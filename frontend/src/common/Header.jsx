@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaShoppingCart } from "react-icons/fa"; // Add this import
 
 export default function Header() {
   const [user, setUser] = useState(null); // Trạng thái người dùng: null (chưa đăng nhập) hoặc object (đã đăng nhập)
@@ -51,14 +52,18 @@ export default function Header() {
         </Link>
       </nav>
 
-      {/* Nút hoặc thông tin người dùng bên phải */}
-      <div className="space-x-4">
+      {/* Cart and user info/buttons */}
+      <div className="flex items-center space-x-4">
+        <Link to="/cart" className="relative flex items-center space-x-1 hover:text-gray-300 transition duration-200">
+          <FaShoppingCart className="text-2xl" />
+          <span className="text-base font-medium">Cart</span>
+        </Link>
         {user ? (
           <div className="flex items-center space-x-4">
             <span className="text-sm">Welcome, {user.name}!</span>
             <button
               onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition duration-200"
+              className="bg-red-500 hover:bg-red-600 text-black px-3 py-1 rounded-md transition duration-200"
             >
               Logout
             </button>
@@ -67,13 +72,13 @@ export default function Header() {
           <>
             <button
               onClick={handleLogin}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition duration-200"
+              className="bg-blue-500 hover:bg-blue-600 text-black px-3 py-1 rounded-md transition duration-200"
             >
               Login
             </button>
             <button
               onClick={handleSignUp}
-              className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md transition duration-200"
+              className="bg-green-500 hover:bg-green-600 text-black px-3 py-1 rounded-md transition duration-200"
             >
               Sign Up
             </button>

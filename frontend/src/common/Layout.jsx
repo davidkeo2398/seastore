@@ -1,13 +1,20 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
+import "../css/layout.css";
 
 export default function Layout() {
-    return (
-        <div className="pt-[64px] pb-[64px]"> {/* Adjust padding to match header/footer height */}
-            <Header />
-            <Outlet />
-            <Footer />
-        </div>
-    );
+  return (
+    <div className="layout-container">
+      <div className="header-container">
+        <Header />
+      </div>
+      <div className="outlet-container">
+        <Outlet />
+      </div>
+      <div className="footer-container">
+        <Footer />
+      </div>
+    </div>
+  );
 }
