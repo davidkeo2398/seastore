@@ -1,0 +1,89 @@
+header {
+    background-color: #1f2937; /* Màu nền */
+    color: white; /* Màu chữ */
+    padding: 16px; /* Khoảng cách bên trong */
+    display: flex; /* Đặt các phần tử con theo hàng ngang */
+    /* justify-content: space-between;  */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+}
+
+header .logo {
+    font-size: 1.5rem; /* Kích thước chữ lớn hơn cho logo */
+    font-weight: bold;
+    margin-right: 32px; /* Khoảng cách giữa logo và menu */
+}
+
+header .nav {
+    display: flex; 
+    gap: 16px; 
+}
+
+header .nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.2s ease-in-out; /* Hiệu ứng chuyển màu */
+}
+
+header .nav a:hover {
+    color: #d1d5db; /* Màu khi hover */
+}
+
+header .cart {
+    display: flex;
+    align-items: center;
+    gap: 4px; /* Khoảng cách giữa icon và chữ */
+    transition: color 0.2s ease-in-out;
+}
+
+header .cart:hover {
+    color: #d1d5db; /* Tương tự hover:text-gray-300 */
+}
+
+header .user-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: absolute;
+    right: 16px;
+}
+
+header .user-actions .btn {
+    padding: 8px 12px; /* Tương tự px-3 py-1 */
+    border-radius: 4px; /* Tương tự rounded-md */
+    font-size: 1rem;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+header .user-actions .btn-login {
+    background-color: #3b82f6; /* Tương tự bg-blue-500 */
+    color: white;
+}
+
+header .user-actions .btn-login:hover {
+    background-color: #2563eb; /* Tương tự hover:bg-blue-600 */
+}
+
+header .user-actions .btn-signup {
+    background-color: #10b981; /* Tương tự bg-green-500 */
+    color: white;
+}
+
+header .user-actions .btn-signup:hover {
+    background-color: #059669; /* Tương tự hover:bg-green-600 */
+}
+
+header .user-actions .btn-logout {
+    background-color: #ef4444; /* Tương tự bg-red-500 */
+    color: black;
+}
+
+header .user-actions .btn-logout:hover {
+    background-color: #dc2626; /* Tương tự hover:bg-red-600 */
+}

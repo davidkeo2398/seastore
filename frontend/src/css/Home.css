@@ -1,17 +1,7 @@
-.home-container{
+/* .home-container{
     width: 100%;
-    padding-top: 88px;
-    padding-bottom: 66px;
-    height: 730px;
-    background-color: #fff;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    padding-left: 10px;
-    padding-right: 10px;
-    overflow-y: auto;
-    overflow-x: hidden; 
-}
+    height: 100%;
+} */
 
 .banner {
     position: relative;
@@ -137,6 +127,7 @@
 
 .btn-add-cart,
 .btn-detail {
+  width: 100%;
   padding: 6px 14px;
   border: none;
   border-radius: 6px;

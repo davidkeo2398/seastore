@@ -59,7 +59,7 @@ const products = [
 
 export default function Home() {
   return (
-    <div className="home-container">
+    <div>
       <div className="banner">
         <div className="banner-blur"></div>
         <div className="banner-content">

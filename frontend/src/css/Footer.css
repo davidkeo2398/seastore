@@ -1,0 +1,18 @@
+footer {
+    background-color: #1f2937; /* Màu nền tương tự bg-gray-800 */
+    color: white; /* Màu chữ */
+    padding: 16px; /* Tương tự p-4 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tương tự shadow-md */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+}
+
+footer .text-center {
+    text-align: center;
+}
