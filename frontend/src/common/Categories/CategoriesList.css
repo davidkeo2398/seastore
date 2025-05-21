@@ -1,0 +1,36 @@
+.categories-list {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 16px;
+    padding: 16px;
+    justify-items: center;
+    justify-content: center;
+    background-color: rgb(242, 248, 237);
+    border-radius: 10px;
+    /* căn giữa grid trong container */
+}
+
+.category-btn {
+    width: 100%;
+    /* mỗi button chiếm hết 1 cột */
+    background: #ffffff;
+    color: #1f2937;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 0;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+        background 0.2s,
+        transform 0.2s,
+        color 0.2s;
+    text-align: center;
+}
+
+.category-btn:hover {
+    background: #5bffb2;
+    color: #fff;
+    transform: scale(1.1);
+}

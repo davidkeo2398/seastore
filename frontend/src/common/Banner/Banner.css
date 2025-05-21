@@ -1,0 +1,116 @@
+.banner {
+    position: relative;
+    width: 100%;
+    height: 192px;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.7s;
+    opacity: 0.7;
+}
+
+.banner.fade-in {
+    opacity: 1;
+    transition: opacity 0.7s;
+}
+
+.banner.fade-out {
+    opacity: 0.8;
+    transition: opacity 0.7s;
+}
+
+.banner-blur {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1;
+}
+
+.banner-content {
+    position: relative;
+    z-index: 2;
+    text-align: left;
+    color: #fff;
+    padding: 0 32px;
+    max-width: 60%;
+}
+
+.banner-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.banner-desc {
+    font-size: 1.125rem;
+    font-weight: 500;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.banner-dots {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    z-index: 3;
+}
+
+.banner-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    opacity: 0.6;
+    transition: transform 0.3s, background 0.3s, opacity 0.3s;
+    cursor: pointer;
+}
+
+.banner-dot.active {
+    background: #69ffcd;
+    opacity: 1;
+    transform: scale(1.5);
+}
+
+.banner-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    background: rgba(255, 255, 255, 0.6);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    /* Đảm bảo width = height */
+    height: 40px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    padding: 0;
+    /* Bỏ padding để nút tròn */
+}
+
+.banner-arrow.left {
+    left: 16px;
+}
+
+.banner-arrow.right {
+    right: 16px;
+}
+
+.banner-arrow:hover {
+    background: #60ff87;
+}

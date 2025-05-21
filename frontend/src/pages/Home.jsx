@@ -1,5 +1,8 @@
 import React from "react";
 import "../css/home.css";
+import ProductList from "@/common/ProductList";
+import CategoriesList from "@/common/Categories/CategoriesList";
+import Banner from "@/common/Banner/Banner";
 
 const products = [
   {
@@ -18,7 +21,7 @@ const products = [
     price: 999,
     rate: 4.7,
     image:
-      "https://images.samsung.com/is/image/samsung/p6pim/levant/sm-s921bzadmea/gallery/levant-galaxy-s24-s921-sm-s921bzadmea-thumb-539246469",
+      "https://images.samsung.com/is/image/samsung/p6pim/levant/sm-s921bzadmea/gallery/levant-galaxy-s24-s921-sm-s921bzadmea-537982982?$650_519_PNG$",
   },
   {
     id: 3,
@@ -26,7 +29,7 @@ const products = [
     description: "Industry-leading noise canceling headphones.",
     price: 399,
     rate: 4.9,
-    image: "https://m.media-amazon.com/images/I/61v6lGqKJGL._AC_SL1500_.jpg",
+    image: "https://cdn.sony.com/image/sony-wh-1000xm5-black.png",
   },
   {
     id: 4,
@@ -35,65 +38,34 @@ const products = [
     price: 1299,
     rate: 4.95,
     image:
-      "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/macbook-air-13-midnight-gallery1-202402?wid=4000&hei=3072&fmt=jpeg&qlt=90&.v=1707348936757",
+      "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/macbook-air-13-midnight-gallery1-202402?wid=2000&hei=1536&fmt=jpeg&qlt=90&.v=1707348936757",
   },
   {
     id: 5,
-    name: "MacBook Air M3",
-    description: "Ultra-thin laptop with Apple M3 chip.",
-    price: 1299,
-    rate: 4.95,
+    name: "Dell XPS 13",
+    description: "Compact and powerful ultrabook from Dell.",
+    price: 1099,
+    rate: 4.7,
     image:
-      "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/macbook-air-13-midnight-gallery1-202402?wid=4000&hei=3072&fmt=jpeg&qlt=90&.v=1707348936757",
+      "https://i.dell.com/sites/csimages/Video_Imagery/all/xps-13-9310-laptop-campaign-hero-504x350-ng.psd",
   },
   {
     id: 6,
-    name: "MacBook Air M3",
-    description: "Ultra-thin laptop with Apple M3 chip.",
-    price: 1299,
-    rate: 4.95,
+    name: "Apple Watch Series 9",
+    description: "Latest Apple Watch with advanced health features.",
+    price: 499,
+    rate: 4.8,
     image:
-      "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/macbook-air-13-midnight-gallery1-202402?wid=4000&hei=3072&fmt=jpeg&qlt=90&.v=1707348936757",
+      "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/MQKX3_VW_34FR+watch-case-45-alum-silver-nc-9s_VW_34FR_WF_CO_GEO_US?wid=2000&hei=2000&fmt=jpeg&qlt=95&.v=1693186741448",
   },
 ];
 
 export default function Home() {
   return (
     <div>
-      <div className="banner">
-        <div className="banner-blur"></div>
-        <div className="banner-content">
-          <h2 className="banner-title">Big Summer Sale!</h2>
-          <p className="banner-desc">
-            Up to 50% off on selected products. Shop now!
-          </p>
-        </div>
-      </div>
-      <div className="products-list">
-        <div className="products-grid">
-          {products.map((product) => (
-            <div className="product-card" key={product.id}>
-              <img
-                className="product-image"
-                src={product.image}
-                alt={product.name}
-              />
-              <div className="product-info">
-                <h3 className="product-title">{product.name}</h3>
-                <p className="product-desc">{product.description}</p>
-                <div className="product-meta">
-                  <span className="product-price">${product.price}</span>
-                  <span className="product-rate"> ⭐ {product.rate}</span>
-                </div>
-                <div className="product-actions">
-                  <button className="btn-add-cart">Add to Cart</button>
-                  <button className="btn-detail">Get Detail</button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Banner />
+      <ProductList products={products} />
+      <CategoriesList />
     </div>
   );
 }
