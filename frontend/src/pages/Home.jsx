@@ -64,8 +64,8 @@ export default function Home() {
   return (
     <div>
       <Banner />
-      <ProductList products={products} />
       <CategoriesList />
+      <ProductList products={products} />
     </div>
   );
 }
