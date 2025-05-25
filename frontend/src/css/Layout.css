@@ -1,21 +1,33 @@
-.layout-container{
-    display: flex;
-    flex-direction: column;
-    width: 100vw;
-    height: 100vh;
-    justify-content: space-between;
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
 }
+
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}
+
 .outlet-container {
-    width: 100%;
-    height: 730px;
-    background-color: #fff;
-    padding-top: 88px;
-    padding-bottom: 66px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    padding-left: 10px;
-    padding-right: 10px;
-    overflow-y: auto;
-    overflow-x: hidden;
+  flex: 1;
+  width: 100%;
+  margin-top: 72px;      /* Độ cao header */
+  margin-bottom: 80px;   /* Độ cao footer */
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.footer-container {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 100;
 }

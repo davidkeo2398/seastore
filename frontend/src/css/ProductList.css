@@ -1,27 +1,29 @@
 .products-list {
-  width: 100%;
+  /* width: 100%; */
   margin-top: 24px;
   background-color: rgb(242, 248, 237);
-  padding: 16px;
+  /* padding: 0 0 16px 0; Chỉ padding dưới, không padding ngang */
   border-radius: 16px;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
-.products-grid {
+/* .products-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   width: 100%;
-}
+} */
 
 .product-card {
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   padding: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: calc(20% - 16px); /* 5 card trên 1 hàng, trừ gap */
+  /* display: flex; */
+  /* flex-direction: column;
+  align-items: center; */
+  /* width: calc(20% - 16px); 5 card trên 1 hàng, trừ gap */
   min-width: 0;
   box-sizing: border-box;
 }
@@ -37,7 +39,7 @@
 }
 
 .product-info {
-  width: 100%;
+  /* width: 100%; */
   text-align: center;
 }
 
@@ -55,20 +57,20 @@
 }
 
 .product-meta {
-  display: flex;
+  /* display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 10px; */
   font-size: 1rem;
 }
 
 .product-price {
-  color: #16a34a;
+  color: #4982f6;
   font-weight: bold;
 }
 
 .product-rate {
-  color: #f59e42;
+  color: #0036e9;
   font-weight: 500;
 }
 
@@ -90,12 +92,12 @@
 }
 
 .btn-add-cart {
-  background: #16a34a;
+  background: #1da1f2;
   color: #fff;
 }
 
 .btn-add-cart:hover {
-  background: #15803d;
+  background: #002135;
 }
 
 .btn-detail {
@@ -104,5 +106,5 @@
 }
 
 .btn-detail:hover {
-  background: #1d4ed8;
+  background: #00195d;
 }

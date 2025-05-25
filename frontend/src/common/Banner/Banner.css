@@ -9,24 +9,26 @@
     justify-content: center;
     background-size: cover;
     background-position: center;
-    transition: opacity 0.7s;
+    transition: opacity 0.7s, transform 0.7s; /* Enhanced with scale for tepbac.vn effect */
     opacity: 0.7;
 }
 
 .banner.fade-in {
     opacity: 1;
-    transition: opacity 0.7s;
+    transform: scale(1); /* Scale in */
+    transition: opacity 0.7s, transform 0.7s;
 }
 
 .banner.fade-out {
     opacity: 0.8;
-    transition: opacity 0.7s;
+    transform: scale(0.98); /* Scale out */
+    transition: opacity 0.7s, transform 0.7s;
 }
 
 .banner-blur {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 50, 100, 0.4); /* Sea blue overlay for theme */
     backdrop-filter: blur(4px);
     z-index: 1;
 }
@@ -35,22 +37,32 @@
     position: relative;
     z-index: 2;
     text-align: left;
-    color: #fff;
+    color: #ffffff;
     padding: 0 32px;
     max-width: 60%;
+    transform: translateY(10px);
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease; /* Slide-up animation for tepbac.vn effect */
+}
+
+.banner.fade-in .banner-content {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .banner-title {
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 8px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    color: #ffffff; /* White for theme */
+    text-shadow: 0 2px 8px rgba(0, 50, 100, 0.3); /* Sea blue shadow */
 }
 
 .banner-desc {
     font-size: 1.125rem;
     font-weight: 500;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    color: #e6f0fa; /* Light sea blue for theme */
+    text-shadow: 0 2px 8px rgba(0, 50, 100, 0.2);
 }
 
 .banner-dots {
@@ -68,7 +80,7 @@
     display: inline-block;
     width: 10px;
     height: 10px;
-    background: #fff;
+    background: #ffffff; /* White for theme */
     border-radius: 50%;
     opacity: 0.6;
     transition: transform 0.3s, background 0.3s, opacity 0.3s;
@@ -76,7 +88,7 @@
 }
 
 .banner-dot.active {
-    background: #69ffcd;
+    background: #2dd4bf; /* Aqua sea blue for theme */
     opacity: 1;
     transform: scale(1.5);
 }
@@ -86,21 +98,19 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 4;
-    background: rgba(255, 255, 255, 0.6);
-    color: #fff;
+    background: rgba(255, 255, 255, 0.7); /* White with opacity */
+    color: #1e3a8a; /* Deep sea blue */
     border: none;
     border-radius: 50%;
     width: 40px;
-    /* Đảm bảo width = height */
     height: 40px;
     font-size: 1.5rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
     padding: 0;
-    /* Bỏ padding để nút tròn */
 }
 
 .banner-arrow.left {
@@ -112,5 +122,21 @@
 }
 
 .banner-arrow:hover {
-    background: #60ff87;
+    background: #2dd4bf; /* Aqua sea blue */
+    color: #ffffff;
+    transform: translateY(-50%) scale(1.2);
+    box-shadow: 0 4px 12px rgba(0, 50, 100, 0.3);
+    animation: pulse 0.6s infinite; /* Pulse animation for tepbac.vn effect */
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }

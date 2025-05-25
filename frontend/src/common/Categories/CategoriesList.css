@@ -6,31 +6,81 @@
     padding: 16px;
     justify-items: center;
     justify-content: center;
-    background-color: rgb(242, 248, 237);
+    background-color: #e6f0fa; /* xanh nước biển nhạt */
     border-radius: 10px;
-    /* căn giữa grid trong container */
 }
 
 .category-btn {
-    width: 100%;
-    /* mỗi button chiếm hết 1 cột */
-    background: #ffffff;
-    color: #1f2937;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 0;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition:
-        background 0.2s,
-        transform 0.2s,
-        color 0.2s;
-    text-align: center;
+  width: 90%;
+  margin: 12px auto 0 auto;
+  background: #1e40af;      /* xanh nước biển đậm */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  display: block;
 }
 
 .category-btn:hover {
-    background: #5bffb2;
-    color: #fff;
-    transform: scale(1.1);
+  background: #fff;
+  color: #1e40af;
+  border: 2px solid #1e40af;
+  transform: scale(1.05);
+}
+
+.categories-container {
+  width: 100%;
+  margin: 24px 0;
+  padding: 16px;
+  background-color: #fff; /* trắng */
+  border-radius: 12px;
+}
+
+.categories-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #1e40af; /* xanh nước biển đậm */
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.category-card {
+  background: #fff; /* trắng */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.08); /* xanh nước biển nhạt */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid #e0e7ff; /* xanh nước biển nhạt */
+}
+
+.category-card.hovered {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.18); /* xanh nước biển đậm */
+  border-color: #1e40af; /* xanh nước biển đậm */
+}
+
+.category-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-bottom: 2px solid #1e40af; /* xanh nước biển đậm */
+  background: #e6f0fa; /* xanh nước biển nhạt */
+}
+
+.category-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1e40af; /* xanh nước biển đậm */
+  text-align: center;
+  padding: 12px;
 }

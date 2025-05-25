@@ -1,18 +1,111 @@
-footer {
-    background-color: #1f2937; /* Màu nền tương tự bg-gray-800 */
-    color: white; /* Màu chữ */
-    padding: 16px; /* Tương tự p-4 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tương tự shadow-md */
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    z-index: 50;
+.footer {
+  background-color: #003366;
+  color: white;
+  padding: 20px 0;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  //position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
 }
 
-footer .text-center {
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 20px;
+}
+
+.footer-section h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.footer-section p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 5px 0;
+}
+
+.footer-section.logo {
+  text-align: center;
+}
+
+.logo-container {
+  margin-bottom: 15px;
+}
+
+.footer-logo {
+  width: 150px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.verified-icon {
+  width: 50px;
+  height: auto;
+  margin-top: 5px;
+}
+
+.app-links {
+  margin-top: 15px;
+}
+
+.app-links p {
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.app-icons {
+  display: flex;
+  gap: 10px;
+}
+
+.app-icon {
+  width: 30px;
+  height: auto;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid #4b6987;
+  margin-top: 20px;
+}
+
+.footer-bottom p {
+  font-size: 0.8rem;
+  margin: 5px 0;
+}
+
+.zalo-icon {
+  margin-top: 10px;
+}
+
+.zalo-logo {
+  width: 40px;
+  height: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-section {
     text-align: center;
+    margin: 10px 0;
+  }
 }

@@ -62,10 +62,11 @@ const products = [
 
 export default function Home() {
   return (
-    <div>
+    <div className="home-container" >
       <Banner />
-      <ProductList products={products} />
       <CategoriesList />
+      <ProductList products={products} />
+      
     </div>
   );
 }
