@@ -30,7 +30,7 @@ const Footer = () => {
         <div className="footer-section logo">
           <div className="logo-container">
             <img
-              src="https://via.placeholder.com/150?text=Farmext"
+              src="https://placehold.co/150x150?text=Farmext"
               alt="Farmext Logo"
               className="footer-logo"
             />

@@ -3,21 +3,20 @@ import "../css/Header.css"; // Import file CSS
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
-import LoginDialog from "./LoginDiaLog"; // Import the LoginDialog component
-import Login from "../pages/Login"; // Import the Login page component
-
+import RegisterDialog from "@/pages/RegisterDialog";
+import LoginDialog from "@/pages/LoginDiaLog";
 const Header = () => {
   const [user, setUser] = useState(null); // Trạng thái người dùng: null (chưa đăng nhập) hoặc object (đã đăng nhập)
   const navigate = useNavigate();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [showRegisterDialog, setShowRegisterDialog] = useState(false);
 
   const handleLogin = () => {
     setShowLoginDialog(true);
   };
 
   const handleSignUp = () => {
-    setUser({ name: "John Doe" });
-    navigate("/");
+    setShowRegisterDialog(true);
   };
 
   const handleLogout = () => {
@@ -68,8 +67,14 @@ const Header = () => {
         )}
       </div>
 
-      {/* Login dialog */}
-      {showLoginDialog && <Login onClose={() => setShowLoginDialog(false)} />}
+      
+      {showLoginDialog && (
+        <LoginDialog onClose={() => setShowLoginDialog(false)} />
+      )}
+      
+      {showRegisterDialog && (
+        <RegisterDialog onClose={() => setShowRegisterDialog(false)} />
+      )}
     </header>
   );
 };
