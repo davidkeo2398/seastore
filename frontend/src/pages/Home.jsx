@@ -1,6 +1,6 @@
 import React from "react";
 import "../css/home.css";
-import ProductList from "@/common/ProductList";
+import ProductList from "@/pages/ProductList";
 import CategoriesList from "@/common/Categories/CategoriesList";
 import Banner from "@/common/Banner/Banner";
 

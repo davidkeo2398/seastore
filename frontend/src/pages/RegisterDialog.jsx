@@ -1,15 +1,30 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import axiosInstance from '@/lib/axios';
-import { Link } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import axiosInstance from "@/lib/axios";
+import { Link } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-export default function RegisterPage() {
-  const [errorMessages, setErrorMessages] = useState('');
+
+export default function RegisterPage({ onClose }) {
+  const [errorMessages, setErrorMessages] = useState("");
   const navigate = useNavigate();
+  const [open, setOpen] = useState(!!onClose);
+
+  const handleOpenChange = (val) => {
+    setOpen(val);
+    if (!val && onClose) onClose();
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -21,7 +36,7 @@ export default function RegisterPage() {
     const confirmPassword = form.confirmPassword.value;
 
     if (password !== confirmPassword) {
-      setErrorMessages('Mật khẩu và xác nhận mật khẩu không khớp.');
+      setErrorMessages("Mật khẩu và xác nhận mật khẩu không khớp.");
       return;
     }
 
@@ -36,25 +51,55 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">Đăng ký</h2>
+    <Dialog
+      open={onClose ? open : undefined}
+      onOpenChange={onClose ? handleOpenChange : undefined}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Đăng ký</DialogTitle>
+        </DialogHeader>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Họ và tên</Label>
-            <Input id="name" name="name" type="text" placeholder="Tên của bạn" required />
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Tên của bạn"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="username">Username</Label>
-            <Input id="username" name="username" type="text" placeholder="Username của bạn" required />
+            <Input
+              id="username"
+              name="username"
+              type="text"
+              placeholder="Username của bạn"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" placeholder="Email của bạn" required />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Email của bạn"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Mật khẩu</Label>
-            <Input id="password" name="password" type="password" placeholder="Mật khẩu" required />
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Mật khẩu"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
@@ -66,28 +111,27 @@ export default function RegisterPage() {
               required
             />
           </div>
-          {errorMessages && <p className="text-red-500 text-sm">{errorMessages}</p>}
-          <Button type="submit" className="w-full">
+          {errorMessages && (
+            <p className="text-red-500 text-sm">{errorMessages}</p>
+          )}
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded"
+          >
             Đăng ký
-          </Button>
+          </button>
         </form>
-        <div className="mt-4">
-          <GoogleLogin
-            onSuccess={() => {
-              window.location.href = 'http://localhost:3333/auth/google';
-            }}
-            onError={() => {
-              setErrorMessages('Đăng ký bằng Google thất bại.');
-            }}
-          />
-        </div>
+        <button className="social-button">
+          <img src="/image/icon_gg.png" alt="Google" className="social-icon" />
+          Google
+        </button>
         <p className="mt-4 text-center text-sm">
-          Đã có tài khoản?{' '}
-          <Link to="/login" className="text-blue-500 hover:underline">
+          Đã có tài khoản?{" "}
+          <Link to="./LoginDialog.jsx" className="text-blue-500 hover:underline">
             Đăng nhập
           </Link>
         </p>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

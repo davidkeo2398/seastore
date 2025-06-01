@@ -11,6 +11,9 @@ import axiosInstance from '@/lib/axios';
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 import RegisterPage from "./pages/RegisterDialog";
+import ProductDetailPage from "./pages/ProductDetail";
+import CartPage from "./pages/CartPage";
+import PaymentPage from "./pages/PaymentPage";
 
 function App() {
     const { user, logout } = useContext(AuthContext);
@@ -31,6 +34,9 @@ function App() {
           <Route path="about" element={<AboutPage />} />
           <Route path="login" element={<LoginDialog/>} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="/products/:id" element={<ProductDetailPage />} />
+          <Route path="cart" element={<CartPage />} />
+          <Route path="payment" element={<PaymentPage />} />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>

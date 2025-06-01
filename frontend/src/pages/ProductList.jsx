@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from "react";
 import "../css/productList.css";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 export default function ProductList(data) {
   const { products } = data;
   const [isVisible, setIsVisible] = useState(false);
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
   // isVisible: Trạng thái hiển thị của sản phẩm.
   useEffect(() => {
     console.log(products);
     setTimeout(() => setIsVisible(true), 100);
   }, []);
+  const handleAddToCart = (product) => {
+    addToCart(product, 1); // Default quantity of 1
+    alert("Đã thêm sản phẩm vào giỏ hàng!");
+  };
   return (
     <div className="products-list">
       {/* mobile: 1, tablet: 2, laptop: 3, desktop: 4, large desktop: 5 */}
@@ -41,8 +49,18 @@ export default function ProductList(data) {
                 <span className="product-rate"> ⭐ {product.rate}</span>
               </div>
               <div className="product-actions flex gap-2 w-full">
-                <button className="btn-add-cart flex-1">Add to Cart</button>
-                <button className="btn-detail flex-1">Get Detail</button>
+                <button
+                  className="btn-add-cart flex-1"
+                  onClick={() => handleAddToCart(product)}
+                >
+                  Add to Cart
+                </button>
+                <button
+                  className="btn-detail flex-1"
+                  onClick={() => navigate(`/products/${product.id}`)}
+                >
+                  Get Detail
+                </button>
               </div>
             </div>
           </div>
