@@ -3,7 +3,9 @@ const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const authentication = require('./authentication'); // Import authentication module
+const authentication = require('./authentication');
+const db = require('./src/config/dbcontext');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3333;
@@ -17,22 +19,6 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
-});
-
-// MySQL connection
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'tom',
-});
-
-db.connect((err) => {
-  if (err) {
-    console.error('Kết nối cơ sở dữ liệu không thành công: ' + err.stack);
-    return;
-  }
-  console.log('Đã kết nối với cơ sở dữ liệu.');
 });
 
 // Middleware for user authentication
