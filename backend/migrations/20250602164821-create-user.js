@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('User', {
+    await queryInterface.createTable('user', {
       user_id: {
         allowNull: false,
         autoIncrement: true,
@@ -40,16 +40,18 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Role', // Assuming you have a Role model
-          key: 'id'
-        }
+          model: 'role',
+          key: 'role_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       agency_rank_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
-          model: 'angecyrank', // Assuming you have an AgencyRank model
-          key: 'agency_rank_id'
+          model: 'agency_rank',
+          key: 'agency_rank_id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
@@ -65,6 +67,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('User');
+    await queryInterface.dropTable('user');
   }
 };

@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Role', {
+    await queryInterface.createTable('role', {
       role_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -17,9 +17,11 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
-          model: 'AgencyRank', // Assuming you have an AgencyRank model
-          key: 'agency_rank_id'
-        }
+          model: 'agency_rank', 
+          key: 'agency_rank_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
       createdAt: {
         allowNull: false,
@@ -33,6 +35,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Role');
+    await queryInterface.dropTable('role');
   }
 };
