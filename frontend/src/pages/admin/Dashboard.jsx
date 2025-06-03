@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -22,6 +23,7 @@ export default function DashboardStats({ stats }) {
   };
 
   const safeStats = stats || defaultStats;
+  const [users, setUsers] = useState([]);
 
   const statsConfig = [
     {
@@ -138,14 +140,6 @@ function StatCard({
             </div>
           )}
         </div>
-
-        {change !== undefined && (
-          <p className="text-xs text-gray-500">
-            {isPositive && "Tăng so với tháng trước"}
-            {isNegative && "Giảm so với tháng trước"}
-            {change === 0 && "Không thay đổi so với tháng trước"}
-          </p>
-        )}
       </CardContent>
 
       {/* Accent Bar */}

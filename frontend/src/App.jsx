@@ -14,6 +14,10 @@ import RegisterPage from "./pages/RegisterDialog";
 import ProductDetailPage from "./pages/ProductDetail";
 import CartPage from "./pages/CartPage";
 import PaymentPage from "./pages/PaymentPage";
+import UsersPage from "./pages/admin/User";
+import ProductsPage from "./pages/admin/Product";
+import WarehousePage from "./pages/admin/Warehouse";
+import OrdersPage from "./pages/admin/Orders";
 
 function App() {
     const { user, logout } = useContext(AuthContext);
@@ -42,6 +46,10 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardStats />} />
           <Route path="dashboard" element={<DashboardStats />} />
+          <Route path="users" element={<UsersPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="warehouse" element={<WarehousePage />} />
+          <Route path="orders" element={<OrdersPage />} />
         </Route>
       </Routes>
       </main>
