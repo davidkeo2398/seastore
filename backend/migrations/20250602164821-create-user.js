@@ -13,6 +13,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      first_name:{
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      last_name: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -39,6 +47,7 @@ module.exports = {
       role_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        defaultValue: 2,
         references: {
           model: 'role',
           key: 'role_id',

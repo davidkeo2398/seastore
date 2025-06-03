@@ -7,16 +7,19 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "sequelize db:migrate",
+    "migrate:generate": "sequelize migration:generate --name",
     "migrate:undo": "sequelize db:migrate:undo",
     "seed": "sequelize db:seed:all",
+    "seed:generate": "sequelize seed:generate --name",
     "seed:undo": "sequelize db:seed:undo",
-    "migrate:generate": "sequelize migration:generate --name"
+    "seed:undo:all": "sequelize db:seed:undo:all"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@faker-js/faker": "^9.8.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
