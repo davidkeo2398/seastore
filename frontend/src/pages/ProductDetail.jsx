@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
 import {
   ShoppingCart,
   Package,
@@ -11,12 +10,53 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useCart } from "../context/CartContext";
 
+const mockProduct = {
+  id: "1",
+  name: "Premium Wireless Headphones",
+  brand: { name: "TechSound" },
+  price: 2500000,
+  old_price: 3000000,
+  unit: "chiếc",
+  number_of_inventory: 15,
+  description:
+    "Tai nghe không dây cao cấp với chất lượng âm thanh vượt trội, pin 30 giờ và công nghệ chống ồn chủ động. Thiết kế ergonomic mang lại sự thoải mái tối đa cho người sử dụng.",
+  image:
+    "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
+};
+
+const mockRelatedProducts = [
+  {
+    product_id: "2",
+    name: "Bluetooth Speaker Pro",
+    price: 1800000,
+    old_price: 2200000,
+    unit: "chiếc",
+    image:
+      "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
+  },
+  {
+    product_id: "3",
+    name: "Gaming Mouse RGB",
+    price: 850000,
+    unit: "chiếc",
+    image:
+      "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
+  },
+  {
+    product_id: "4",
+    name: "Mechanical Keyboard",
+    price: 1500000,
+    old_price: 1800000,
+    unit: "chiếc",
+    image:
+      "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
+  },
+];
 export default function ProductDetailPage() {
-  const [product, setProduct] = useState(null);
-  const [relatedProducts, setRelatedProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [product] = useState(mockProduct);
+  const [relatedProducts] = useState(mockRelatedProducts);
+  const [isLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
@@ -24,45 +64,34 @@ export default function ProductDetailPage() {
   //   const navigate = useNavigate()
   //   const productId = params.id
 
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { addToCart } = useCart();
+  // const { id } = useParams();
+  // const navigate = useNavigate();
+  // const { addToCart } = useCart();
 
-  // Fetch product details
-  useEffect(() => {
-    const fetchProductDetails = async () => {
-      if (!id) return;
-      try {
-        setIsLoading(true);
-        const response = await fetch(`/api/products/${id}`);
-        if (!response.ok) {
-          throw new Error("Không tìm thấy sản phẩm");
-        }
-        const data = await response.json();
-        setProduct(data);
-      } catch (error) {
-        console.error("Error fetching product details:", error);
-        setProduct(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProductDetails();
-  }, [id]);
+  // useEffect(() => {
+  //   const processProductDetails = () => {
+  //     setIsLoading(true);
+  //     if (!id) {
+  //       setProduct(null);
+  //       setIsLoading(false);
+  //       return;
+  //     }
+  //     setProduct(null);
+  //     setIsLoading(false);
+  //   };
+  //   processProductDetails();
+  // }, [id]);
 
-  // Fetch related products
-  useEffect(() => {
-    const fetchRelated = async () => {
-      if (!product) return;
-      try {
-        const data = await fetchRelatedProducts(product.category_id, product.id);
-        setRelatedProducts(data);
-      } catch (error) {
-        console.error("Error fetching related products:", error);
-      }
-    };
-    fetchRelated();
-  }, [product]);
+  // useEffect(() => {
+  //   const processRelatedProducts = () => {
+  //     if (!product) {
+  //       setRelatedProducts([]);
+  //       return;
+  //     }
+  //     setRelatedProducts([]);
+  //   };
+  //   processRelatedProducts();
+  // }, [product]);
 
   //   // Fetch product details
   // useEffect(() => {
@@ -114,7 +143,8 @@ export default function ProductDetailPage() {
     if (!product) return;
     setIsAddingToCart(true);
     try {
-      await addToCart(product.id, quantity);
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       alert("Đã thêm sản phẩm vào giỏ hàng!");
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -135,23 +165,23 @@ export default function ProductDetailPage() {
     return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
   };
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
-          <div className="w-full h-96 bg-gray-200 rounded-lg animate-pulse"></div>
-          <div className="space-y-4">
-            <div className="h-8 w-3/4 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-6 w-1/2 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-12 w-full bg-gray-200 rounded animate-pulse"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="container mx-auto px-4 py-8">
+  //       <div className="grid md:grid-cols-2 gap-8 mb-8">
+  //         <div className="w-full h-96 bg-gray-200 rounded-lg animate-pulse"></div>
+  //         <div className="space-y-4">
+  //           <div className="h-8 w-3/4 bg-gray-200 rounded animate-pulse"></div>
+  //           <div className="h-6 w-1/2 bg-gray-200 rounded animate-pulse"></div>
+  //           <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+  //           <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+  //           <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse"></div>
+  //           <div className="h-12 w-full bg-gray-200 rounded animate-pulse"></div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   if (!product) {
     return (
@@ -163,12 +193,12 @@ export default function ProductDetailPage() {
           <p className="text-gray-600 mb-6">
             Sản phẩm bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.
           </p>
-          <Link to="/products">
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Quay lại danh sách sản phẩm
-            </Button>
-          </Link>
+          {/* <Link to="/products"> */}
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Quay lại danh sách sản phẩm
+          </Button>
+          {/* </Link> */}
         </div>
       </div>
     );
@@ -182,8 +212,10 @@ export default function ProductDetailPage() {
         <div className="space-y-4">
           <div className="relative">
             <img
-              src={product.image || "/placeholder.svg"}
+              src={product.image}
               alt={product.name}
+              width={600}
+              height={600}
               className="w-full h-auto rounded-lg shadow-lg border border-gray-200"
             />
             {product.old_price && (
@@ -247,181 +279,134 @@ export default function ProductDetailPage() {
               </Badge>
             )}
           </div>
+        </div>
 
-          {/* Description */}
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Mô tả sản phẩm</h3>
-            <p className="text-gray-600 leading-relaxed">
-              {product.description}
-            </p>
-          </div>
+        {/* Description */}
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Mô tả sản phẩm</h3>
+          <p className="text-gray-600 leading-relaxed">
+            {product.description || "Không có mô tả cho sản phẩm này."}
+          </p>
+        </div>
 
-          {/* Quantity and Add to Cart */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <label
-                htmlFor="quantity"
-                className="text-sm font-medium text-gray-700"
-              >
-                Số lượng:
-              </label>
-              <div className="flex items-center border border-gray-300 rounded-md">
-                <button
-                  type="button"
-                  className="px-3 py-2 text-gray-600 hover:bg-gray-100"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  disabled={quantity <= 1}
-                >
-                  -
-                </button>
-                <input
-                  id="quantity"
-                  type="number"
-                  min="1"
-                  max={product.number_of_inventory}
-                  value={quantity}
-                  onChange={(e) =>
-                    setQuantity(
-                      Math.max(1, Number.parseInt(e.target.value) || 1)
-                    )
-                  }
-                  className="w-16 px-3 py-2 text-center border-0 focus:ring-0"
-                />
-                <button
-                  type="button"
-                  className="px-3 py-2 text-gray-600 hover:bg-gray-100"
-                  onClick={() =>
-                    setQuantity(
-                      Math.min(product.number_of_inventory, quantity + 1)
-                    )
-                  }
-                  disabled={quantity >= product.number_of_inventory}
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            <div className="flex space-x-4">
+        {/* Quantity and Add to Cart */}
+        <div className="space-y-4">
+          <div className="flex items-center space-x-4">
+            <label
+              htmlFor="quantity"
+              className="text-sm font-medium text-gray-700"
+            >
+              Số lượng:
+            </label>
+            <div className="flex items-center border border-gray-300 rounded-md">
               <button
-                onClick={handleAddToCart}
-                disabled={product.number_of_inventory === 0 || isAddingToCart}
-                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 flex items-center justify-center"
+                type="button"
+                className="px-3 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                disabled={quantity <= 1}
               >
-                {isAddingToCart ? (
-                  "Đang thêm..."
-                ) : (
-                  <>
-                    <svg
-                      className="mr-2 h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
-                    Thêm vào giỏ hàng
-                  </>
-                )}
+                -
               </button>
-              <button className="p-2 border border-gray-300 rounded hover:bg-gray-100">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </button>
-              <button className="p-2 border border-gray-300 rounded hover:bg-gray-100">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.684 13.342 8.684 13.342 8.684 13.342l4.162 4.162m0 0l4.162-4.162m-4.162 4.162V3m0 0h6.364M12 3H5.636" />
-                </svg>
+              <input
+                id="quantity"
+                type="number"
+                min="1"
+                max={product.number_of_inventory}
+                value={quantity}
+                onChange={(e) =>
+                  setQuantity(Math.max(1, Number.parseInt(e.target.value) || 1))
+                }
+                className="w-16 px-3 py-2 text-center border-0 focus:ring-0 focus:outline-none"
+              />
+              <button
+                type="button"
+                className="px-3 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                onClick={() =>
+                  setQuantity(
+                    Math.min(product.number_of_inventory, quantity + 1)
+                  )
+                }
+                disabled={quantity >= product.number_of_inventory}
+              >
+                +
               </button>
             </div>
           </div>
 
-          {/* Shipping Info */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <Truck className="h-5 w-5 text-blue-600" />
-              <span className="font-medium text-blue-900">
-                Thông tin vận chuyển
-              </span>
-            </div>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>• Miễn phí vận chuyển cho đơn hàng trên 500.000đ</li>
-              <li>• Giao hàng trong 2-3 ngày làm việc</li>
-              <li>• Hỗ trợ đổi trả trong 7 ngày</li>
-            </ul>
+          <div className="flex space-x-4">
+            <Button
+              onClick={handleAddToCart}
+              disabled={product.number_of_inventory === 0 || isAddingToCart}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400"
+            >
+              {isAddingToCart ? (
+                "Đang thêm..."
+              ) : (
+                <>
+                  <ShoppingCart className="mr-2 h-4 w-4 " />
+                  <span className="text-black">Thêm vào giỏ hàng</span>
+                </>
+              )}
+            </Button>
+            <Button variant="outline" size="icon">
+              <Heart className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="icon">
+              <Share2 className="h-4 w-4" />
+            </Button>
           </div>
+        </div>
+
+        {/* Shipping Info */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center space-x-2 mb-2">
+            <Truck className="h-5 w-5 text-blue-600" />
+            <span className="font-medium text-blue-900">
+              Thông tin vận chuyển
+            </span>
+          </div>
+          <ul className="text-sm text-blue-800 space-y-1">
+            <li>• Miễn phí vận chuyển cho đơn hàng trên 500.000đ</li>
+            <li>• Giao hàng trong 2-3 ngày làm việc</li>
+            <li>• Hỗ trợ đổi trả trong 7 ngày</li>
+          </ul>
         </div>
       </div>
 
       {/* Related Products */}
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+      <div className="mb-12">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
           Sản phẩm liên quan
         </h2>
-        {relatedProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {relatedProducts.map((relatedProduct) => (
-              <Card
-                key={relatedProduct.product_id}
-                className="hover:shadow-lg transition-shadow"
-              >
-                <CardContent className="p-4">
-                  <div className="relative mb-4">
-                    <img
-                      src={relatedProduct.image || "/placeholder.svg"}
-                      alt={relatedProduct.name}
-                      className="w-full h-48 object-cover rounded-md"
-                    />
-                    {relatedProduct.old_price && (
-                      <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600 text-xs">
-                        -
-                        {calculateDiscount(
-                          relatedProduct.old_price,
-                          relatedProduct.price
-                        )}
-                        %
-                      </Badge>
-                    )}
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2 line-clamp-2">
-                    {relatedProduct.name}
-                  </h3>
-                  <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-xl font-bold text-blue-600">
-                      {formatPrice(relatedProduct.price)}
+        <div className="grid md:grid-cols-3 gap-6">
+          {relatedProducts.map((relatedProduct) => (
+            <Card
+              key={relatedProduct.product_id}
+              className="hover:shadow-lg transition-shadow"
+            >
+              <CardContent className="p-4 space-y-4">
+                <img
+                  src={relatedProduct.image}
+                  alt={relatedProduct.name}
+                  className="w-full h-40 object-cover rounded-lg mb-4"
+                />
+                <h3 className="text-lg font-medium text-gray-900">
+                  {relatedProduct.name}
+                </h3>
+                <div className="flex items-center justify-between">
+                  <span className="text-blue-600 font-bold">
+                    {formatPrice(relatedProduct.price)}
+                  </span>
+                  {relatedProduct.old_price && (
+                    <span className="text-sm text-gray-500 line-through">
+                      {formatPrice(relatedProduct.old_price)}
                     </span>
-                    {relatedProduct.old_price && (
-                      <span className="text-sm text-gray-500 line-through">
-                        {formatPrice(relatedProduct.old_price)}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Đơn vị: {relatedProduct.unit}
-                  </p>
-                  <Link to={`/products/${relatedProduct.product_id}`}>
-                    <Button
-                      variant="outline"
-                      className="w-full hover:bg-blue-50 hover:border-blue-300"
-                    >
-                      Xem chi tiết
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500 text-center py-8">
-            Không có sản phẩm liên quan.
-          </p>
-        )}
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );

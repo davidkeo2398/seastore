@@ -1,12 +1,12 @@
 .products-list {
-  /* width: 100%; */
+   width: 100%;
   margin-top: 24px;
   background-color: rgb(242, 248, 237);
   /* padding: 0 0 16px 0; Chỉ padding dưới, không padding ngang */
   border-radius: 16px;
   box-sizing: border-box;
   overflow-x: hidden;
-}
+ }
 
 /* .products-grid {
   display: flex;
@@ -107,4 +107,8 @@
 
 .btn-detail:hover {
   background: #00195d;
+}
+
+.some-class {
+  color: red;
 }
