@@ -5,21 +5,34 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "sequelize db:migrate",
+    "migrate:generate": "sequelize migration:generate --name",
+    "migrate:undo": "sequelize db:migrate:undo",
+    "seed": "sequelize db:seed:all",
+    "seed:generate": "sequelize seed:generate --name",
+    "seed:undo": "sequelize db:seed:undo",
+    "seed:undo:all": "sequelize db:seed:undo:all"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@faker-js/faker": "^9.8.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "firebase": "^11.8.1",
-    "mysql": "^2.18.1"
+    "mariadb": "^3.4.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.1",
+    "sequelize": "^6.37.7"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "babel-register": "^6.26.0",
+    "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.3"
   }
 }
