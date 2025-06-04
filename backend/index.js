@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const authentication = require('./authentication');
 const db = require('./src/config/dbcontext');
+const { Sequelize } = require('sequelize');
+const { UserModel, User } = require('./src/Model/Index');
 require('dotenv').config();
 
 const app = express();
@@ -55,19 +57,27 @@ const adminMiddleware = (req, res, next) => {
 };
 
 // Login route
-app.post('/login', (req, res) => {
-  authentication.login(req, res, db)
-    .then(data => {
-      if (data.token) {
-        return res.json({ redirect: data.user.isAdmin ? '/admin' : '/home', token: data.token, user: data.user });
-      } else {
-        return res.status(401).json({ message: data.message });
-      }
-    })
-    .catch(err => {
-      return res.status(500).json({ message: 'Đã xảy ra lỗi!' });
-    });
-});
+// app.post('/login', (req, res) => {
+//   authentication.login(req, res, db)
+//     .then(data => {
+//       if (data.token) {
+//         return res.json({ redirect: data.user.isAdmin ? '/admin' : '/home', token: data.token, user: data.user });
+//       } else {
+//         return res.status(401).json({ message: data.message });
+//       }
+//     })
+//     .catch(err => {
+//       return res.status(500).json({ message: 'Đã xảy ra lỗi!' });
+//     });
+// });
+
+app.get('/login', (req, res) => {
+  const users =  User.findAll();
+  res.json({
+    message: 'Đăng nhập thành công.',
+    data: users
+  });
+})
 
 // Signup route
 app.post('/signup', (req, res) => {

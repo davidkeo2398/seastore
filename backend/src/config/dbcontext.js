@@ -1,4 +1,6 @@
 const mysql = require('mysql');
+const { Sequelize } = require('sequelize');
+require('dotenv').config();
 
 // Connect to MySQL database
 const db = mysql.createConnection({
@@ -17,4 +19,23 @@ db.connect((err) => {
     }
 });
 
-module.exports = db;
+const sequelize = new Sequelize(
+    process.env.DB_NAME || 'sea_store',
+    process.env.DB_USER || 'root',
+    process.env.DB_PASSWORD || '',
+    {
+        host: process.env.DB_HOST || 'localhost',
+        dialect: 'mysql',
+        port: process.env.DB_PORT || 3306,
+        logging: false
+    }
+);
+
+sequelize.authenticate().then(() => {
+    console.log('Connection to the database has been established successfully.');
+}).catch(err => {
+    console.error('Unable to connect to the database:', err);
+});
+
+
+module.exports = {db, sequelize};
