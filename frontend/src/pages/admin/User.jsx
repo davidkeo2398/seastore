@@ -270,7 +270,7 @@ export default function UsersPage() {
                             onClick={() => handleDelete(user.iduser)}
                             title="Xóa người dùng"
                           >
-                            <Trash className="h-4 w-4" />
+                            <Trash className="h-4 w-4 text-black" />
                           </Button>
                         </div>
                       </TableCell>

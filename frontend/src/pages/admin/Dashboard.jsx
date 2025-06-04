@@ -114,7 +114,7 @@ function StatCard({
             {value.toLocaleString()}
           </div>
 
-          {change !== undefined && (
+          {/* {change !== undefined && (
             <div className="flex items-center space-x-1">
               {isPositive && (
                 <>
@@ -138,7 +138,7 @@ function StatCard({
                 </Badge>
               )}
             </div>
-          )}
+          )} */}
         </div>
       </CardContent>
 

@@ -35,7 +35,13 @@ const Header = () => {
   // Hiển thị giao diện
   return (
     <header>
-      <div className="logo">Your Logo</div>
+      <Link to ="/" className="logo">
+        <img
+          src="/images/whale_5729775.png"
+          alt="Logo"
+          className="logo-image w-12 h-12"
+        />
+      </Link>
       <nav className="nav">
         <Link to="/" className="nav-link">
           Home

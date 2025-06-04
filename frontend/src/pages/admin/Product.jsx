@@ -445,7 +445,7 @@ export default function ProductsPage() {
                             onClick={() => handleDelete(product.id)}
                             title="Xóa sản phẩm"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4 text-black" />
                           </Button>
                         </div>
                       </TableCell>

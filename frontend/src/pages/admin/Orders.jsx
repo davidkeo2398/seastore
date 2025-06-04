@@ -397,7 +397,7 @@ export default function OrdersPage() {
                             onClick={() => handleDelete(order.order_id)}
                             title="Xóa đơn hàng"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4 text-black" />
                           </Button>
                         </div>
                       </TableCell>

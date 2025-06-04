@@ -66,7 +66,7 @@ export default function AdminLayout() {
               Quản lý người dùng
             </Button>
           </Link>
-          <Link to="/admin/settings">
+          {/* <Link to="/admin/settings">
             <Button
               variant="ghost"
               className="w-full justify-start text-gray-700 hover:text-blue-700 hover:bg-blue-50"
@@ -74,7 +74,7 @@ export default function AdminLayout() {
               <Settings className="mr-3 h-5 w-5 text-gray-400 group-hover:text-blue-500" />
               Cài đặt
             </Button>
-          </Link>
+          </Link> */}
           <div className="pt-4 mt-4 border-t border-gray-200">
             <Link to="/">
               <Button
