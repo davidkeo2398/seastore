@@ -55,19 +55,19 @@ const adminMiddleware = (req, res, next) => {
 };
 
 // Login route
-app.post('/login', (req, res) => {
-  authentication.login(req, res, db)
-    .then(data => {
-      if (data.token) {
-        return res.json({ redirect: data.user.isAdmin ? '/admin' : '/home', token: data.token, user: data.user });
-      } else {
-        return res.status(401).json({ message: data.message });
-      }
-    })
-    .catch(err => {
-      return res.status(500).json({ message: 'Đã xảy ra lỗi!' });
-    });
-});
+// app.post('/login', (req, res) => {
+//   authentication.login(req, res, db)
+//     .then(data => {
+//       if (data.token) {
+//         return res.json({ redirect: data.user.isAdmin ? '/admin' : '/home', token: data.token, user: data.user });
+//       } else {
+//         return res.status(401).json({ message: data.message });
+//       }
+//     })
+//     .catch(err => {
+//       return res.status(500).json({ message: 'Đã xảy ra lỗi!' });
+//     });
+// });
 
 // Signup route
 app.post('/signup', (req, res) => {
@@ -78,6 +78,10 @@ app.post('/signup', (req, res) => {
 app.post('/logout', (req, res) => {
   // Client-side will handle token removal
   res.json({ message: 'Đăng xuất thành công.' });
+});
+
+app.get('/login',(req, res) => {
+  res.json({"message": "hello"});
 });
 
 // Start server
