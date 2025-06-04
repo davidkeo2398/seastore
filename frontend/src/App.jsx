@@ -18,6 +18,7 @@ import UsersPage from "./pages/admin/User";
 import ProductsPage from "./pages/admin/Product";
 import WarehousePage from "./pages/admin/Warehouse";
 import OrdersPage from "./pages/admin/Orders";
+import PayCheckout from "./pages/PayCheckout";
 
 function App() {
     const { user, logout } = useContext(AuthContext);
@@ -41,6 +42,7 @@ function App() {
           <Route path="productdetail" element={<ProductDetailPage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="payment" element={<PaymentPage />} />
+          <Route path="paycheckout" element={<PayCheckout />} />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>

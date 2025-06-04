@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { Outlet } from "react-router-dom";
+
 
 export default function PaymentPage() {
   const { cart, getCartTotal } = useCart();
