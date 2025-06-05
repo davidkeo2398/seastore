@@ -71,12 +71,20 @@ const adminMiddleware = (req, res, next) => {
 //     });
 // });
 
-app.get('/login', (req, res) => {
-  const users =  User.findAll();
-  res.json({
-    message: 'Đăng nhập thành công.',
-    data: users
-  });
+app.get('/login', async (req, res) => {
+  try {
+    const users = await User.findAll();
+    res.json({
+      message: 'Thành công',
+      data: users
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      message: 'Lỗi khi truy vấn dữ liệu',
+      error: error.message
+    });
+  }
 })
 
 // Signup route

@@ -14,10 +14,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      order_item_id:{ // foreign key to OrderItem
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
+      // order_item_id:{ // foreign key to OrderItem
+      //   type: Sequelize.INTEGER,
+      //   allowNull: false,
+      // },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -36,7 +36,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      phone:{
+      phone_user:{
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          is: /^[0-9]+$/
+        }
+      },
+      phone_agengy:{
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
