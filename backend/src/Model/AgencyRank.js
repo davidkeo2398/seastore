@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/dbcontext');
 
-class AgencyRank extends Model { 
+class AgencyRank extends Model {
     otherPublicField;
 }
 
@@ -16,7 +16,7 @@ AgencyRank.init(
             type: DataTypes.STRING,
             unique: true,
             allowNull: false
-        },  
+        },
         min_accumulated_value: {
             type: DataTypes.INTEGER,
             defaultValue: 0,
@@ -36,5 +36,6 @@ AgencyRank.init(
         sequelize,
         modelName: 'AgencyRank',
         tableName: 'agency_rank',
+        timestamps: true
     }
 );

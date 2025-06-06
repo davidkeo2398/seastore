@@ -66,6 +66,7 @@ module.exports = (sequelize) => {
             role_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                defaultValue: 2, // Default role is 'user'
                 references: {
                     model: 'Role', // Assuming you have a Role model
                     key: 'id'
@@ -79,11 +80,17 @@ module.exports = (sequelize) => {
                     key: 'agency_rank_id'
                 }
             },
+            resources: {
+                type: DataTypes.JSON,
+                allowNull: true,
+                defaultValue: {}
+            },
         },
         {
             sequelize,
             modelName: 'User',
             tableName: 'user',
+            timestamps: true 
         },
     );
     return User;

@@ -8,14 +8,21 @@ module.exports = {
   async up(queryInterface, Sequelize) {
 
     await queryInterface.sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
+    const now = new Date();
+    const order_code = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}${String(now.getMilliseconds()).padStart(3, '0')}`;
+
+
     const orders = [];
     for (let i = 0; i < 10; i++) {
       orders.push({
-        name: faker.food.dish(),
+        order_code: order_code,
         // order_item_id: Math.floor(Math.random() * 10) + 1,
         user_id: Math.floor(Math.random() * 10) + 1,
+        user_name: `${faker.person.firstName()} ${faker.person.lastName()}`,
+        user_email: faker.internet.email(),
         address_user: faker.location.streetAddress(),
         phone_user: faker.phone.number('##########'),
+        agency_name: faker.company.name(),
         address_agency: faker.location.streetAddress(),
         phone_agengy: faker.phone.number('##########'),
         total: (Math.random() * 100).toFixed(2), // Random total between 0 and 100

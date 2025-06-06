@@ -2,7 +2,7 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('orders', {
       order_id: {
         allowNull: false,
@@ -10,7 +10,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
+      order_code: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -28,22 +28,37 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
+      user_name: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      user_email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          isEmail: true
+        }
+      },
       address_user: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      address_agency:{
+      agency_name: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      phone_user:{
+      address_agency: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      phone_user: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
           is: /^[0-9]+$/
         }
       },
-      phone_agengy:{
+      phone_agengy: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
@@ -86,7 +101,7 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('orders');
   }
 };

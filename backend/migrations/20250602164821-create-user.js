@@ -65,6 +65,11 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
+      resources: {
+        type: Sequelize.JSON,
+        allowNull: true,
+        defaultValue: {}
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

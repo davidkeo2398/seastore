@@ -1,7 +1,13 @@
 const sequelize = require('../config/dbcontext').sequelize;
+const RoleModel = require('./Role');
 const UserModel = require('./User');
+const OrderModdel = require('./Order');
+const OrderItemModel = require('./OrderItem');
 
 const User = UserModel(sequelize);
+const Role = RoleModel(sequelize);
+const Order = OrderModdel(sequelize);
+const OrderItem = OrderItemModel(sequelize);
 
 // Sync all models
 sequelize.sync()
@@ -14,5 +20,8 @@ sequelize.sync()
 
 module.exports = {
     sequelize,
-    User
+    User,
+    Role,
+    Order,
+    OrderItem
 };

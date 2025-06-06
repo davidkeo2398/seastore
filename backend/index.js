@@ -6,7 +6,7 @@ const cors = require('cors');
 const authentication = require('./authentication');
 const db = require('./src/config/dbcontext');
 const { Sequelize } = require('sequelize');
-const { UserModel, User } = require('./src/Model/Index');
+const { User } = require('./src/Model/Index');
 require('dotenv').config();
 
 const app = express();
@@ -55,6 +55,8 @@ const adminMiddleware = (req, res, next) => {
     next();
   });
 };
+const rotues = require('./src/routes/index');
+app.use('/api', rotues);
 
 // Login route
 // app.post('/login', (req, res) => {
@@ -71,32 +73,32 @@ const adminMiddleware = (req, res, next) => {
 //     });
 // });
 
-app.get('/login', async (req, res) => {
-  try {
-    const users = await User.findAll();
-    res.json({
-      message: 'Thành công',
-      data: users
-    });
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({
-      message: 'Lỗi khi truy vấn dữ liệu',
-      error: error.message
-    });
-  }
-})
+// app.get('/login', async (req, res) => {
+//   try {
+//     const users = await User.findAll();
+//     res.json({
+//       message: 'Thành công',
+//       data: users
+//     });
+//   } catch (error) {
+//     console.error('Error:', error);
+//     res.status(500).json({
+//       message: 'Lỗi khi truy vấn dữ liệu',
+//       error: error.message
+//     });
+//   }
+// })
 
-// Signup route
-app.post('/signup', (req, res) => {
-  authentication.signup(req, res, db);
-});
+// // Signup route
+// app.post('/signup', (req, res) => {
+//   authentication.signup(req, res, db);
+// });
 
-// Logout route
-app.post('/logout', (req, res) => {
-  // Client-side will handle token removal
-  res.json({ message: 'Đăng xuất thành công.' });
-});
+// // Logout route
+// app.post('/logout', (req, res) => {
+//   // Client-side will handle token removal
+//   res.json({ message: 'Đăng xuất thành công.' });
+// });
 
 // Start server
 app.listen(port, () => {
