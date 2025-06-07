@@ -19,6 +19,12 @@ module.exports = {
         phone: faker.phone.number('##########'),
         address: faker.location.streetAddress(),
         role_id: Math.floor(Math.random() * 3) + 1,
+        resources: JSON.stringify({
+          canView: true,
+          canEdit: true,
+          warehouse_id: Math.floor(Math.random() * 10) + 1,
+
+        }),
         createdAt: new Date(),
         updatedAt: new Date()
       });
