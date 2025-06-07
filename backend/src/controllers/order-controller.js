@@ -1,5 +1,5 @@
 const { orderService } = require('../services/index');
-const generateCode = require('../ultils/generateCode');
+const generateCode = require('../utils/generateCode');
 
 module.exports = {
     createOrder: async (req, res) => {

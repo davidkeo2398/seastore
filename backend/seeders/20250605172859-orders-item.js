@@ -11,6 +11,7 @@ module.exports = {
         order_id: Math.floor(Math.random() * 10) + 1, // Random order ID between 1 and 10
         warehouse_id: Math.floor(Math.random() * 10) + 1, // Random warehouse ID between 1 and 10
         quantity: Math.floor(Math.random() * 10) + 1, // Random quantity between 1 and 50
+        isPaid: false,
         createdAt: new Date(),
         updatedAt: new Date()
       });

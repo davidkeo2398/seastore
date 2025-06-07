@@ -58,7 +58,7 @@ module.exports = {
           is: /^[0-9]+$/
         }
       },
-      phone_agengy: {
+      phone_agency: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {

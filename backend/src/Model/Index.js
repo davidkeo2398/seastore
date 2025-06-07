@@ -7,6 +7,7 @@ const CategoriesModel = require('./Categories');
 const AgencyModel = require('./Agency');
 const AgencyRankModel = require('./AgencyRank');
 const WarehouseModel = require('./Warehouse');
+const ProductModel = require('./Product');
 
 const User = UserModel(sequelize);
 const Role = RoleModel(sequelize);
@@ -16,6 +17,7 @@ const Categories = CategoriesModel(sequelize);
 const Agency = AgencyModel(sequelize);
 const AgencyRank = AgencyRankModel(sequelize);
 const Warehouse = WarehouseModel(sequelize);
+const Product = ProductModel(sequelize);
 
 // Sync all models
 sequelize.sync()
@@ -35,5 +37,6 @@ module.exports = {
     Categories,
     Agency,
     AgencyRank,
-    Warehouse
+    Warehouse,
+    Product
 };
