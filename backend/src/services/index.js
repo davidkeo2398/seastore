@@ -1,4 +1,8 @@
 
 const authService = require('./auth-service');
+const orderService = require('./order-service');
 
-module.exports = {authService}
+module.exports = {
+    authService,
+    orderService
+};
