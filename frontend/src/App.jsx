@@ -19,6 +19,9 @@ import ProductsPage from "./pages/admin/Product";
 import WarehousePage from "./pages/admin/Warehouse";
 import OrdersPage from "./pages/admin/Orders";
 import PayCheckout from "./pages/PayCheckout";
+import BuyerRight from './common/BuyerRight';
+import NotFound from "./pages/NotFound";
+import ProductList from "./pages/ProductList";
 
 function App() {
     const { user, logout } = useContext(AuthContext);
@@ -39,10 +42,13 @@ function App() {
           <Route path="about" element={<AboutPage />} />
           <Route path="login" element={<LoginDialog/>} />
           <Route path="register" element={<RegisterPage />} />
-          <Route path="productdetail" element={<ProductDetailPage />} />
+          <Route path="products" element={<ProductList />} />
+          <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="payment" element={<PaymentPage />} />
           <Route path="paycheckout" element={<PayCheckout />} />
+          <Route path="BuyerRight" element={<BuyerRight />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>

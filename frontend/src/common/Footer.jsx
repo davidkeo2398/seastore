@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 import '../css/Footer.css';
+import BuyerRights from './BuyerRight';
 
 const Footer = () => {
   return (
@@ -7,7 +9,7 @@ const Footer = () => {
       <div className="footer-content">
         <div className="footer-section contact">
           <h3>Khách hàng</h3>
-          <p>Quyền và nghĩa vụ của người mua</p>
+          <Link to="/BuyerRight" className="footer-link">Quyền và nghĩa vụ của người mua</Link>
           <p>Quy định đổi trả</p>
           <p>Phương thức thanh toán</p>
           <p>Góp ý khiếu nại</p>

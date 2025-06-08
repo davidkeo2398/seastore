@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ShoppingCart,
   Package,
@@ -11,134 +11,118 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Outlet } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import ProductList from "./ProductList";
+import { useCart } from "@/context/CartContext";
+import axiosInstance from "@/lib/axios";
 
-const mockProduct = {
-  id: "1",
-  name: "Premium Wireless Headphones",
-  brand: { name: "TechSound" },
-  price: 2500000,
-  old_price: 3000000,
-  unit: "chiếc",
-  number_of_inventory: 15,
-  description:
-    "Tai nghe không dây cao cấp với chất lượng âm thanh vượt trội, pin 30 giờ và công nghệ chống ồn chủ động. Thiết kế ergonomic mang lại sự thoải mái tối đa cho người sử dụng.",
-  image:
-    "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
-};
+// const mockProduct = {
+//   id: "1",
+//   name: "Premium Wireless Headphones",
+//   brand: { name: "TechSound" },
+//   price: 2500000,
+//   old_price: 3000000,
+//   unit: "chiếc",
+//   number_of_inventory: 15,
+//   description:
+//     "Tai nghe không dây cao cấp với chất lượng âm thanh vượt trội, pin 30 giờ và công nghệ chống ồn chủ động. Thiết kế ergonomic mang lại sự thoải mái tối đa cho người sử dụng.",
+//   image:
+//     "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
+// };
 
-const mockRelatedProducts = [
-  {
-    product_id: "2",
-    name: "Bluetooth Speaker Pro",
-    price: 1800000,
-    old_price: 2200000,
-    unit: "chiếc",
-    image:
-      "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
-  },
-  {
-    product_id: "3",
-    name: "Gaming Mouse RGB",
-    price: 850000,
-    unit: "chiếc",
-    image:
-      "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
-  },
-  {
-    product_id: "4",
-    name: "Mechanical Keyboard",
-    price: 1500000,
-    old_price: 1800000,
-    unit: "chiếc",
-    image:
-      "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
-  },
-];
+// const mockRelatedProducts = [
+//   {
+//     product_id: "2",
+//     name: "Bluetooth Speaker Pro",
+//     price: 1800000,
+//     old_price: 2200000,
+//     unit: "chiếc",
+//     image:
+//       "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
+//   },
+//   {
+//     product_id: "3",
+//     name: "Gaming Mouse RGB",
+//     price: 850000,
+//     unit: "chiếc",
+//     image:
+//       "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
+//   },
+//   {
+//     product_id: "4",
+//     name: "Mechanical Keyboard",
+//     price: 1500000,
+//     old_price: 1800000,
+//     unit: "chiếc",
+//     image:
+//       "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
+//   },
+// ];
 export default function ProductDetailPage() {
-  const [product] = useState(mockProduct);
-  const [relatedProducts] = useState(mockRelatedProducts);
-  const [isLoading] = useState(false);
+  const [product, setProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const params = useParams();
+  const [isLoading, setIsLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
-  //   const params = useParams()
-  //   const navigate = useNavigate()
-  //   const productId = params.id
+  const navigate = useNavigate();
+  const productId = params.id;
 
-  // const { id } = useParams();
-  // const navigate = useNavigate();
-  // const { addToCart } = useCart();
+  const { id } = useParams();
+  const { addToCart } = useCart();
 
-  // useEffect(() => {
-  //   const processProductDetails = () => {
-  //     setIsLoading(true);
-  //     if (!id) {
-  //       setProduct(null);
-  //       setIsLoading(false);
-  //       return;
-  //     }
-  //     setProduct(null);
-  //     setIsLoading(false);
-  //   };
-  //   processProductDetails();
-  // }, [id]);
+  const fetchProductDetails = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await axiosInstance.get(`/product/${productId}`);
+      console.log("debug details:", data.data);
+      if (!data) {
+        throw new Error("Không tìm thấy sản phẩm");
+      }
+      setProduct(data.data);
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+      navigate("/not-found");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const fetchRelatedProducts = async () => {
+    setIsLoading(false);
 
-  // useEffect(() => {
-  //   const processRelatedProducts = () => {
-  //     if (!product) {
-  //       setRelatedProducts([]);
-  //       return;
-  //     }
-  //     setRelatedProducts([]);
-  //   };
-  //   processRelatedProducts();
-  // }, [product]);
+    if (product) {
+      try {
+        const { data } = await axiosInstance.get(`/product`);
+        console.log("debug related:", data.data);
+        const related = data.data.filter(
+          (p) => p.category_id === product.category_id && p.id !== product.product_id
+        );
+        console.log("debug related filter:", related);
+        setRelatedProducts(related);
+      } catch (error) {
+        console.error("Error fetching related products:", error);
+      }
+    }
+  };
 
-  //   // Fetch product details
-  // useEffect(() => {
-  //   const fetchProductDetails = async () => {
-  //     if (!productId) return
+  // Khi productId thay đổi, fetch chi tiết sản phẩm
+  useEffect(() => {
+    if (productId) {
+      fetchProductDetails();
+    }
+  }, [productId]);
 
-  //     try {
-  //       setIsLoading(true)
-  //       const response = await fetch(`/api/products/${productId}`)
+  // Khi product đã có dữ liệu, fetch sản phẩm liên quan
+  useEffect(() => {
+    if (product) {
+      fetchRelatedProducts();
+    }
+  }, [product]);
 
-  //       if (!response.ok) {
-  //         throw new Error("Không tìm thấy sản phẩm")
-  //       }
-
-  //       const data = await response.json()
-  //       setProduct(data)
-  //     } catch (error) {
-  //       console.error("Error fetching product details:", error)
-  //       setProduct(null)
-  //     } finally {
-  //       setIsLoading(false)
-  //     }
-  //   }
-
-  //   fetchProductDetails()
-  // }, [productId])
-
-  //   // Fetch related products
-  //   useEffect(() => {
-  //     const fetchRelatedProducts = async () => {
-  //       if (!product) return
-
-  //       try {
-  //         const response = await fetch(`${API_URL}/products?category_id=${product.category_id}&limit=6`)
-  //         const data = await response.json()
-
-  //         // Filter out current product and limit to 3 items
-  //         const related = data.filter((p: Product) => p.product_id !== product.product_id).slice(0, 3)
-  //         setRelatedProducts(related)
-  //       } catch (error) {
-  //         console.error("Error fetching related products:", error)
-  //       }
-  //     }
-
-  //     fetchRelatedProducts()
-  //   }, [product, API_URL])
+  if (isLoading) {
+    return <div className="text-center py-8">Đang tải lại sản phẩm...</div>;
+  }
 
   const handleAddToCart = async () => {
     if (!product) return;
@@ -146,6 +130,7 @@ export default function ProductDetailPage() {
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      addToCart(product, quantity);
       alert("Đã thêm sản phẩm vào giỏ hàng!");
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -165,24 +150,6 @@ export default function ProductDetailPage() {
   const calculateDiscount = (oldPrice, newPrice) => {
     return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
   };
-
-  // if (isLoading) {
-  //   return (
-  //     <div className="container mx-auto px-4 py-8">
-  //       <div className="grid md:grid-cols-2 gap-8 mb-8">
-  //         <div className="w-full h-96 bg-gray-200 rounded-lg animate-pulse"></div>
-  //         <div className="space-y-4">
-  //           <div className="h-8 w-3/4 bg-gray-200 rounded animate-pulse"></div>
-  //           <div className="h-6 w-1/2 bg-gray-200 rounded animate-pulse"></div>
-  //           <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-  //           <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-  //           <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse"></div>
-  //           <div className="h-12 w-full bg-gray-200 rounded animate-pulse"></div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   if (!product) {
     return (
@@ -207,14 +174,12 @@ export default function ProductDetailPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Product Details */}
       <div className="grid md:grid-cols-2 gap-8 mb-12">
-        {/* Product Image */}
         <div className="space-y-4">
           <div className="relative">
             <img
               src={product.image}
-              alt={product.name}
+              alt={product.product_name}
               width={600}
               height={600}
               className="w-full h-auto rounded-lg shadow-lg border border-gray-200"
@@ -231,13 +196,8 @@ export default function ProductDetailPage() {
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {product.name}
+              {product.product_name}
             </h1>
-            {product.brand && (
-              <p className="text-blue-600 font-medium">
-                Thương hiệu: {product.brand.name}
-              </p>
-            )}
           </div>
 
           {/* Price */}
@@ -388,11 +348,11 @@ export default function ProductDetailPage() {
               <CardContent className="p-4 space-y-4">
                 <img
                   src={relatedProduct.image}
-                  alt={relatedProduct.name}
+                  alt={relatedProduct.product_name}
                   className="w-full h-40 object-cover rounded-lg mb-4"
                 />
                 <h3 className="text-lg font-medium text-gray-900">
-                  {relatedProduct.name}
+                  {relatedProduct.product_name}
                 </h3>
                 <div className="flex items-center justify-between">
                   <span className="text-blue-600 font-bold">

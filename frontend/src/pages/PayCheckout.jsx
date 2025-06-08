@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import "../css/PaymentCheckout.css";
 import {
   CreditCard,
   Smartphone,
@@ -24,30 +25,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useCart } from "@/context/CartContext";
 
 // Mock order data
-const orderSummary = {
-  items: [
-    {
-      id: "1",
-      name: "Premium Wireless Headphones",
-      quantity: 2,
-      price: 2500000,
-      image: "/placeholder.svg?height=60&width=60",
-    },
-    {
-      id: "2",
-      name: "Bluetooth Speaker Pro",
-      quantity: 1,
-      price: 1800000,
-      image: "/placeholder.svg?height=60&width=60",
-    },
-  ],
-  subtotal: 6800000,
-  shipping: 0,
-  discount: 500000,
-  total: 6300000,
-};
+// const orderSummary = {
+//   items: [
+//     {
+//       id: "1",
+//       name: "Premium Wireless Headphones",
+//       quantity: 2,
+//       price: 2500000,
+//       image: "/placeholder.svg?height=60&width=60",
+//     },
+//     {
+//       id: "2",
+//       name: "Bluetooth Speaker Pro",
+//       quantity: 1,
+//       price: 1800000,
+//       image: "/placeholder.svg?height=60&width=60",
+//     },
+//   ],
+//   subtotal: 6800000,
+//   shipping: 0,
+//   discount: 500000,
+//   total: 6300000,
+// };
 
 const paymentMethods = [
   {
@@ -81,6 +83,7 @@ const paymentMethods = [
 ];
 
 export default function PayCheckout() {
+  const [orderSummary, setOrderSummary] = useState([]);
   const [selectedPayment, setSelectedPayment] = useState("credit-card");
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
@@ -110,6 +113,11 @@ export default function PayCheckout() {
     saveInfo: false,
     agreeTerms: false,
   });
+  const { cart, getCartTotal } = useCart();
+
+  useEffect(() => {
+    setOrderSummary(cart);
+  }, []);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -120,6 +128,7 @@ export default function PayCheckout() {
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    console.log(`Updated ${field}:`, value);
   };
 
   const handleSubmit = async (e) => {
@@ -433,15 +442,21 @@ export default function PayCheckout() {
                           <SelectItem value="district10">Quận 10</SelectItem>
                           <SelectItem value="district11">Quận 11</SelectItem>
                           <SelectItem value="district12">Quận 12</SelectItem>
-                          <SelectItem value="binhthanh">Quận Bình Thạnh</SelectItem>
+                          <SelectItem value="binhthanh">
+                            Quận Bình Thạnh
+                          </SelectItem>
                           <SelectItem value="govap">Quận Gò Vấp</SelectItem>
-                          <SelectItem value="phunhuan">Quận Phú Nhuận</SelectItem>
+                          <SelectItem value="phunhuan">
+                            Quận Phú Nhuận
+                          </SelectItem>
                           <SelectItem value="tanbinh">Quận Tân Bình</SelectItem>
                           <SelectItem value="tanphu">Quận Tân Phú</SelectItem>
                           <SelectItem value="thuduc">TP. Thủ Đức</SelectItem>
                           <SelectItem value="binhtan">Quận Bình Tân</SelectItem>
                           <SelectItem value="hocmon">Huyện Hóc Môn</SelectItem>
-                          <SelectItem value="binhchanh">Huyện Bình Chánh</SelectItem>
+                          <SelectItem value="binhchanh">
+                            Huyện Bình Chánh
+                          </SelectItem>
                           <SelectItem value="nhabe">Huyện Nhà Bè</SelectItem>
                           <SelectItem value="cuchi">Huyện Củ Chi</SelectItem>
                           <SelectItem value="canjo">Huyện Cần Giờ</SelectItem>
@@ -511,10 +526,11 @@ export default function PayCheckout() {
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="saveInfo"
-                        checked={formData.saveInfo}
+                        checked={!!formData.saveInfo}
                         onCheckedChange={(checked) =>
                           handleInputChange("saveInfo", checked)
                         }
+                        
                       />
                       <Label htmlFor="saveInfo" className="text-sm">
                         Lưu thông tin để thanh toán nhanh hơn lần sau
@@ -523,10 +539,11 @@ export default function PayCheckout() {
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="agreeTerms"
-                        checked={formData.agreeTerms}
+                        checked={!!formData.agreeTerms}
                         onCheckedChange={(checked) =>
                           handleInputChange("agreeTerms", checked)
                         }
+                        className={formData.agreeTerms ? "!important:bg-blue-200 border-blue-600" : "border-gray-300"}
                       />
                       <Label htmlFor="agreeTerms" className="text-sm">
                         Tôi đồng ý với{" "}
@@ -553,7 +570,7 @@ export default function PayCheckout() {
                 <CardContent className="space-y-4">
                   {/* Order Items */}
                   <div className="space-y-3">
-                    {orderSummary.items.map((item) => (
+                    {orderSummary.map((item) => (
                       <div
                         key={item.id}
                         className="flex items-center space-x-3"
@@ -592,7 +609,7 @@ export default function PayCheckout() {
                     </div>
                     <div className="flex justify-between text-sm text-green-600">
                       <span>Giảm giá</span>
-                      <span>-{formatPrice(orderSummary.discount)}</span>
+                      <span>-{formatPrice(orderSummary?.discount || 0)}</span>
                     </div>
                   </div>
 
@@ -601,7 +618,7 @@ export default function PayCheckout() {
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-semibold">Tổng cộng</span>
                     <span className="text-xl font-bold text-blue-600">
-                      {formatPrice(orderSummary.total)}
+                      {formatPrice(getCartTotal())}
                     </span>
                   </div>
 

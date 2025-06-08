@@ -36,7 +36,7 @@ export default function BuyerRights() {
 
               {/* Rights Section */}
               <div className="mb-8">
-                <h2 className="text-xl font-semibold text-blue-600 mb-4">a) Quyền của Người mua</h2>
+                <h2 className="text-xl font-semibold text-blue-600 mb-4"> a) Quyền của Người mua</h2>
                 <div className="space-y-4 text-gray-700 leading-relaxed">
                   <p>
                     Được cung cấp, hỗ trợ thông tin, giải đáp thắc mắc, khiếu nại khi có nhu cầu qua hệ thống chăm sóc

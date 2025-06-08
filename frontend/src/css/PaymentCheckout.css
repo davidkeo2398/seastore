@@ -1,0 +1,3 @@
+input[type="checkbox"]:checked {
+  accent-color: #2563eb !important; /* blue-600 */
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,47 +6,49 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "@/context/CartContext";
 
 // Mock cart data
-const initialCartItems = [
-  {
-    id: "1",
-    name: "Premium Wireless Headphones",
-    brand: "TechSound",
-    price: 2500000,
-    oldPrice: 3000000,
-    quantity: 2,
-    image: "/placeholder.svg?height=100&width=100",
-    unit: "chiếc",
-    inStock: true,
-  },
-  {
-    id: "2",
-    name: "Bluetooth Speaker Pro",
-    brand: "AudioMax",
-    price: 1800000,
-    oldPrice: 2200000,
-    quantity: 1,
-    image: "/placeholder.svg?height=100&width=100",
-    unit: "chiếc",
-    inStock: true,
-  },
-  {
-    id: "3",
-    name: "Gaming Mouse RGB",
-    brand: "GameTech",
-    price: 850000,
-    quantity: 3,
-    image: "/placeholder.svg?height=100&width=100",
-    unit: "chiếc",
-    inStock: false,
-  },
-];
+// const initialCartItems = [
+//   {
+//     id: "1",
+//     name: "Premium Wireless Headphones",
+//     brand: "TechSound",
+//     price: 2500000,
+//     oldPrice: 3000000,
+//     quantity: 2,
+//     image: "/placeholder.svg?height=100&width=100",
+//     unit: "chiếc",
+//     inStock: true,
+//   },
+//   {
+//     id: "2",
+//     name: "Bluetooth Speaker Pro",
+//     brand: "AudioMax",
+//     price: 1800000,
+//     oldPrice: 2200000,
+//     quantity: 1,
+//     image: "/placeholder.svg?height=100&width=100",
+//     unit: "chiếc",
+//     inStock: true,
+//   },
+//   {
+//     id: "3",
+//     name: "Gaming Mouse RGB",
+//     brand: "GameTech",
+//     price: 850000,
+//     quantity: 3,
+//     image: "/placeholder.svg?height=100&width=100",
+//     unit: "chiếc",
+//     inStock: false,
+//   },
+// ];
 
 export default function ShoppingCart() {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { cart, addToCart, updateQuantity, removeFromCart } = useCart();
 
   //giảm giá
   const [couponCode, setCouponCode] = useState("");
@@ -54,6 +56,11 @@ export default function ShoppingCart() {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponError, setCouponError] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+
+  useEffect(() => {
+    console.log("Cart updated:", cart);
+    setCartItems(cart);
+  }, [cart]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -66,7 +73,7 @@ export default function ShoppingCart() {
     return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
   };
 
-  const updateQuantity = (id, newQuantity) => {
+  const handleUpdateQuantity = (id, newQuantity) => {
     if (newQuantity < 1) return;
     setCartItems((items) =>
       items.map((item) =>
@@ -172,26 +179,26 @@ export default function ShoppingCart() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {cartItems.map((item) => (
-              <Card key={item.id} className="overflow-hidden">
+            {cartItems.map((item, index) => (
+              <Card key={index} className="overflow-hidden">
                 <CardContent className="p-6">
                   <div className="flex gap-4">
                     {/* Product Image */}
                     <div className="relative flex-shrink-0">
                       <img
                         src={item.image || "/placeholder.svg"}
-                        alt={item.name}
+                        alt={item.product_name}
                         className="w-24 h-24 object-cover rounded-lg border border-gray-200"
                       />
-                      {item.oldPrice && (
+                      {item.old_price && (
                         <Badge
                           variant="destructive"
                           className="absolute -top-2 -right-2 text-xs"
                         >
-                          -{calculateDiscount(item.oldPrice, item.price)}%
+                          -{calculateDiscount(item.old_price, item.price)}%
                         </Badge>
                       )}
-                      {!item.inStock && (
+                      {item.number_of_inventory === 0 && (
                         <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
                           <Badge variant="secondary" className="text-xs">
                             Hết hàng
@@ -241,7 +248,7 @@ export default function ShoppingCart() {
                             variant="ghost"
                             size="sm"
                             onClick={() =>
-                              updateQuantity(item.id, item.quantity - 1)
+                              handleUpdateQuantity(item.id, item.quantity - 1)
                             }
                             disabled={item.quantity <= 1 || !item.inStock}
                             className="h-8 w-8 p-0"
@@ -253,7 +260,7 @@ export default function ShoppingCart() {
                             min="1"
                             value={item.quantity}
                             onChange={(e) =>
-                              updateQuantity(
+                              handleUpdateQuantity(
                                 item.id,
                                 Number.parseInt(e.target.value) || 1
                               )
@@ -265,7 +272,7 @@ export default function ShoppingCart() {
                             variant="ghost"
                             size="sm"
                             onClick={() =>
-                              updateQuantity(item.id, item.quantity + 1)
+                              handleUpdateQuantity(item.id, item.quantity + 1)
                             }
                             disabled={!item.inStock}
                             className="h-8 w-8 p-0"
@@ -384,13 +391,13 @@ export default function ShoppingCart() {
                   size="lg"
                   onClick={handleCheckout}
                   disabled={
-                    isLoading || cartItems.some((item) => !item.inStock)
+                    isLoading || cartItems.some((item) => item.number_of_inventory === 0)
                   }
                 >
                   {isLoading ? "Đang xử lý..." : "Tiến hành thanh toán"}
                 </Button>
 
-                {cartItems.some((item) => !item.inStock) && (
+                {cartItems.some((item) => item.number_of_inventory === 0) && (
                   <p className="text-sm text-red-600 mt-2 text-center">
                     Vui lòng xóa sản phẩm hết hàng để tiếp tục
                   </p>

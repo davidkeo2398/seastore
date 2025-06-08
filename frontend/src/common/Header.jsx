@@ -56,9 +56,9 @@ const Header = () => {
         <Link to="/admin" className="nav-link">
           Trang quản trị
         </Link>
-        <Link to="/productdetail" className="nav-link">
+        {/* <Link to="/productdetail" className="nav-link">
           Product Detail
-        </Link>
+        </Link> */}
       </nav>
       {/* Cart and user info/buttons */}
       <div className="user-actions">
