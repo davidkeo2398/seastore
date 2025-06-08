@@ -2,7 +2,7 @@ const { User, Order, OrderItem } = require('../Model/Index');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { generateToken } = require('../config/authentication');
-const generateCode = require('../ultils/generateCode');
+const { generateCode } = require('../utils/generateCode');
 
 
 module.exports = {
@@ -23,12 +23,13 @@ module.exports = {
                 order_date,
                 payment_method,
                 promotion_code,
-                product_id,
-                quantity
+                products
                 // status
             } = orderData;
             const user = User.findOne({ where: { user_id: user_id } });
-            const orderItem = OrderItem({where: {order_id: orderId, user_id: user_id}})
+            if (!user) {
+                throw new Error('The user is not exist');
+            }
             const payload = {
                 order_code: order_code,
                 user_id: user_id,
@@ -48,7 +49,17 @@ module.exports = {
 
             };
             const newOrder = await Order.create(payload);
-            return newOrder;
+            const orderItems = await Promise.all(
+                products.map(product =>
+                    OrderItem.create({
+                        order_id: newOrder.order_id,
+                        product_id: product.product_id,
+                        quantity: product.quantity,
+                        isPaid: false
+                    })
+                )
+            );
+            return { order: newOrder, orderItems: orderItems };
         } catch (error) {
             console.error('Error creating order:', error);
             throw new Error('Failed to create order');
@@ -56,10 +67,11 @@ module.exports = {
     },
     getOrders: async () => {
         try {
-
+            const orders = Order.findAll();
+            return orders;
         }
         catch (err) {
-
+            throw new Error('Fail to get orders: ', err)
         }
     },
 

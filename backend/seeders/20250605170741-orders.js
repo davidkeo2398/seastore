@@ -24,7 +24,7 @@ module.exports = {
         phone_user: faker.phone.number('##########'),
         agency_name: faker.company.name(),
         address_agency: faker.location.streetAddress(),
-        phone_agengy: faker.phone.number('##########'),
+        phone_agency: faker.phone.number('##########'),
         total: (Math.random() * 100).toFixed(2), // Random total between 0 and 100
         promotion_id: Math.floor(Math.random() * 10) + 1, // Random promotion ID between 1 and 10
         order_date: faker.date.past().toISOString().slice(0, 19).replace('T', ' '),

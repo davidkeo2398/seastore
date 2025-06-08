@@ -35,7 +35,8 @@ module.exports = (sequelize) => {
             },
             first_name: {
                 type: DataTypes.STRING,
-                allowNull: false},
+                allowNull: false
+            },
             last_name: {
                 type: DataTypes.STRING,
                 allowNull: false
@@ -90,8 +91,16 @@ module.exports = (sequelize) => {
             sequelize,
             modelName: 'User',
             tableName: 'user',
-            timestamps: true 
-        },
+            timestamps: true,
+            defaultScope: {
+                attributes: { exclude: ['password'] }
+            },
+            scopes: {
+                withPassword: {
+                    attributes: {}
+                }
+            }
+        }
     );
     return User;
 }

@@ -35,7 +35,7 @@ module.exports = (sequelize) => {
             },
             warehouse_id: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                allowNull: true,
                 references: {
                     model: 'Warehouse', // Assuming you have a Warehouse model
                     key: 'warehouse_id'
@@ -51,6 +51,11 @@ module.exports = (sequelize) => {
                     min: 1 // Quantity must be at least 1
                 }
             },
+            isPaid: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            }
 
         },
         {

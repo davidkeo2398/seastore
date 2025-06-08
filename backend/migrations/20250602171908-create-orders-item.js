@@ -2,7 +2,7 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('orders_item', {
       order_item_id: {
         allowNull: false,
@@ -26,7 +26,7 @@ module.exports = {
       },
       warehouse_id: { // foreign key to Warehouse
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       quantity: {
         type: Sequelize.INTEGER,
@@ -35,6 +35,11 @@ module.exports = {
         validate: {
           min: 1
         }
+      },
+      isPaid: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -47,7 +52,7 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('orders_item');
   }
 };
