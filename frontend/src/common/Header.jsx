@@ -16,6 +16,7 @@ const Header = () => {
 
   // Xử lý đăng nhập thành công
   const handleLoginSuccess = (userData) => {
+    console.log("User logged in:", userData);
     setUser(userData);
     setShowLoginDialog(false);
   };
@@ -66,8 +67,8 @@ const Header = () => {
           <span>Cart</span>
         </Link>
         {user ? (
-          <div className="user-info">
-            <span>Welcome, {user.name}!</span>
+          <div className="user-info flex items-center gap-4 w-auto">
+            <span>Welcome, {user.user_name}!</span>
             <button onClick={handleLogout} className="btn btn-logout">
               Logout
             </button>

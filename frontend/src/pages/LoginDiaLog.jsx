@@ -36,19 +36,22 @@ export default function LoginDialog({ onClose, onLoginSuccess }) {
     const email = form.email.value;
     const password = form.password.value;
 
-    // try {
-    //   const { data } = await axiosInstance.post('/login', { email, password });
+    try {
+      const { data } = await axiosInstance.post('auth/login', { email, password });
+      console.log("Login response:", data.data.user);
 
-    //   if (data.token) {
-    //     document.cookie = `token=${data.token}; max-age=14400; path=/`;
-    //     setUser({ iduser: data.user.iduser, isAdmin: data.user.isAdmin });
-    //     navigate(data.user.isAdmin ? '/admin' : '/home');
-    //   } else {
-    //     setErrorMessages(data.message);
-    //   }
-    // } catch (error) {
-    //   setErrorMessages(error.response?.data?.message || 'Đã xảy ra lỗi khi đăng nhập.');
-    // }
+      if (data.data.accessToken) {
+        document.cookie = `token=${data.data.accessToken}; max-age=14400; path=/`;
+        setUser({ user: data.data.user });
+        onClose();
+        onLoginSuccess(data.data.user);
+        // navigate(data.data.user.isAdmin ? '/admin' : '/home');
+      } else {
+        setErrorMessages(data.message);
+      }
+    } catch (error) {
+      setErrorMessages(error.response?.data?.message || 'Đã xảy ra lỗi khi đăng nhập.');
+    }
   };
   const handleGgLogin = () => {
     signInWithPopup(auth, provider)
@@ -120,7 +123,7 @@ export default function LoginDialog({ onClose, onLoginSuccess }) {
           <div className="flex justify-center mt-2">
             <button className="social-button" onClick={handleGgLogin}>
               <img
-                src="/image/icon_gg.png"
+                src="/images/icons8-google-48.png"
                 alt="Google"
                 className="social-icon"
               />

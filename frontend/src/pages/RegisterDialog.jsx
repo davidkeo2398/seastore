@@ -29,25 +29,29 @@ export default function RegisterPage({ onClose }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = event.target;
-    const name = form.name.value;
-    const username = form.username.value;
+    // const name = form.name.value;
+    const user_name = form.username.value;
     const email = form.email.value;
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
+    const first_name = form.firstName?.value;
+    const last_name = form.lastName?.value;
+    const phone = form.phone.value || '';
+    const address = form.address.value || '';
 
     if (password !== confirmPassword) {
       setErrorMessages("Mật khẩu và xác nhận mật khẩu không khớp.");
       return;
     }
 
-    // try {
-    //   await axiosInstance.post('/signup', { name, username, email, password });
-    //   setErrorMessages('');
-    //   alert('Đăng ký thành công. Vui lòng đăng nhập.');
-    //   navigate('/login');
-    // } catch (error) {
-    //   setErrorMessages(error.response?.data?.message || 'Đã xảy ra lỗi khi đăng ký.');
-    // }
+    try {
+      const response = await axiosInstance.post('auth/register', {user_name, first_name, last_name, email, password, phone, address });
+      console.log("Đăng ký thành công", response);
+      setErrorMessages('');
+      onClose();
+    } catch (error) {
+      setErrorMessages(error.response?.data?.message || 'Đã xảy ra lỗi khi đăng ký.');
+    }
   };
 
   return (
@@ -60,14 +64,24 @@ export default function RegisterPage({ onClose }) {
           <DialogTitle>Đăng ký</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-2">
           <div className="space-y-2">
-            <Label htmlFor="name">Họ và tên</Label>
+            <Label htmlFor="name">Họ</Label>
             <Input
               id="name"
-              name="name"
+              name="firstName"
               type="text"
-              placeholder="Tên của bạn"
+              placeholder="Họ của bạn là..."
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="name">Tên</Label>
+            <Input
+              id="name"
+              name="lastName"
+              type="text"
+              placeholder="Tên của bạn là..."
               required
             />
           </div>
@@ -77,7 +91,7 @@ export default function RegisterPage({ onClose }) {
               id="username"
               name="username"
               type="text"
-              placeholder="Username của bạn"
+              placeholder="Username của bạn là ..."
               required
             />
           </div>
@@ -111,20 +125,36 @@ export default function RegisterPage({ onClose }) {
               required
             />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone">Số điện thoại</Label>
+            <Input
+              id="phone"
+              name="phone"
+              type="text"
+              placeholder="Số điện thoại của bạn là..."
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="address">Địa chỉ</Label>
+            <Input
+              id="address"
+              name="address"
+              type="text"
+              placeholder="Địa chỉ của bạn là..."
+              required
+            />
+          </div>
           {errorMessages && (
             <p className="text-red-500 text-sm">{errorMessages}</p>
           )}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded"
+            className="w-full bg-blue-500 text-black py-2 rounded"
           >
             Đăng ký
           </button>
         </form>
-        <button className="social-button">
-          <img src="/image/icon_gg.png" alt="Google" className="social-icon" />
-          Google
-        </button>
         <p className="mt-4 text-center text-sm">
           Đã có tài khoản?{" "}
           <Link to="./LoginDialog.jsx" className="text-blue-500 hover:underline">

@@ -8,13 +8,13 @@ module.exports = {
             const result = await authService.login(req.body);
 
             return res.status(200).json({
-                message: "Đặng nhập thành công",
+                message: "Đăng nhập thành công",
                 data: result
             });
         }
         catch (error) {
             return res.status(400).json({
-                message: "Đặng nhập không thành công",
+                message: "Đăng nhập không thành công",
                 data: [],
                 error: error.message
             });
