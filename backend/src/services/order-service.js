@@ -35,16 +35,16 @@ module.exports = {
                 user_id: user_id,
                 user_name: user_name,
                 user_email: user_email,
-                address_user: address_user,
-                agency_name: agency_name,
-                address_agency: address_agency,
-                phone_user: phone_user,
-                phone_agency: phone_agency,
+                address_user: address_user ?? '',
+                agency_name: agency_name ?? '',
+                address_agency: address_agency ?? '',
+                phone_user: phone_user ?? '',
+                phone_agency: phone_agency ?? '',
                 total: total,
-                promotion_id: promotion_id,
+                promotion_id: promotion_id ?? '',
                 order_date: order_date,
                 payment_method: payment_method,
-                promotion_code: promotion_code,
+                promotion_code: promotion_code ?? '',
                 status: 'pending'
 
             };
