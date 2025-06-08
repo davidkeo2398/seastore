@@ -9,7 +9,7 @@
         "old_price": 538000.00,
         "image": "https://tepbac.com//upload/product/ge_image/2025/01/1_1736248887.png",
         "warehouse_id": 1,
-        "number_of_inventory": 0,
+        "number_of_inventory": 100,
         "createdAt": "2025-06-07 00:00:00",
         "updatedAt": "2025-06-07 00:00:00"
     },
@@ -23,7 +23,7 @@
         "old_price": 1722235.29,
         "image": "https://tepbac.com//upload/product/ge_image/2023/07/1hi755-checkerhc_front-1275x12_1690777976.jpg",
         "warehouse_id": 1,
-        "number_of_inventory": 0,
+        "number_of_inventory": 50,
         "createdAt": "2025-06-07 00:00:00",
         "updatedAt": "2025-06-07 00:00:00"
     },
@@ -37,7 +37,7 @@
         "old_price": 1722235.29,
         "image": "https://tepbac.com//upload/product/ge_image/2023/11/hi774-front_1690542153_1700728451.webp",
         "warehouse_id": 1,
-        "number_of_inventory": 0,
+        "number_of_inventory": 340,
         "createdAt": "2025-06-07 00:00:00",
         "updatedAt": "2025-06-07 00:00:00"
     },
@@ -51,7 +51,7 @@
         "old_price": 413000.00,
         "image": "https://tepbac.com//upload/product/ge_image/2024/02/thiet-ke-chua-co-ten-8_1707121055.png",
         "warehouse_id": 1,
-        "number_of_inventory": 0,
+        "number_of_inventory": 99,
         "createdAt": "2025-06-07 00:00:00",
         "updatedAt": "2025-06-07 00:00:00"
     },
@@ -65,7 +65,7 @@
         "old_price": 120000.00,
         "image": "https://tepbac.com//upload/product/ge_image/2023/11/2459_1683777418_1700715060.webp",
         "warehouse_id": 1,
-        "number_of_inventory": 0,
+        "number_of_inventory": 90,
         "createdAt": "2025-06-07 00:00:00",
         "updatedAt": "2025-06-07 00:00:00"
     },
@@ -79,7 +79,7 @@
         "old_price": 240000.00,
         "image": "https://tepbac.com//upload/product/ge_image/2022/12/mcp_1670999069.png",
         "warehouse_id": 1,
-        "number_of_inventory": 0,
+        "number_of_inventory": 80,
         "createdAt": "2025-06-07 00:00:00",
         "updatedAt": "2025-06-07 00:00:00"
     },
@@ -93,7 +93,7 @@
         "old_price": 382000.00,
         "image": "https://tepbac.com//upload/product/ge_image/2024/03/m1_1709629979.png",
         "warehouse_id": 1,
-        "number_of_inventory": 0,
+        "number_of_inventory": 123,
         "createdAt": "2025-06-07 00:00:00",
         "updatedAt": "2025-06-07 00:00:00"
     },
@@ -107,7 +107,7 @@
         "old_price": 217000.00,
         "image": "https://tepbac.com//upload/product/ge_image/2023/11/2227_5_1682062387_1700728156.webp",
         "warehouse_id": 1,
-        "number_of_inventory": 0,
+        "number_of_inventory": 321,
         "createdAt": "2025-06-07 00:00:00",
         "updatedAt": "2025-06-07 00:00:00"
     },
@@ -121,7 +121,7 @@
         "old_price": 440000.00,
         "image": "https://tepbac.com//upload/product/ge_image/2024/11/nova-colorb_1681988484-1_1730966477.png",
         "warehouse_id": 1,
-        "number_of_inventory": 0,
+        "number_of_inventory": 777,
         "createdAt": "2025-06-07 00:00:00",
         "updatedAt": "2025-06-07 00:00:00"
     },
@@ -135,7 +135,7 @@
         "old_price": 360000.00,
         "image": "https://tepbac.com//upload/product/ge_image/2023/11/13_1698309721_1700722641.webp",
         "warehouse_id": 1,
-        "number_of_inventory": 0,
+        "number_of_inventory": 999,
         "createdAt": "2025-06-07 00:00:00",
         "updatedAt": "2025-06-07 00:00:00"
     },
@@ -149,7 +149,7 @@
         "old_price": 100000.00,
         "image": "https://web-api.vemedim.vn/vmd-web-mediafile/file/ee3a2230-9cdf-449e-bb4c-5c90f9a239ec?size=720",
         "warehouse_id": 1,
-        "number_of_inventory": 0,
+        "number_of_inventory": 888,
         "createdAt": "2025-06-07 00:00:00",
         "updatedAt": "2025-06-07 00:00:00"
     }
