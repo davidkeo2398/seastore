@@ -20,6 +20,8 @@ module.exports = {
         canView: true,
         canEdit: true,
         warehouse_id: null,
+        agency_id: null,
+        isSuperAdmin: true
 
       }),
       createdAt: new Date(),
@@ -38,7 +40,8 @@ module.exports = {
         canView: true,
         canEdit: true,
         warehouse_id: null,
-
+        agency_id: null,
+        isSuperAdmin: true
       }),
       createdAt: new Date(),
       updatedAt: new Date()
@@ -56,6 +59,9 @@ module.exports = {
         canView: true,
         canEdit: true,
         warehouse_id: Math.floor(Math.random() * 10) + 1, // Random warehouse ID for admin_agency
+        agency_id: Math.floor(Math.random() * 10) + 1,
+        isSuperAdmin: false
+
 
       }),
       createdAt: new Date(),
@@ -74,7 +80,8 @@ module.exports = {
         canView: true,
         canEdit: true,
         warehouse_id: Math.floor(Math.random() * 10) + 1, // Random warehouse ID for admin_agency
-
+        agency_id: Math.floor(Math.random() * 10) + 1,
+        isSuperAdmin: false
       }),
       createdAt: new Date(),
       updatedAt: new Date()

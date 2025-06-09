@@ -1,30 +1,53 @@
-const e = require("express");
 const { verifyToken } = require("../config/authentication");
 const { User } = require("../Model/Index");
 
-const authMiddleware = (req, res, next) => {
+// Export the middleware function directly
+const authMiddleware = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
-        if (authHeader && authHeader.startsWith('Bearer ')) {
-            const token = authHeader.split(' ')[1]; // Lấy phần access_token
-            const userInfo = verifyToken(token);
-            const isExistedUser = User.findOne({ where: { email: userInfo.email } });
-            if (isExistedUser) {
-                next();
-            } else {
-                res.status(401).json({ message: 'Unauthorized' });
-            }
-            console.log('Access token:', token);
-        } else {
-            console.log('Authorization header không hợp lệ!');
-            res.status(403).json({ message: 'Forbiden' });
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(403).json({
+                message: 'No token provided',
+                status: 'error'
+            });
         }
+
+        const token = authHeader.split(' ')[1];
+
+        if (!token) {
+            return res.status(401).json({
+                message: 'Invalid token format',
+                status: 'error'
+            });
+        }
+
+        const userInfo = verifyToken(token);
+        const user = await User.findOne({
+            where: { email: userInfo.email }
+        });
+
+        if (!user) {
+            return res.status(401).json({
+                message: 'User not found',
+                status: 'error'
+            });
+        }
+
+        // Add user info to request
+        req.user = user;
+        next();
+        console.log('here')
+
+
     } catch (error) {
-        console.error('Lỗi xác thực:', error);
-        res.status(401).json({ message: error.message });
+        console.error('Authentication error:', error);
+        return res.status(401).json({
+            message: 'Authentication failed',
+            error: error.message,
+            status: 'error'
+        });
     }
-
-
 };
 
-module.exports = { authMiddleware };
+module.exports = authMiddleware;

@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const { orderController } = require('../controllers/index');
+const { authMiddleware } = require('../middleware/index');
 
-router.get('/', orderController.getOrders);
-router.post('/', orderController.createOrder);
+router.get('/', authMiddleware, orderController.getOrders);
+router.post('/', authMiddleware, orderController.createOrder);
 
 module.exports = router;

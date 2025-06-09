@@ -2,7 +2,7 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('promotion', {
       promotion_id: {
         allowNull: false,
@@ -20,7 +20,8 @@ module.exports = {
       },
       promotion_code: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
       },
       promotion_price: {
         type: Sequelize.DECIMAL(10, 2),
@@ -58,7 +59,7 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('promotion');
   }
 };

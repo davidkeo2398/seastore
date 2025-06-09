@@ -6,13 +6,13 @@ const { generateCode } = require('../utils/generateCode');
 
 
 module.exports = {
-    createOrder: async (orderData) => {
+    createOrder: async (orderData, userInfo) => {
         try {
             const order_code = generateCode();
+            const { user_id, user_name, first_name, last_name, email, phone, address, role_id, resources } = userInfo;
+            const userResources = JSON.parse(userInfo.resources);
+            
             const {
-                user_id,
-                user_name,
-                user_email,
                 address_user,
                 agency_name,
                 address_agency,
