@@ -1,3 +1,4 @@
+const { getUserInfo } = require('../services/auth-service');
 const { authService } = require('../services/index');
 
 
@@ -34,6 +35,23 @@ module.exports = {
         catch (error) {
             return res.status(400).json({
                 message: "Đăng ký không thành công",
+                data: [],
+                error: error.message
+            });
+        }
+    },
+    getUserInfo: async (req, res) => {
+        try {
+            const result = await authService.getUserInfo(req.user);
+
+            return res.status(200).json({
+                message: "Get user info success",
+                data: result
+            });
+        }
+        catch (error) {
+            return res.status(400).json({
+                message: "Get user info fail",
                 data: [],
                 error: error.message
             });

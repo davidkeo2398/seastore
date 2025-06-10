@@ -72,5 +72,19 @@ module.exports = {
             console.error('Lỗi đăng ký:', error);
             throw new Error('Đăng ký không thành công');
         }
+    },
+    getUserInfo: async (userInfo) => {
+        try {
+            const user = User.findOne({ where: { email: userInfo.email } })
+            return {
+                user: user,
+                tokenInfo: userInfo
+            }
+        }
+        catch (err) {
+            console.error('Get user info fail:', error);
+            throw new Error('Get user info fail: ', err);
+        }
+
     }
 }

@@ -13,6 +13,7 @@ module.exports = {
             const userResources = JSON.parse(userInfo.resources);
             
             const {
+                user_email,
                 address_user,
                 agency_name,
                 address_agency,
