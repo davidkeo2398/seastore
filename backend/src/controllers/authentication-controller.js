@@ -42,7 +42,7 @@ module.exports = {
     },
     getUserInfo: async (req, res) => {
         try {
-            const result = await authService.getUserInfo(req.user);
+            const result = await authService.getUserInfo(req.userInfo);
 
             return res.status(200).json({
                 message: "Get user info success",
