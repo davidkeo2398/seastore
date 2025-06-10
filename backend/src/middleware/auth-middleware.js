@@ -36,6 +36,7 @@ const authMiddleware = async (req, res, next) => {
 
         // Add user info to request
         req.user = user;
+        req.userInfo = userInfo;
         next();
         console.log('here')
 
