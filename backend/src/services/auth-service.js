@@ -1,4 +1,4 @@
-const { User } = require('../Model/Index');
+const { User, Role } = require('../Model/Index');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { generateToken } = require('../config/authentication');
@@ -75,10 +75,12 @@ module.exports = {
     },
     getUserInfo: async (userInfo) => {
         try {
-            const user = await User.findOne({ where: { email: userInfo.email } })
+            const user = await User.findOne({ where: { email: userInfo.email } });
+            const role = await Role.findOne({ where: { role_id: userInfo.role_id } });
             return {
                 user: user,
-                tokenInfo: userInfo
+                tokenInfo: userInfo,
+                role: role
             }
         }
         catch (err) {
