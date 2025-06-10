@@ -4,25 +4,25 @@ import "./Banner.css";
 const banners = [
   {
     image:
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0SD5aJTe7G90UHZI3YbshfAgzo2JN8eY-8g&s",
     title: "Big Summer Sale!",
     desc: "Up to 50% off on selected products. Shop now!",
   },
   {
     image:
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    "https://binhphuoc.gov.vn/uploads/binhphuoc/news/2022_11/nuoi-trong-thuy-san.png",
     title: "New Arrivals",
     desc: "Check out the latest gadgets and accessories.",
   },
   {
     image:
-      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6r89XSTtRN_dkAlX8rQWgDYd1-DomyN7dIQ&s",
     title: "Exclusive Deals",
     desc: "Special discounts for members only.",
   },
   {
     image:
-      "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80",
+      "https://www.phaplyvatruyenthong.vn/uploads/news/size800/news1/9/822-nhan-chuyen-nhuong-dien-tich-dat-nuoi-trong-thuy-san-co-bi-phap-luat-cam-khong.png",
     title: "Tech Trends 2024",
     desc: "Discover the hottest tech trends of the year.",
   },

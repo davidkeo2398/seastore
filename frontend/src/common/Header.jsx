@@ -45,32 +45,33 @@ const Header = () => {
       </Link>
       <nav className="nav">
         <Link to="/" className="nav-link">
-          Home
+          Trang chủ
         </Link>
         <Link to="/about" className="nav-link">
-          About
+          Giới thiệu
         </Link>
         <Link to="/products" className="nav-link">
-          Products
+          Sản phẩm
         </Link>
         <Link to="/admin" className="nav-link">
           Trang quản trị
         </Link>
-        {/* <Link to="/productdetail" className="nav-link">
-          Product Detail
-        </Link> */}
+         <Link to="/orderTracking" className="nav-link">
+          Trang theo dõi đơn hàng
+        </Link>
+        {/* 5 */}
       </nav>
       {/* Cart and user info/buttons */}
       <div className="user-actions">
         <Link to="/cart" className="cart">
           <FaShoppingCart className="cart-icon" />
-          <span>Cart</span>
+          <span>Giỏ hàng</span>
         </Link>
         {user ? (
           <div className="user-info flex items-center gap-4 w-auto">
-            <span>Welcome, {user.user_name}!</span>
+            <span>Xin chào, {user.user_name}!</span>
             <button onClick={handleLogout} className="btn btn-logout">
-              Logout
+              Đăng xuất
             </button>
           </div>
         ) : (
@@ -79,13 +80,13 @@ const Header = () => {
               onClick={() => setShowLoginDialog(true)}
               className="btn btn-login"
             >
-              Login
+              Đăng nhập
             </button>
             <button
               onClick={() => setShowRegisterDialog(true)}
               className="btn btn-signup"
             >
-              Sign Up
+              Đăng ký
             </button>
           </>
         )}

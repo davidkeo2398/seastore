@@ -65,7 +65,7 @@ export default function ProductList() {
                   className="btn-add-cart flex-1"
                   onClick={() => handleAddToCart(product)}
                 >
-                  Add to Cart
+                  Thêm vào giỏ hàng
                 </button>
                 <button
                   className="btn-detail flex-1"

@@ -40,3 +40,6 @@
 .read-the-docs {
   color: #888;
 }
+.checkbox[data-state="checked"] svg {
+  color: #16a34a !important; /* tick màu xanh lá */
+}

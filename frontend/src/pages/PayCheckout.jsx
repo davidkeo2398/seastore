@@ -26,6 +26,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCart } from "@/context/CartContext";
+import axiosInstance from "@/lib/axios";
+import { Link } from "react-router-dom";
 
 // Mock order data
 // const orderSummary = {
@@ -83,6 +85,7 @@ const paymentMethods = [
 ];
 
 export default function PayCheckout() {
+  const [userInfo, setUserInfo] = useState({});
   const [orderSummary, setOrderSummary] = useState([]);
   const [selectedPayment, setSelectedPayment] = useState("credit-card");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -113,11 +116,33 @@ export default function PayCheckout() {
     saveInfo: false,
     agreeTerms: false,
   });
-  const { cart, getCartTotal } = useCart();
+  const { cart, getCartTotal, clearCart } = useCart();
 
   useEffect(() => {
     setOrderSummary(cart);
   }, []);
+  const [paycheck, setPaycheck] = useState([]);
+  useEffect(() => {
+    fetchUserInfo();
+    fetchPaycheck();
+  }, []);
+  const fetchUserInfo = async () => {
+    const userInfo = await axiosInstance.get("/auth/userInfo");
+    setUserInfo(userInfo.data.data);
+  };
+
+  const fetchPaycheck = async () => {
+    try {
+      const { data } = await axiosInstance.get("/order");
+      setPaycheck(data.data);
+      console.log("Paycheck fetched successfully", data.data);
+      if (data.error) {
+        console.error("Error fetching paycheck:", data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching paycheck:", error);
+    }
+  };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -131,6 +156,24 @@ export default function PayCheckout() {
     console.log(`Updated ${field}:`, value);
   };
 
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const pad = (n) => n.toString().padStart(2, "0");
+    return (
+      now.getFullYear() +
+      "-" +
+      pad(now.getMonth() + 1) +
+      "-" +
+      pad(now.getDate()) +
+      " " +
+      pad(now.getHours()) +
+      ":" +
+      pad(now.getMinutes()) +
+      ":" +
+      pad(now.getSeconds())
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.agreeTerms) {
@@ -138,11 +181,41 @@ export default function PayCheckout() {
       return;
     }
 
-    setIsProcessing(true);
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    alert("Thanh toán thành công!");
-    setIsProcessing(false);
+    console.log("form data", formData);
+    console.log("userInfo", userInfo);
+    console.log("cart", orderSummary);
+    const products = orderSummary.map((item) => {
+      return {
+        product_id: item.product_id,
+        quantity: item.quantity,
+      };
+    });
+    console.log("products", products);
+
+    if (userInfo.role.role_name === "admin_agency") {
+      const payload = {
+        user_email: userInfo.email,
+        address_agency: formData.address_user,
+        agency_name: formData.full_name,
+        phone_agency: formData.phone_user,
+        total: getCartTotal(),
+        promotion_id: 1,
+        order_date: getCurrentDateTime(),
+        payment_method: "cash",
+        products: products,
+      };
+      console.log("payload", payload);
+      // setIsProcessing(true);
+      const result = await axiosInstance.post("/order", payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('create order', result)
+      clearCart();
+      // alert("Thanh toán thành công!");
+      // setIsProcessing(false);
+    }
   };
 
   const renderPaymentForm = () => {
@@ -316,10 +389,12 @@ export default function PayCheckout() {
             <h1 className="text-3xl font-bold text-gray-900">Thanh toán</h1>
             <p className="text-gray-600 mt-1">Hoàn tất đơn hàng của bạn</p>
           </div>
-          <Button variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Quay lại giỏ hàng
-          </Button>
+          <Link to="/cart">
+            <Button variant="outline">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Quay lại giỏ hàng
+            </Button>
+          </Link>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -339,51 +414,51 @@ export default function PayCheckout() {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="fullName">Họ và tên *</Label>
+                      <Label htmlFor="full_name">Họ và tên *</Label>
                       <Input
-                        id="fullName"
+                        id="full_name"
                         required
-                        value={formData.fullName}
+                        value={formData.full_name}
                         onChange={(e) =>
-                          handleInputChange("fullName", e.target.value)
+                          handleInputChange("full_name", e.target.value)
                         }
                       />
                     </div>
                     <div>
-                      <Label htmlFor="phone">Số điện thoại *</Label>
+                      <Label htmlFor="phone_user">Số điện thoại *</Label>
                       <Input
-                        id="phone"
+                        id="phone_user"
                         required
-                        value={formData.phone}
+                        value={formData.phone_user}
                         onChange={(e) =>
-                          handleInputChange("phone", e.target.value)
+                          handleInputChange("phone_user", e.target.value)
                         }
                       />
                     </div>
                     <div className="col-span-2">
-                      <Label htmlFor="email">Email *</Label>
+                      <Label htmlFor="user_email">Email *</Label>
                       <Input
-                        id="email"
+                        id="user_email"
                         type="email"
                         required
-                        value={formData.email}
+                        value={formData.user_email}
                         onChange={(e) =>
-                          handleInputChange("email", e.target.value)
+                          handleInputChange("user_email", e.target.value)
                         }
                       />
                     </div>
                     <div className="col-span-2">
-                      <Label htmlFor="address">Địa chỉ *</Label>
+                      <Label htmlFor="address_user">Địa chỉ *</Label>
                       <Input
-                        id="address"
+                        id="address_user"
                         required
-                        value={formData.address}
+                        value={formData.address_user}
                         onChange={(e) =>
-                          handleInputChange("address", e.target.value)
+                          handleInputChange("address_user", e.target.value)
                         }
                       />
                     </div>
-                    <div>
+                    {/* <div>
                       <Label htmlFor="city">Tỉnh/Thành phố *</Label>
                       <Select
                         value={formData.city}
@@ -417,8 +492,8 @@ export default function PayCheckout() {
                           <SelectItem value="thaibinh">Thái Bình</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
-                    <div>
+                    </div> */}
+                    {/* <div>
                       <Label htmlFor="district">Quận/Huyện *</Label>
                       <Select
                         value={formData.district}
@@ -462,7 +537,7 @@ export default function PayCheckout() {
                           <SelectItem value="canjo">Huyện Cần Giờ</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
+                    </div> */}
                   </div>
                 </CardContent>
               </Card>
@@ -530,7 +605,6 @@ export default function PayCheckout() {
                         onCheckedChange={(checked) =>
                           handleInputChange("saveInfo", checked)
                         }
-                        
                       />
                       <Label htmlFor="saveInfo" className="text-sm">
                         Lưu thông tin để thanh toán nhanh hơn lần sau
@@ -543,8 +617,14 @@ export default function PayCheckout() {
                         onCheckedChange={(checked) =>
                           handleInputChange("agreeTerms", checked)
                         }
-                        className={formData.agreeTerms ? "!important:bg-blue-200 border-blue-600" : "border-gray-300"}
-                      />
+                        className={
+                          formData.agreeTerms
+                            ? "bg-white border-black text-black" // text-white để tick nổi bật trên nền đen
+                            : "border-gray-300"
+                        }
+                      >
+                        <Checkbox.Indicator className="text-black" />
+                      </Checkbox>
                       <Label htmlFor="agreeTerms" className="text-sm">
                         Tôi đồng ý với{" "}
                         <a href="#" className="text-blue-600 hover:underline">
