@@ -9,15 +9,28 @@ const { generateToken } = require('../config/authentication');
 
 module.exports = {
     login: async (userInfo) => {
-        console.log('userInfo', userInfo);
         const { email, password } = userInfo;
+
+        if (!email || !password) {
+            throw new Error('Email và mật khẩu không được để trống');
+        }
+
         try {
-            const user = await User.findOne({ where: { email: email } });
+            // Get user with password using scope
+            const user = await User.scope('withPassword').findOne({
+                where: { email: email }
+            });
+
             if (!user) {
-                throw new Error('Nguời dùng không tồn tại');
+                throw new Error('Người dùng không tồn tại');
+            }
+
+            if (!user.password) {
+                throw new Error('Lỗi xác thực tài khoản');
             }
 
             const isPasswordValid = await bcrypt.compare(password, user.password);
+
             if (!isPasswordValid) {
                 throw new Error('Mật khẩu không đúng');
             }

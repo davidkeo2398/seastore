@@ -23,7 +23,8 @@ module.exports = {
           canView: true,
           canEdit: true,
           warehouse_id: Math.floor(Math.random() * 10) + 1,
-
+          agency_id: Math.floor(Math.random() * 10) + 1,
+          isSuperAdmin: false
         }),
         createdAt: new Date(),
         updatedAt: new Date()

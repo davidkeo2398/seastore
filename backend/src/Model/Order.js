@@ -82,7 +82,7 @@ module.exports = (sequelize) => {
                 onUpdate: 'CASCADE',
                 onDelete: 'SET NULL' // If promotion is deleted, set to NULL
             },
-            pomotion_code: {
+            promotion_code: {
                 type: DataTypes.STRING,
                 allowNull: true,
                 validate: {
