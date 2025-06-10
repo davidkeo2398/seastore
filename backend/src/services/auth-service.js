@@ -75,7 +75,7 @@ module.exports = {
     },
     getUserInfo: async (userInfo) => {
         try {
-            const user = User.findOne({ where: { email: userInfo.email } })
+            const user = await User.findOne({ where: { email: userInfo.email } })
             return {
                 user: user,
                 tokenInfo: userInfo
