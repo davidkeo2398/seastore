@@ -59,14 +59,30 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
-          is: /^[0-9]+$/
+          is: {
+            args: /^[0-9]+$/,
+            msg: 'Phone number must contain only digits'
+          },
+          phoneValidation(value) {
+            if (value !== null && !/^[0-9]+$/.test(value)) {
+              throw new Error('Phone number must contain only digits');
+            }
+          }
         }
       },
       phone_agency: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         validate: {
-          is: /^[0-9]+$/
+          is: {
+            args: /^[0-9]+$/,
+            msg: 'Phone number must contain only digits'
+          },
+          phoneValidation(value) {
+            if (value !== null && !/^[0-9]+$/.test(value)) {
+              throw new Error('Phone number must contain only digits');
+            }
+          }
         }
       },
       total: {
