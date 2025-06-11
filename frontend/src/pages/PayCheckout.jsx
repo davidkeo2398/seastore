@@ -116,7 +116,7 @@ export default function PayCheckout() {
     saveInfo: false,
     agreeTerms: false,
   });
-  const { cart, getCartTotal, clearCart } = useCart();
+  const { cart, getCartTotal, removeFromCart } = useCart();
 
   useEffect(() => {
     setOrderSummary(cart);
@@ -194,7 +194,7 @@ export default function PayCheckout() {
 
     if (userInfo.role.role_name === "admin_agency") {
       const payload = {
-        user_email: userInfo.email,
+        user_email: userInfo.user.email,
         address_agency: formData.address_user,
         agency_name: formData.full_name,
         phone_agency: formData.phone_user,
@@ -212,7 +212,7 @@ export default function PayCheckout() {
         }
       });
       console.log('create order', result)
-      clearCart();
+      removeFromCart();
       // alert("Thanh toán thành công!");
       // setIsProcessing(false);
     }
