@@ -10,8 +10,8 @@ module.exports = {
         try {
             const order_code = generateCode();
             const { user_id, user_name, first_name, last_name, email, phone, address, role_id, resources } = userInfo;
-            const userResources = JSON.parse(userInfo.resources);
-            
+            // const userResources = JSON.parse(userInfo.resources);
+
             const {
                 user_email,
                 address_user,
@@ -36,16 +36,16 @@ module.exports = {
                 user_id: user_id,
                 user_name: user_name,
                 user_email: user_email,
-                address_user: address_user ?? '',
-                agency_name: agency_name ?? '',
-                address_agency: address_agency ?? '',
-                phone_user: phone_user ?? '',
-                phone_agency: phone_agency ?? '',
+                address_user: address_user ?? null,
+                agency_name: agency_name ?? null,
+                address_agency: address_agency ?? null,
+                phone_user: phone_user ?? null,
+                phone_agency: phone_agency ?? null,
                 total: total,
-                promotion_id: promotion_id ?? '',
+                promotion_id: promotion_id ?? null,
                 order_date: order_date,
                 payment_method: payment_method,
-                promotion_code: promotion_code ?? '',
+                promotion_code: promotion_code ?? null,
                 status: 'pending'
 
             };

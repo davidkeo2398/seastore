@@ -53,17 +53,11 @@ module.exports = (sequelize) => {
             },
             phone_user: {
                 type: DataTypes.STRING,
-                allowNull: false,
-                validate: {
-                    is: /^[0-9]+$/ // Only numbers allowed
-                }
+                allowNull: true,
             },
             phone_agency: {
                 type: DataTypes.STRING,
-                allowNull: false,
-                validate: {
-                    is: /^[0-9]+$/ // Only numbers allowed
-                }
+                allowNull: true,
             },
             total: {
                 type: DataTypes.DECIMAL(10, 2), // Total amount with two decimal places
@@ -85,9 +79,9 @@ module.exports = (sequelize) => {
             promotion_code: {
                 type: DataTypes.STRING,
                 allowNull: true,
-                validate: {
-                    is: /^[A-Z0-9]+$/ // Only uppercase letters and numbers allowed
-                }
+                // validate: {
+                //     is: /^[A-Z0-9]+$/ // Only uppercase letters and numbers allowed
+                // }
             },
             order_date: {
                 type: DataTypes.DATE,
