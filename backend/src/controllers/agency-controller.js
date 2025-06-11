@@ -1,9 +1,10 @@
-import { agencyService } from '../services/index.js';
+const { agencyRankService } = require("../services");
 
-export default {
+
+module.exports = {
     createAgency: async (req, res) => {
         try{
-            const result = await agencyService.createAgency(req.body);
+            const result = await agencyRankService.createAgency(req.body);
             return res.status(200).json({
                 message: "Tạo đại lý thành công",
                 data: result
@@ -51,5 +52,4 @@ export default {
             });
         }
     }
-    
 }

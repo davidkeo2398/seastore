@@ -1,4 +1,3 @@
-const { getAgencyrank } = require("../controllers/agencyrank-controller");
 const { Agency, AgencyRank } = require("../Model/Index");
 
 module.exports = {
@@ -19,4 +18,4 @@ module.exports = {
 
     }
   }
-};
+}

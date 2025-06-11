@@ -1,11 +1,11 @@
 const express = require('express');
+const router = express.Router();
 
 const { agencyController } = require('../controllers/index');
-const { authController } = require('../controllers/index');
 
-router.post('/',authController, agencyController.createAgency);
-router.get('/', authController, agencyController.getAgency);
-router.put('/:id', authController, agencyController.updateAgency);
+router.post('/', agencyController.createAgency);
+router.get('/', agencyController.getAgency);
+router.put('/:id', agencyController.updateAgency);
 
 
 

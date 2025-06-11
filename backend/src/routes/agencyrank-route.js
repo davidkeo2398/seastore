@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const { agencyrankController } = require('../controllers/index');
+const { agencyRankController } = require('../controllers/index');
 
-router.post('/',agencyrankController.createAgencyrank);
-router.get('/', agencyrankController.getAgencyrank);
+router.post('/',agencyRankController.createAgencyrank);
+router.get('/', agencyRankController.getAgencyrank);
 
 
 module.exports = router;

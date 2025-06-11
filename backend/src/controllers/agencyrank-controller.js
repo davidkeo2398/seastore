@@ -1,8 +1,11 @@
-import { agencyrankService } from '../services/index.js';
-export default {
+const { agencyRankService } = require("../services");
+
+
+
+module.exports = {
     createAgencyrank: async (req,res) =>{
         try{
-            const result = await agencyrankService.createAgencyrank(req.body);
+            const result = await agencyRankService.createAgencyrank(req.body);
             return res.status(200).json({
                 message:"Tạo xếp hạng thành viên thành công ",
                 data: result
