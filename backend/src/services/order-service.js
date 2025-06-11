@@ -10,7 +10,7 @@ module.exports = {
         try {
             const order_code = generateCode();
             const { user_id, user_name, first_name, last_name, email, phone, address, role_id, resources } = userInfo;
-            const userResources = JSON.parse(userInfo.resources);
+            // const userResources = JSON.parse(userInfo.resources);
 
             const {
                 user_email,
