@@ -25,6 +25,7 @@ import ProductList from "./pages/ProductList";
 import AdminAngencyRank from "./pages/admin/Rank";
 import AgencyRankPage from "./pages/AngencyRank";
 import OrderTracking from "./pages/OrderTracking";
+import CategoryProducts from "./common/Categories/CategoryProducts";
 
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
             <Route path="*" element={<NotFound />} />\
             <Route path="rank" element={<AgencyRankPage />} />
             <Route path="orderTracking" element={<OrderTracking />} />
+            <Route path="/category/:id" element={<CategoryProducts />} />
           </Route>
 
           <Route path="/admin" element={<AdminLayout />}>

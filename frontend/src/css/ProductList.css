@@ -92,21 +92,21 @@
 }
 
 .btn-add-cart {
-  background: #1da1f2;
+  background: #8dcef6;
   color: #fff;
 }
 
 .btn-add-cart:hover {
-  background: #002135;
+  background: #00203f;
 }
 
 .btn-detail {
-  background: #2563eb;
+  background: #000000;
   color: #fff;
 }
 
 .btn-detail:hover {
-  background: #00195d;
+  background: #01094b;
 }
 
 .some-class {

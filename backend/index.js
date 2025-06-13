@@ -58,6 +58,8 @@ const adminMiddleware = (req, res, next) => {
 const rotues = require('./src/routes/index');
 app.use('/api', rotues);
 
+app.use('/api/products', require('./src/routes/product-route'));
+
 // Login route
 // app.post('/login', (req, res) => {
 //   authentication.login(req, res, db)

@@ -26,6 +26,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Mock cart data
 // const initialCartItems = [
@@ -81,10 +82,13 @@ const rankThresholds = [
 // }, [cart]);
 
 export default function ShoppingCart() {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    const stored = localStorage.getItem("cartItems");
+    return stored ? JSON.parse(stored) : [];
+  });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { cart, addToCart, removeFromCart } = useCart();
+  // const { cart, removeFromCart, updateQuantity, getCartTotal } = useCart();
 
   //giảm giá
   const [couponCode, setCouponCode] = useState("");
@@ -93,10 +97,14 @@ export default function ShoppingCart() {
   const [couponError, setCouponError] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
+  // useEffect(() => {
+  //   console.log("Cart updated:", cart);
+  //   setCartItems(cart);
+  // }, [cart]);
+
   useEffect(() => {
-    console.log("Cart updated:", cart);
-    setCartItems(cart);
-  }, [cart]);
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -165,21 +173,33 @@ export default function ShoppingCart() {
   const calculateDiscount = (old_price, newPrice) => {
     return Math.round(((old_price - newPrice) / old_price) * 100);
   };
-  const updateQuantity = (id, newQuantity) => {
-    setCart((prevCart) =>
+  // const updateQuantity = (id, newQuantity) => {
+  //   setCartItems((prevCart) =>
+  //     prevCart.map((item) =>
+  //       item.id === id ? { ...item, quantity: newQuantity } : item
+  //     )
+  //   );
+  // };
+
+  const handleUpdateQuantity = (product_id , newQuantity) => {
+    console.log('cartItem',cartItems);
+    if (newQuantity < 1) return;
+    setCartItems((prevCart) =>
       prevCart.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
+        item.id === product_id  ? { ...item, quantity: newQuantity } : item
       )
     );
   };
+  const getCartTotal = () => {
+  return cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+};
 
-  const handleUpdateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    updateQuantity(id, newQuantity); // Gọi hàm từ context
-  };
 
-  const removeItem = (id) => {
-    removeFromCart(id);
+  const removeItem = (product_id) => {
+    setCartItems((prevCart) => prevCart.filter((item) => item.id !== product_id));
   };
 
   // const getSubtotal = () => {
@@ -306,7 +326,6 @@ export default function ShoppingCart() {
                         </div>
                       )}
                     </div>
-
                     {/* Product Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-2">
@@ -342,15 +361,15 @@ export default function ShoppingCart() {
                       </div>
 
                       {/* Quantity Controls */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center border border-gray-300 rounded-md">
+                      {!item.fixedQuantity ? (
+                        <div className="flex items-center gap-1 rounded-md border border-gray-300 px-2 py-1 w-fit bg-white">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() =>
                               handleUpdateQuantity(item.id, item.quantity - 1)
                             }
-                            disabled={item.quantity <= 1 || !item.inStock}
+                            disabled={item.quantity <= 1 }
                             className="h-8 w-8 p-0"
                           >
                             <Minus className="h-3 w-3" />
@@ -365,7 +384,7 @@ export default function ShoppingCart() {
                                 Number.parseInt(e.target.value) || 1
                               )
                             }
-                            disabled={!item.inStock}
+                            disabled={item.quantity >= item.number_of_inventory}
                             className="h-8 w-16 text-center border-0 focus-visible:ring-0"
                           />
                           <Button
@@ -374,25 +393,30 @@ export default function ShoppingCart() {
                             onClick={() =>
                               handleUpdateQuantity(item.id, item.quantity + 1)
                             }
-                            disabled={!item.inStock}
+                            disabled={item.quantity > item.number_of_inventory}
                             className="h-8 w-8 p-0"
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
                         </div>
-                        <div className="text-right">
-                          <p className="font-semibold text-gray-900">
-                            {formatPrice(item.price * item.quantity)}
-                          </p>
-                          {item.old_price && (
-                            <p className="text-sm text-green-600">
-                              Tiết kiệm{" "}
-                              {formatPrice(
-                                (item.old_price - item.price) * item.quantity
-                              )}
-                            </p>
-                          )}
+                      ) : (
+                        // Hiển thị số lượng tĩnh
+                        <div className="text-sm text-gray-700">
+                          Số lượng: {item.quantity}
                         </div>
+                      )}
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-900">
+                          {formatPrice(item.price * item.quantity)}
+                        </p>
+                        {item.old_price && (
+                          <p className="text-sm text-green-600">
+                            Tiết kiệm{" "}
+                            {formatPrice(
+                              (item.old_price - item.price) * item.quantity
+                            )}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -87,3 +87,85 @@ header .user-actions .btn-logout {
 header .user-actions .btn-logout:hover {
     background-color: #dc2626; /* Tương tự hover:bg-red-600 */
 }
+
+.header-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 49;
+}
+
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 100;
+}
+.hamburger-bar {
+  width: 28px;
+  height: 3px;
+  background: #fff;
+  margin: 4px 0;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 8px;
+    height: auto;
+  }
+  header .logo {
+    margin-right: 0;
+    margin-bottom: 8px;
+    align-self: center;
+  }
+  header .nav {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  header .nav a {
+    font-size: 1.1rem;
+    padding: 4px 0;
+  }
+  header .user-actions {
+    position: static;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-start;
+    margin-top: 8px;
+  }
+  header .user-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .hamburger-menu {
+    display: flex;
+    position: absolute;
+    right: 16px;
+    top: 18px;
+  }
+  header .nav {
+    width: 100%;
+    background: #1f2937;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    z-index: 99;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 12px 0 8px 0;
+  }
+}

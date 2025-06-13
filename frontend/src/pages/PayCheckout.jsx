@@ -9,6 +9,7 @@ import {
   ArrowLeft,
   Lock,
   AlertCircle,
+  Regex,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +29,7 @@ import {
 import { useCart } from "@/context/CartContext";
 import axiosInstance from "@/lib/axios";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Mock order data
 // const orderSummary = {
@@ -85,10 +87,12 @@ const paymentMethods = [
 ];
 
 export default function PayCheckout() {
+  const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({});
   const [orderSummary, setOrderSummary] = useState([]);
   const [selectedPayment, setSelectedPayment] = useState("credit-card");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   const [formData, setFormData] = useState({
     // Billing info
     fullName: "",
@@ -117,6 +121,15 @@ export default function PayCheckout() {
     agreeTerms: false,
   });
   const { cart, getCartTotal, removeFromCart } = useCart();
+  const [invalidFullName, setInvalidFullName] = useState(true);
+  const [invalidEmail, setInvalidEmail] = useState(true);
+  const [invalidPhone, setInvalidPhone] = useState(true);
+  const [invalidAddress, setInvalidAddress] = useState(true);
+
+  const [touchedFullName, setTouchedFullName] = useState(false);
+  const [touchedEmail, setTouchedEmail] = useState(false);
+  const [touchedPhone, setTouchedPhone] = useState(false);
+  const [touchedAddress, setTouchedAddress] = useState(false);
 
   useEffect(() => {
     setOrderSummary(cart);
@@ -125,10 +138,62 @@ export default function PayCheckout() {
   useEffect(() => {
     fetchUserInfo();
     fetchPaycheck();
+    // console.log('debug cart', cart, getCartTotal())
   }, []);
   const fetchUserInfo = async () => {
-    const userInfo = await axiosInstance.get("/auth/userInfo");
-    setUserInfo(userInfo.data.data);
+    try {
+      const response = await axiosInstance.get("/auth/userInfo");
+      const data = response.data?.data;
+      if (data && data.role) {
+        setUserInfo(data);
+      } else {
+        setUserInfo({});
+        console.warn("User info không có trường role:", data);
+      }
+    } catch (error) {
+      setUserInfo({});
+      console.error("Lỗi khi fetch user info:", error);
+    }
+  };
+
+  const checkInvalid = async (fieldName, value) => {
+    const regexFullName = /^[\p{L}\s]+$/u;
+    const regexEmail = /\b@\w+\.{1}com\.{1}w+/;
+    const regexPhone = /^0\d{9,10}$/;
+    const regexAddress = /^[a-zA-ZÀ-ỹ0-9\s,./\-]+$/;
+    switch (fieldName) {
+      case "full_name":
+        return regexFullName.test(value.trim())
+          ? setInvalidFullName(false)
+          : setInvalidFullName(true);
+        break;
+      case "user_email":
+        return regexEmail.test(value.trim())
+          ? setInvalidEmail(false)
+          : setInvalidEmail(true);
+        break;
+      case "phone_user":
+        return regexPhone.test(value.trim())
+          ? setInvalidPhone(false)
+          : setInvalidPhone(true);
+        break;
+      case "address_user":
+        return regexAddress.test(value.trim())
+          ? setInvalidAddress(false)
+          : setInvalidAddress(true);
+        break;
+      default:
+        return;
+        break;
+    }
+  };
+
+  const handleCreateOrder = async () => {
+    const response = await axiosInstance.post("/order", payload);
+    if (response.status === 200) {
+      const createdOrder = response.data.data;
+      navigate("/orderTracking", { state: { order: createdOrder } });
+    }
   };
 
   const fetchPaycheck = async () => {
@@ -153,6 +218,7 @@ export default function PayCheckout() {
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    checkInvalid(field, value);
     console.log(`Updated ${field}:`, value);
   };
 
@@ -192,7 +258,7 @@ export default function PayCheckout() {
     });
     console.log("products", products);
 
-    if (userInfo.role.role_name === "admin_agency") {
+    if (userInfo.role && userInfo.role.role_name === "admin_agency") {
       const payload = {
         user_email: userInfo.user.email,
         address_agency: formData.address_user,
@@ -208,10 +274,10 @@ export default function PayCheckout() {
       // setIsProcessing(true);
       const result = await axiosInstance.post("/order", payload, {
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       });
-      console.log('create order', result)
+      console.log("create order", result);
       removeFromCart();
       // alert("Thanh toán thành công!");
       // setIsProcessing(false);
@@ -419,10 +485,18 @@ export default function PayCheckout() {
                         id="full_name"
                         required
                         value={formData.full_name}
-                        onChange={(e) =>
-                          handleInputChange("full_name", e.target.value)
-                        }
+                        onClick={() => setTouchedFullName(false)}
+                        onChange={(e) => {
+                          handleInputChange("full_name", e.target.value);
+                          setTouchedFullName(false);
+                        }}
+                        onBlur={() => setTouchedFullName(true)}
                       />
+                      {invalidFullName && touchedFullName && (
+                        <p className="mt-1 text-sm text-red-600">
+                          Họ và tên không đúng định dạng
+                        </p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="phone_user">Số điện thoại *</Label>
@@ -430,10 +504,18 @@ export default function PayCheckout() {
                         id="phone_user"
                         required
                         value={formData.phone_user}
-                        onChange={(e) =>
-                          handleInputChange("phone_user", e.target.value)
-                        }
+                        onClick={() => setTouchedPhone(false)}
+                        onChange={(e) => {
+                          handleInputChange("phone_user", e.target.value);
+                          setTouchedPhone(false);
+                        }}
+                        onBlur={() => setTouchedPhone(true)}
                       />
+                      {invalidPhone && touchedPhone && (
+                        <p className="mt-1 text-sm text-red-600">
+                          Số điện thoại không đúng định dạng
+                        </p>
+                      )}
                     </div>
                     <div className="col-span-2">
                       <Label htmlFor="user_email">Email *</Label>
@@ -442,10 +524,18 @@ export default function PayCheckout() {
                         type="email"
                         required
                         value={formData.user_email}
-                        onChange={(e) =>
-                          handleInputChange("user_email", e.target.value)
-                        }
+                        onClick={() => setTouchedEmail(false)}
+                        onChange={(e) => {
+                          handleInputChange("user_email", e.target.value);
+                          setTouchedEmail(false);
+                        }}
+                        onBlur={() => setTouchedEmail(true)}
                       />
+                      {invalidEmail && touchedEmail && (
+                        <p className="mt-1 text-sm text-red-600">
+                          Email không đúng định dạng
+                        </p>
+                      )}
                     </div>
                     <div className="col-span-2">
                       <Label htmlFor="address_user">Địa chỉ *</Label>
@@ -453,10 +543,18 @@ export default function PayCheckout() {
                         id="address_user"
                         required
                         value={formData.address_user}
-                        onChange={(e) =>
-                          handleInputChange("address_user", e.target.value)
-                        }
+                        onClick={() => setTouchedAddress(false)}
+                        onChange={(e) => {
+                          handleInputChange("address_user", e.target.value);
+                          setTouchedAddress(false);
+                        }}
+                        onBlur={() => setTouchedAddress(true)}
                       />
+                      {invalidAddress && touchedAddress && (
+                        <p className="mt-1 text-sm text-red-600">
+                          Địa chỉ không đúng định dạng
+                        </p>
+                      )}
                     </div>
                     {/* <div>
                       <Label htmlFor="city">Tỉnh/Thành phố *</Label>
@@ -650,11 +748,8 @@ export default function PayCheckout() {
                 <CardContent className="space-y-4">
                   {/* Order Items */}
                   <div className="space-y-3">
-                    {orderSummary.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center space-x-3"
-                      >
+                    {orderSummary.map((item, index) => (
+                      <div key={index} className="flex items-center space-x-3">
                         <img
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
@@ -681,7 +776,7 @@ export default function PayCheckout() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Tạm tính</span>
-                      <span>{formatPrice(orderSummary.subtotal)}</span>
+                      <span>{formatPrice(getCartTotal())}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Phí vận chuyển</span>
@@ -712,8 +807,12 @@ export default function PayCheckout() {
                       "Đang xử lý..."
                     ) : (
                       <>
-                        <Lock className="mr-2 h-4 w-4" />
-                        Hoàn tất thanh toán
+                        <p
+                          className="text-gray-600 mt-1 cursor-pointer hover:underline"
+                          onClick={() => navigate("/orderTracking")}
+                        >
+                          Hoàn tất đơn hàng của bạn
+                        </p>
                       </>
                     )}
                   </Button>
