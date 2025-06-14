@@ -1,5 +1,7 @@
 'use strict';
 
+const { DataTypes } = require('sequelize');
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -26,6 +28,11 @@ module.exports = {
       promotion_price: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false
+      },
+      promotion_percent: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 5
       },
       promotion_created_date: {
         type: Sequelize.DATE,
