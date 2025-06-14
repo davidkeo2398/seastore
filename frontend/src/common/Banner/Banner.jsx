@@ -4,7 +4,7 @@ import "./Banner.css";
 const banners = [
   {
     image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0SD5aJTe7G90UHZI3YbshfAgzo2JN8eY-8g&s",
+      "https://tepbac.com/upload/advertiment/ge_image/2025/05/tepbac-tai-tro-2025-05_1747042886.png",
     title: "Big Summer Sale!",
     desc: "Up to 50% off on selected products. Shop now!",
   },

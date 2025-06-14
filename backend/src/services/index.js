@@ -5,6 +5,7 @@ const productService = require('./product-service');
 const categoriesService = require('./categories-service');
 const agencyService = require('./agency-service');
 const agencyRankService = require('./agencyrank-service');
+const promotionService = require('./promotion-service');
 
 module.exports = {
     authService,
@@ -12,5 +13,6 @@ module.exports = {
     productService,
     categoriesService,
     agencyService,
-    agencyRankService
+    agencyRankService,
+    promotionService
 };

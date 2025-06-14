@@ -8,6 +8,7 @@ const categoriesRoutes = require('./category-route');
 const agencyRoutes = require('./agency-route');
 const agencyRankRoutes = require('./agencyrank-route');
 
+const promotionRoutes = require('./promotion-route');
 
 
 //Authentication group api routes
@@ -18,5 +19,6 @@ router.use('/category', categoriesRoutes);
 router.use('/agency',agencyRoutes);
 router.use('/agency-rank',agencyRankRoutes);
 
+router.use('/promotion', promotionRoutes);
 
 module.exports = router;

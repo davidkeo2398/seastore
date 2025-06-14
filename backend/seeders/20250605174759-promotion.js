@@ -13,6 +13,7 @@ module.exports = {
         description: faker.lorem.sentence(),
         promotion_code: faker.string.alphanumeric(10).toUpperCase(), // Random promotion code
         promotion_price: faker.number.int({ min: 10000, max: 500000 }), // Random promotion price between 10,000 and 500,000
+        promotion_percent: Math.floor(Math.random() * 50) + 1,
         promotion_created_date: faker.date.past().toISOString().slice(0, 10), // Random past date
         promotion_expired_date: faker.date.future().toISOString().slice(0, 10), // Random future date
         promotion_condition: faker.lorem.sentence(), // Random condition
