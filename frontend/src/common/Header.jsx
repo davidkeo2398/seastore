@@ -5,10 +5,12 @@ import { FaShoppingCart } from "react-icons/fa";
 import RegisterDialog from "@/pages/RegisterDialog";
 import LoginDialog from "@/pages/LoginDiaLog";
 import { AuthContext } from "@/context/AuthContext";
-import { clearAuthToken } from "@/ultils/Authentication";
+import { clearAuthToken, getAuthToken } from "@/ultils/Authentication";
 
 const Header = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("user")) || {}
+  );
   const navigate = useNavigate();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
@@ -17,6 +19,7 @@ const Header = () => {
   // Xử lý đăng nhập thành công
   const handleLoginSuccess = (userData) => {
     console.log("User logged in:", userData);
+    localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
     setShowLoginDialog(false);
   };
@@ -31,12 +34,14 @@ const Header = () => {
   const handleLogout = () => {
     setUser(null);
     clearAuthToken();
+    localStorage.clear();
+    navigate('/')
   };
 
   // Hiển thị giao diện
   return (
     <header>
-      <Link to ="/" className="logo">
+      <Link to="/" className="logo">
         <img
           src="/images/whale_5729775.png"
           alt="Logo"
@@ -56,7 +61,7 @@ const Header = () => {
         <Link to="/admin" className="nav-link">
           Trang quản trị
         </Link>
-         <Link to="/orderTracking" className="nav-link">
+        <Link to="/orderTracking" className="nav-link">
           Trang theo dõi đơn hàng
         </Link>
         {/* 5 */}
@@ -67,7 +72,7 @@ const Header = () => {
           <FaShoppingCart className="cart-icon" />
           <span>Giỏ hàng</span>
         </Link>
-        {user ? (
+        {getAuthToken() ? (
           <div className="user-info flex items-center gap-4 w-auto">
             <span>Xin chào, {user.user_name}!</span>
             <button onClick={handleLogout} className="btn btn-logout">
@@ -113,5 +118,3 @@ const Header = () => {
 };
 
 export default Header;
-
-      

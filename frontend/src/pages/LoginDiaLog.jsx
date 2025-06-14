@@ -41,7 +41,8 @@ export default function LoginDialog({ onClose, onLoginSuccess }) {
       console.log("Login response:", data.data.user);
 
       if (data.data.accessToken) {
-        document.cookie = `token=${data.data.accessToken}; max-age=14400; path=/`;
+        // document.cookie = `token=${data.data.accessToken}; max-age=14400; path=/`;
+        setAuthToken(data.data.accessToken);
         setUser({ user: data.data.user });
         onClose();
         onLoginSuccess(data.data.user);

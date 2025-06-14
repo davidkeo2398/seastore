@@ -131,8 +131,11 @@ export default function PayCheckout() {
   const [touchedPhone, setTouchedPhone] = useState(false);
   const [touchedAddress, setTouchedAddress] = useState(false);
 
+  const [discount, setDiscount] = useState(0);
+
   useEffect(() => {
-    setOrderSummary(cart);
+    setDiscount(localStorage.getItem('discount'));
+    setOrderSummary(JSON.parse(localStorage.getItem('cart')));
   }, []);
   const [paycheck, setPaycheck] = useState([]);
   useEffect(() => {
@@ -264,7 +267,7 @@ export default function PayCheckout() {
         address_agency: formData.address_user,
         agency_name: formData.full_name,
         phone_agency: formData.phone_user,
-        total: getCartTotal(),
+        total: getCartTotal() - discount,
         promotion_id: 1,
         order_date: getCurrentDateTime(),
         payment_method: "cash",
@@ -784,7 +787,7 @@ export default function PayCheckout() {
                     </div>
                     <div className="flex justify-between text-sm text-green-600">
                       <span>Giảm giá</span>
-                      <span>-{formatPrice(orderSummary?.discount || 0)}</span>
+                      <span>-{formatPrice(localStorage.getItem('discount') || 0)}</span>
                     </div>
                   </div>
 
@@ -793,7 +796,7 @@ export default function PayCheckout() {
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-semibold">Tổng cộng</span>
                     <span className="text-xl font-bold text-blue-600">
-                      {formatPrice(getCartTotal())}
+                      {formatPrice(getCartTotal() - discount)}
                     </span>
                   </div>
 

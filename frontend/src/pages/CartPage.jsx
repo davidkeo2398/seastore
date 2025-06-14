@@ -26,6 +26,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import axiosInstance from "@/lib/axios";
 
 // Mock cart data
 // const initialCartItems = [
@@ -84,19 +85,30 @@ export default function ShoppingCart() {
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { cart, addToCart, removeFromCart } = useCart();
+  const { cart, addToCart, updateQuantity, removeFromCart, getCartTotal } =
+    useCart();
 
   //giảm giá
-  const [couponCode, setCouponCode] = useState("");
+  const [couponCode, setCouponCode] = useState(localStorage.getItem("promotion_code") || "");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponError, setCouponError] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [promotions, setPromotions] = useState([]);
+  const [discount, setDiscount] = useState(0);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     console.log("Cart updated:", cart);
-    setCartItems(cart);
+    setCartItems(JSON.parse(localStorage.getItem('cart')) || []);
+    fetchPromotion();
   }, [cart]);
+
+  const fetchPromotion = async () => {
+    const res = await axiosInstance.get("/promotion");
+    console.log("promotion", res.data.data);
+    setPromotions(res.data.data);
+  };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -140,12 +152,16 @@ export default function ShoppingCart() {
   };
   const rankDetails = getRankDetails();
 
-  const getTotal = () => {
-    const rankDetails = getRankDetails();
-    const subtotal = getSubtotal();
-    const rankDiscount = subtotal * (rankDetails.currentDiscount / 100);
-    return subtotal - couponDiscount - rankDiscount;
-  };
+  // const getTotal = () => {
+  //   const rankDetails = getRankDetails();
+  //   const subtotal = getSubtotal();
+  //   const rankDiscount = subtotal * (rankDetails.currentDiscount / 100);
+  //   return subtotal - couponDiscount - rankDiscount;
+  // };
+
+  const getTotal = useCallback(() => {
+    return getSubtotal() - discount;
+  }, [getSubtotal, discount]);
 
   const getTotalItems = () => {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -165,15 +181,16 @@ export default function ShoppingCart() {
   const calculateDiscount = (old_price, newPrice) => {
     return Math.round(((old_price - newPrice) / old_price) * 100);
   };
-  const updateQuantity = (id, newQuantity) => {
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
+  // const updateQuantity = (id, newQuantity) => {
+  //   setCart((prevCart) =>
+  //     prevCart.map((item) =>
+  //       item.id === id ? { ...item, quantity: newQuantity } : item
+  //     )
+  //   );
+  // };
 
   const handleUpdateQuantity = (id, newQuantity) => {
+    console.log("update quantity", id, newQuantity);
     if (newQuantity < 1) return;
     updateQuantity(id, newQuantity); // Gọi hàm từ context
   };
@@ -206,13 +223,22 @@ export default function ShoppingCart() {
     setIsApplyingCoupon(false);
   };
 
-  const getDiscount = () => {
-    return cartItems.reduce((total, item) => {
-      if (item.old_price) {
-        return total + (item.old_price - item.price) * item.quantity;
-      }
-      return total;
-    }, 0);
+  const getDiscount = (promotion_code) => {
+    // return cartItems.reduce((total, item) => {
+    //   if (item.old_price) {
+    //     return total + (item.old_price - item.price) * item.quantity;
+    //   }
+    //   return total;
+    // }, 0);
+    const promotion = promotions.filter(
+      (item) => item.promotion_code === promotion_code
+    );
+    const percent = promotion[0].promotion_percent / 100;
+    const priceReduce = getCartTotal() * percent;
+    setDiscount(priceReduce);
+    localStorage.setItem("discount", priceReduce);
+    localStorage.setItem("promotion_code", promotion_code);
+    console.log("price reduce", priceReduce, percent, getCartTotal());
   };
 
   // const getTotal = () => {
@@ -319,7 +345,7 @@ export default function ShoppingCart() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeItem(item.product_id)}
                           className="text-red-600 hover:text-red-700 hover:bg-red-50"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -348,9 +374,12 @@ export default function ShoppingCart() {
                             variant="ghost"
                             size="sm"
                             onClick={() =>
-                              handleUpdateQuantity(item.id, item.quantity - 1)
+                              handleUpdateQuantity(
+                                item.product_id,
+                                item.quantity - 1
+                              )
                             }
-                            disabled={item.quantity <= 1 || !item.inStock}
+                            disabled={item.quantity <= 1}
                             className="h-8 w-8 p-0"
                           >
                             <Minus className="h-3 w-3" />
@@ -361,20 +390,23 @@ export default function ShoppingCart() {
                             value={item.quantity}
                             onChange={(e) =>
                               handleUpdateQuantity(
-                                item.id,
+                                item.product_id,
                                 Number.parseInt(e.target.value) || 1
                               )
                             }
-                            disabled={!item.inStock}
+                            disabled={item.quantity >= item.number_of_inventory}
                             className="h-8 w-16 text-center border-0 focus-visible:ring-0"
                           />
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() =>
-                              handleUpdateQuantity(item.id, item.quantity + 1)
+                              handleUpdateQuantity(
+                                item.product_id,
+                                item.quantity + 1
+                              )
                             }
-                            disabled={!item.inStock}
+                            disabled={item.quantity > item.number_of_inventory}
                             className="h-8 w-8 p-0"
                           >
                             <Plus className="h-3 w-3" />
@@ -492,10 +524,10 @@ export default function ShoppingCart() {
                       <span className="text-gray-600">Tạm tính</span>
                       <span>{formatPrice(getSubtotal())}</span>
                     </div>
-                    {getDiscount() > 0 && (
+                    {discount > 0 && (
                       <div className="flex justify-between text-green-600">
                         <span>Giảm giá</span>
-                        <span>-{formatPrice(getDiscount())}</span>
+                        <span>-{formatPrice(discount)}</span>
                       </div>
                     )}
                     <div className="flex justify-between items-center">
@@ -509,25 +541,31 @@ export default function ShoppingCart() {
                   {/* Coupon Code Input */}
                   <div className="mb-4">
                     <p className="text-sm font-medium mb-2">Mã giảm giá</p>
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-2 ">
                       <Select
                         value={couponCode}
-                        onValueChange={(value) => setCouponCode(value)}
+                        onValueChange={(value) => {
+                          setCouponCode(value === "none" ? "" : value);
+                          getDiscount(value);
+                        }}
                         disabled={isApplyingCoupon || appliedCoupon !== null}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-[300px]">
                           <SelectValue placeholder="Chọn mã giảm giá" />
                         </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="giamgia50">
-                            Giảm 50.000đ
-                          </SelectItem>
-                          <SelectItem value="freeship">
-                            Miễn phí vận chuyển
-                          </SelectItem>
-                          <SelectItem value="vip10">
-                            Giảm 10% cho VIP
-                          </SelectItem>
+                        <SelectContent className="w-[300px] max-h-[200px] overflow-y-auto">
+                          {/* "None" option with value "none" */}
+                          <SelectItem value="none">Không chọn</SelectItem>
+
+                          {promotions.map((promotion, index) => (
+                            <SelectItem
+                              key={index}
+                              value={promotion.promotion_code}
+                              className="w-[300px]"
+                            >
+                              {promotion.promotion_name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <Input
