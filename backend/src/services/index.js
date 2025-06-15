@@ -4,10 +4,8 @@ const orderService = require('./order-service');
 const productService = require('./product-service');
 const categoriesService = require('./categories-service');
 const agencyService = require('./agency-service');
-const agencyRankService = require('./agencyrank-service');
-const promotionService = require('./promotion-service');
 const agencyRankService = require('./agency-rank-service');
-const agencyService = require('./agency-service');
+const promotionService = require('./promotion-service');
 
 module.exports = {
     authService,
