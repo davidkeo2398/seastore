@@ -6,8 +6,8 @@ const orderRoutes = require('./order-route');
 const productRoutes = require('./product-route');
 const categoriesRoutes = require('./category-route');
 const promotionRoutes = require('./promotion-route');
-const agencyRoutes = require('./agency-routes');
-const agencyRankRoutes = require('./agency-rank-routes');
+const agencyRoutes = require('./agency-route');
+const agencyRankRoutes = require('./agency-rank-route');
 
 
 //Authentication group api routes
