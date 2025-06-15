@@ -1,12 +1,14 @@
-const { User, Order, OrderItem } = require('../Model/Index');
+const { User, Order, OrderItem, Product, Agency, AgencyRank } = require('../Model/Index');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { generateToken } = require('../config/authentication');
 const { generateCode } = require('../utils/generateCode');
+const { sequelize } = require('../config/dbcontext');
 
 
 module.exports = {
     createOrder: async (orderData, userInfo) => {
+        const t = await sequelize.transaction();
         try {
             const order_code = generateCode();
             const { user_id, user_name, first_name, last_name, email, phone, address, role_id, resources } = userInfo;
@@ -46,7 +48,7 @@ module.exports = {
                 order_date: order_date,
                 payment_method: payment_method,
                 promotion_code: promotion_code ?? null,
-                status: 'pending'
+                status: 'completed'
 
             };
             const newOrder = await Order.create(payload);
@@ -60,9 +62,55 @@ module.exports = {
                     })
                 )
             );
+            if (newOrder.status === 'completed') {
+                await Promise.all(
+                    orderItems.map(product => {
+                        Product.findOne({ where: { product_id: product.product_id } }).then(model => {
+                            model.decrement({ "number_of_inventory": product.quantity })
+                        })
+                    })
+                )
+                const ordersTotal = await Order.sum('total', {
+                    where: { user_id, status: 'completed' },
+                    transaction: t,
+                });
+
+                // Determine rank based on total
+                let rankName;
+                if (ordersTotal >= 40_000_000) {
+                    rankName = 'Diamond';
+                } else if (ordersTotal >= 30_000_000) {
+                    rankName = 'Platinum';
+                } else if (ordersTotal >= 10_000_000) {
+                    rankName = 'Gold';
+                } else if (ordersTotal >= 5_000_000) {
+                    rankName = 'Silver';
+                } else if (ordersTotal >= 100_000) {
+                    rankName = 'Bronze';
+                } else {
+                    rankName = null;
+                }
+
+                // Update user rank if applicable
+                if (rankName) {
+                    const agency = await AgencyRank.findOne({
+                        where: { agency_rank_name: rankName },
+                        transaction: t,
+                    });
+                    if (!agency) {
+                        throw new Error(`Agency rank '${rankName}' not found`);
+                    }
+                    await user.then(model => {
+                        model.update({ agency_rank_id: agency.agency_rank_id })
+                    })
+                }
+            }
+            await t.commit();
+
             return { order: newOrder, orderItems: orderItems };
         } catch (error) {
             console.error('Error creating order:', error);
+            await t.rollback();
             throw new Error('Failed to create order');
         }
     },

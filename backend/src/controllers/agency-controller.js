@@ -1,8 +1,26 @@
 const { agencyRankService } = require("../services");
+   
+const { agencyService } = require('../services/index');
+
 
 
 module.exports = {
-    createAgency: async (req, res) => {
+    getAgencies: async (req, res) => {
+        try {
+            const result = await agencyService.getAgencies();
+            return res.status(200).json({
+                message: "Get agencies success",
+                data: result,
+            });
+        } catch (err) {
+            return res.status(400).json({
+                message: "Get agencies fail",
+                data: [],
+                error: error.message
+            });
+        }
+    }, 
+     createAgency: async (req, res) => {
         try{
             const result = await agencyRankService.createAgency(req.body);
             return res.status(200).json({
@@ -14,24 +32,6 @@ module.exports = {
                 message: "Taọ đại lý không thành công",
                 data: [],
                 error: error.message
-            });
-        }
-    },
-    getAgency : async (req, res) => {
-        try{
-            console.log('debug req')
-             // Truyền req.query xuống service để xử lý lọc, phân trang, tìm kiếm
-            const result = await agencyService.getAgency(req.query);
-            return res.status(200).json({
-                message: "Get agency successfully",
-                data: result
-            });
-        }
-        catch (err) {
-            return res.status(400).json({
-                message: "Get agency failed",
-                data: [],
-                error: err.message
             });
         }
     },
@@ -51,5 +51,20 @@ module.exports = {
                 error: error.message
             });
         }
+    },
+    getAgencyById: async (req, res) => {
+        try {
+            const result = await agencyService.getAgencyById(req.params.agency_id);
+            return res.status(200).json({
+                message: "Get agency by id success",
+                data: result,
+            });
+        } catch (err) {
+            return res.status(400).json({
+                message: "Get agency by id fail",
+                data: [],
+                error: error.message
+            });
+        }
     }
-}
+};

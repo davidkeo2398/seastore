@@ -66,12 +66,3 @@ module.exports = {
     }
   },
 };
-// module.exports = {
-//   getAgencies: async()=>{
-//     try{
-//       const agencies = await Agency
-//     }catch(err){
-
-//     }
-//   }
-// }

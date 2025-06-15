@@ -5,6 +5,8 @@ const categoriesController = require('./categories-controller');
 const agencyController = require('./agency-controller');
 const agencyRankController = require('./agencyrank-controller');
 const promotionController = require('./promotion-controller');
+const agencyController = require('./agency-controller');
+const agencyRankController = require('./agency-rank-controller');
 
 module.exports = {
     authController,

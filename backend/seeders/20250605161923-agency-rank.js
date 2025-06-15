@@ -17,7 +17,7 @@ module.exports = {
         agency_rank_id: 2,
         agency_rank_name: 'Silver',
         min_accumulated_value: 5000000,
-        discount_percent: 20,
+        discount_percent: 12,
         note: "Hạng bạc",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -26,7 +26,7 @@ module.exports = {
         agency_rank_id: 3,
         agency_rank_name: 'Gold',
         min_accumulated_value: 10000000,
-        discount_percent: 30,
+        discount_percent: 15,
         note: "Hạng vàng",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -35,7 +35,7 @@ module.exports = {
         agency_rank_id: 4,
         agency_rank_name: 'Platinum',
         min_accumulated_value: 30000000,
-        discount_percent: 40,
+        discount_percent: 17,
         note: "Hạng platinum",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -44,7 +44,7 @@ module.exports = {
         agency_rank_id: 5,
         agency_rank_name: 'Diamond',
         min_accumulated_value: 40000000,
-        discount_percent: 50,
+        discount_percent: 20,
         note: "Hạng kim cương",
         createdAt: new Date(),
         updatedAt: new Date()
