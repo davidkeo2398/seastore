@@ -9,6 +9,8 @@ const agencyRoutes = require('./agency-route');
 const agencyRankRoutes = require('./agency-rank-route');
 
 const promotionRoutes = require('./promotion-route');
+const agencyRoutes = require('./agency-route');
+const agencyRankRoutes = require('./agency-rank-route');
 
 
 //Authentication group api routes
