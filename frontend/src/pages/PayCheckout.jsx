@@ -132,9 +132,11 @@ export default function PayCheckout() {
   const [touchedAddress, setTouchedAddress] = useState(false);
 
   const [discount, setDiscount] = useState(0);
+  const [calRankDiscount, setCalRankDiscount] = useState(0)
 
   useEffect(() => {
     setDiscount(localStorage.getItem('discount'));
+    setCalRankDiscount(localStorage.getItem('calRankDiscount'));
     setOrderSummary(JSON.parse(localStorage.getItem('cart')));
   }, []);
   const [paycheck, setPaycheck] = useState([]);
@@ -191,13 +193,13 @@ export default function PayCheckout() {
     }
   };
 
-  const handleCreateOrder = async () => {
-    const response = await axiosInstance.post("/order", payload);
-    if (response.status === 200) {
-      const createdOrder = response.data.data;
-      navigate("/orderTracking", { state: { order: createdOrder } });
-    }
-  };
+  // const handleCreateOrder = async () => {
+  //   const response = await axiosInstance.post("/order", payload);
+  //   if (response.status === 200) {
+  //     const createdOrder = response.data.data;
+  //     navigate("/orderTracking", { state: { order: createdOrder } });
+  //   }
+  // };
 
   const fetchPaycheck = async () => {
     try {
@@ -267,11 +269,12 @@ export default function PayCheckout() {
         address_agency: formData.address_user,
         agency_name: formData.full_name,
         phone_agency: formData.phone_user,
-        total: getCartTotal() - discount,
+        total: getCartTotal() - discount - calRankDiscount,
         promotion_id: 1,
         order_date: getCurrentDateTime(),
         payment_method: "cash",
         products: products,
+        promotion_code: localStorage.getItem('promotion_code')
       };
       console.log("payload", payload);
       // setIsProcessing(true);
@@ -282,6 +285,7 @@ export default function PayCheckout() {
       });
       console.log("create order", result);
       removeFromCart();
+      navigate('/orderTracking');
       // alert("Thanh toán thành công!");
       // setIsProcessing(false);
     }
@@ -789,6 +793,10 @@ export default function PayCheckout() {
                       <span>Giảm giá</span>
                       <span>-{formatPrice(localStorage.getItem('discount') || 0)}</span>
                     </div>
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Chiết khấu</span>
+                      <span>-{formatPrice(localStorage.getItem('calRankDiscount') || 0)}</span>
+                    </div>
                   </div>
 
                   <Separator />
@@ -796,7 +804,7 @@ export default function PayCheckout() {
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-semibold">Tổng cộng</span>
                     <span className="text-xl font-bold text-blue-600">
-                      {formatPrice(getCartTotal() - discount)}
+                      {formatPrice(getCartTotal() - discount - calRankDiscount)}
                     </span>
                   </div>
 
@@ -812,7 +820,7 @@ export default function PayCheckout() {
                       <>
                         <p
                           className="text-gray-600 mt-1 cursor-pointer hover:underline"
-                          onClick={() => navigate("/orderTracking")}
+                          // onClick={() => navigate("/orderTracking")}
                         >
                           Hoàn tất đơn hàng của bạn
                         </p>

@@ -27,6 +27,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import axiosInstance from "@/lib/axios";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Mock cart data
 // const initialCartItems = [
@@ -64,17 +65,17 @@ import axiosInstance from "@/lib/axios";
 //   },
 // ];
 // Mock user data with total spent and rank details
-const user = {
-  currentRank: "Silver",
-  totalSpent: 6000000, // Example: 6,000,000 VND spent
-  totalScore: 1000,
-};
+// const user = {
+//   currentRank: "Silver",
+//   totalSpent: 6000000, // Example: 6,000,000 VND spent
+//   totalScore: 1000,
+// };
 
-// Membership rank thresholds and discounts
-const rankThresholds = [
-  { rank: "Silver", threshold: 5000000, discount: 5 }, // 5% discount
-  { rank: "Gold", threshold: 10000000, discount: 10 }, // 10% discount
-];
+// // Membership rank thresholds and discounts
+// const rankThresholds = [
+//   { rank: "Silver", threshold: 5000000, discount: 5 }, // 5% discount
+//   { rank: "Gold", threshold: 10000000, discount: 10 }, // 10% discount
+// ];
 
 // useEffect(() => {
 //   console.log("Cart updated:", cart);
@@ -89,7 +90,9 @@ export default function ShoppingCart() {
     useCart();
 
   //giảm giá
-  const [couponCode, setCouponCode] = useState(localStorage.getItem("promotion_code") || "");
+  const [couponCode, setCouponCode] = useState(
+    localStorage.getItem("promotion_code") || ""
+  );
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponError, setCouponError] = useState("");
@@ -98,11 +101,79 @@ export default function ShoppingCart() {
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
 
+  //rank
+  const [userInfo, setUserInfo] = useState({});
+  const [agency, setAgency] = useState(null);
+  const [rankDiscountPercent, setRankDiscountPercent] = useState(0);
+  const [rankDiscountAmount, setRankDiscountAmount] = useState(0);
+
+  const getSubtotal = useCallback(() => {
+    return cartItems.reduce(
+      (currentTotal, item) => currentTotal + item.price * item.quantity,
+      0
+    );
+  }, [cartItems]);
+
+  const getTotal = useCallback(() => {
+    const subtotal = getSubtotal();
+    return subtotal - rankDiscountAmount - discount;
+  }, [getSubtotal, rankDiscountAmount, discount]);
+
+  const getTotalItems = useCallback(() => {
+    return cartItems.reduce(
+      (currentTotal, item) => currentTotal + item.quantity,
+      0
+    );
+  }, [cartItems]);
+
+  useEffect(() => {
+    const fetchUserAndAgency = async () => {
+      try {
+        const userRes = await axiosInstance.get("/auth/userInfo");
+        const userData = userRes.data?.data;
+        setUserInfo(userData);
+
+        // Debugging logs
+        console.log("User Data after fetch:", userData);
+        console.log("User Role Name:", userData?.role?.role_name);
+        console.log("User Agency Rank ID:", userData?.user?.agency_rank_id);
+
+        if (
+          userData?.role?.role_name === "admin_agency" &&
+          userData?.user?.agency_rank_id
+        ) {
+          const agencyRankRes = await axiosInstance.get(
+            `/agency-rank/${userData.user.agency_rank_id}`
+          );
+          setAgency(agencyRankRes.data.data);
+          const percent = agencyRankRes.data.data.discount_percent || 0;
+          setRankDiscountPercent(percent);
+        } else {
+          setAgency(null);
+          setRankDiscountPercent(0);
+        }
+      } catch (error) {
+        console.error("Error fetching user or agency info:", error);
+        setUserInfo({});
+        setAgency(null);
+        setRankDiscountPercent(0);
+      }
+    };
+    fetchUserAndAgency();
+  }, []);
+
   useEffect(() => {
     console.log("Cart updated:", cart);
-    setCartItems(JSON.parse(localStorage.getItem('cart')) || []);
+    setCartItems(JSON.parse(localStorage.getItem("cart")) || []);
     fetchPromotion();
   }, [cart]);
+
+  useEffect(() => {
+    const subtotal = getSubtotal();
+    const calRankDiscount = subtotal * (rankDiscountPercent / 100);
+    localStorage.setItem("calRankDiscount", calRankDiscount);
+    setRankDiscountAmount(calRankDiscount);
+  }, [getSubtotal, rankDiscountPercent]);
 
   const fetchPromotion = async () => {
     const res = await axiosInstance.get("/promotion");
@@ -117,77 +188,30 @@ export default function ShoppingCart() {
     }).format(price);
   };
 
-  //rank mói
-  const getSubtotal = useCallback(() => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
-  }, [cartItems]);
-
-  // Calculate points to earn (1 point per 10,000 VND, +50% for Gold rank)
-  const getPointsToEarn = useCallback(() => {
-    const basePoints = Math.floor(getSubtotal() / 10000);
-    return user.currentRank === "Gold"
-      ? Math.floor(basePoints * 1.5)
-      : basePoints;
-  }, [getSubtotal, user.currentRank]);
-
-  // Calculate current rank discount and amount needed for next rank
-  const getRankDetails = () => {
-    const currentRankData = rankThresholds.find(
-      (r) => r.rank === user.currentRank
-    );
-    const nextRankData = rankThresholds.find(
-      (r) => r.threshold > user.totalSpent
-    );
-
-    return {
-      currentDiscount: currentRankData ? currentRankData.discount : 0,
-      nextRank: nextRankData ? nextRankData.rank : null,
-      amountToNextRank: nextRankData
-        ? nextRankData.threshold - user.totalSpent
-        : 0,
-    };
-  };
-  const rankDetails = getRankDetails();
-
-  // const getTotal = () => {
-  //   const rankDetails = getRankDetails();
-  //   const subtotal = getSubtotal();
-  //   const rankDiscount = subtotal * (rankDetails.currentDiscount / 100);
-  //   return subtotal - couponDiscount - rankDiscount;
-  // };
-
-  const getTotal = useCallback(() => {
-    return getSubtotal() - discount;
-  }, [getSubtotal, discount]);
-
-  const getTotalItems = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
-  };
-
-  // // Mock user data (replace with actual user context or API call)
-  // const user = {
-  //   currentRank: "Silver", // Could be "Gold" for 50% bonus points
-  //   totalScore: 1000,
-  // };
-  // // Calculate points to earn (1 point per 10,000 VND, +50% for Gold rank)
-  // const getPointsToEarn = useCallback(() => {
-  //   const basePoints = Math.floor(getSubtotal() / 10000);
-  //   return user.currentRank === "Gold" ? Math.floor(basePoints * 1.5) : basePoints;
-  // }, [getSubtotal, user.currentRank]);
-
   const calculateDiscount = (old_price, newPrice) => {
     return Math.round(((old_price - newPrice) / old_price) * 100);
   };
-  // const updateQuantity = (id, newQuantity) => {
-  //   setCart((prevCart) =>
-  //     prevCart.map((item) =>
-  //       item.id === id ? { ...item, quantity: newQuantity } : item
-  //     )
-  //   );
+
+  // Calculate points to earn (1 point per 10,000 VND, +50% for Gold rank)
+  // const getPointsToEarn = useCallback(() => {
+  //   const basePoints = Math.floor(getSubtotal() / 10000);
+  //   return userInfo.user?.currentRank === "Gold"
+  //     ? Math.floor(basePoints * 1.5)
+  //     : basePoints;
+  // }, [getSubtotal, userInfo.user?.currentRank]);
+
+  // Calculate current rank discount and amount needed for next rank
+  // const getRankDetails = () => {
+  //   // rankThresholds và user mock data không còn được sử dụng, nên sẽ bị loại bỏ.
+  //   // Nếu bạn muốn hiển thị thông tin này, cần lấy dữ liệu rankThresholds từ backend
+  //   // và cập nhật userInfo với totalSpent và currentRank thực tế từ DB.
+  //   return {
+  //     currentDiscount: 0,
+  //     nextRank: null,
+  //     amountToNextRank: 0,
+  //   };
   // };
+  // const rankDetails = getRankDetails(); // Vẫn giữ để tránh lỗi nếu có chỗ nào khác dùng
 
   const handleUpdateQuantity = (id, newQuantity) => {
     console.log("update quantity", id, newQuantity);
@@ -198,13 +222,6 @@ export default function ShoppingCart() {
   const removeItem = (id) => {
     removeFromCart(id);
   };
-
-  // const getSubtotal = () => {
-  //   return cartItems.reduce(
-  //     (total, item) => total + item.price * item.quantity,
-  //     0
-  //   );
-  // };
 
   const applyCoupon = async () => {
     setIsApplyingCoupon(true);
@@ -224,38 +241,36 @@ export default function ShoppingCart() {
   };
 
   const getDiscount = (promotion_code) => {
-    // return cartItems.reduce((total, item) => {
-    //   if (item.old_price) {
-    //     return total + (item.old_price - item.price) * item.quantity;
-    //   }
-    //   return total;
-    // }, 0);
     const promotion = promotions.filter(
       (item) => item.promotion_code === promotion_code
     );
-    const percent = promotion[0].promotion_percent / 100;
-    const priceReduce = getCartTotal() * percent;
-    setDiscount(priceReduce);
-    localStorage.setItem("discount", priceReduce);
-    localStorage.setItem("promotion_code", promotion_code);
-    console.log("price reduce", priceReduce, percent, getCartTotal());
+    if (promotion.length > 0) {
+      const percent = promotion[0].promotion_percent / 100;
+      const priceReduce = getCartTotal() * percent;
+      setDiscount(priceReduce);
+      localStorage.setItem("discount", priceReduce);
+      localStorage.setItem("promotion_code", promotion_code);
+      console.log("price reduce", priceReduce, percent, getCartTotal());
+    } else {
+      setDiscount(0);
+      localStorage.setItem("discount", 0);
+      localStorage.setItem("promotion_code", "");
+    }
   };
-
-  // const getTotal = () => {
-  //   return getSubtotal();
-  // };
-
-  // const getTotalItems = () => {
-  //   return cartItems.reduce((total, item) => total + item.quantity, 0);
-  // };
 
   const handleCheckout = async () => {
     setIsLoading(true);
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    alert("Đang chuyển đến trang thanh toán...");
-    navigate("/PayCheckout");
-    setIsLoading(false);
+    if (discount + calculateDiscount > getSubtotal()) {
+      alert(
+        "Không thể áp dụng mã giảm giá và chiết khấu đồng thời! Mời chọn lại mã giảm giá"
+      );
+    } else {
+      localStorage.setItem("finalOrderTotal", getTotal());
+      alert("Đang chuyển đến trang thanh toán...");
+      navigate("/PayCheckout");
+      setIsLoading(false);
+    }
   };
 
   if (cartItems.length === 0) {
@@ -283,6 +298,12 @@ export default function ShoppingCart() {
       </div>
     );
   }
+  console.log("Current userInfo:", userInfo);
+  console.log("Current agency:", agency);
+  console.log(
+    "Is admin_agency and agency exists?",
+    userInfo.role?.role_name === "admin_agency" && agency
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -445,64 +466,73 @@ export default function ShoppingCart() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
-                      Hạng thành viên:
-                    </span>
-                    <Badge className="bg-blue-500 text-white">
-                      <Trophy className="h-3 w-3 mr-1" />
-                      {user.currentRank}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
-                      Giảm giá hạng:
-                    </span>
-                    <span className="font-medium">
-                      {rankDetails.currentDiscount}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Đã chi tiêu:</span>
-                    <span className="font-medium">
-                      {formatPrice(user.totalSpent)}
-                    </span>
-                  </div>
-                  {rankDetails.nextRank && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
-                        Còn lại để lên {rankDetails.nextRank}:
-                      </span>
-                      <span className="font-medium">
-                        {formatPrice(rankDetails.amountToNextRank)}
-                      </span>
+                  {userInfo.role?.role_name === "admin_agency" && agency ? (
+                    <>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">
+                          Hạng thành viên:
+                        </span>
+                        <Badge className="bg-blue-500 text-white">
+                          <Trophy className="h-3 w-3 mr-1" />
+                          {agency.agency_rank_name || "0"}
+                        </Badge>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">
+                          Chiết khấu hạng:
+                        </span>
+                        <span className="font-medium">
+                          {agency.discount_percent}%
+                        </span>
+                      </div>
+
+                      {/* Tên đại lý, Địa chỉ, Số điện thoại 
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Tên đại lý:</span>
+                        <span className="font-medium">
+                          {agency.agency_name} // Uncomment if Agency object is fetched and has this
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Địa chỉ:</span>
+                        <span className="font-medium">{agency.address}</span>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">
+                          Số điện thoại:
+                        </span>
+                        <span className="font-medium">{agency.phone}</span>
+                      </div>
+                      */}
+                    </>
+                  ) : (
+                    <div className="text-sm text-gray-600">
+                      Bạn chưa là đại lý. Đăng ký để nhận ưu đãi!
                     </div>
                   )}
+
+                  <Separator />
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">
                       Điểm hiện tại:
                     </span>
-                    <span className="font-medium">
-                      {user.totalScore.toLocaleString()}
-                    </span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-blue-700">
-                      Điểm sẽ nhận:
-                    </span>
                     <span className="font-bold text-blue-700">
-                      +{getPointsToEarn()}
+                      {/* Cần userInfo.user.totalScore nếu có */}
+                      {userInfo.user?.total?.toLocaleString() || "0"}
                     </span>
                   </div>
-                  <div className="text-xs text-gray-500">
-                    * 1 điểm = 10,000 VND. Hạng {user.currentRank} nhận thêm{" "}
-                    {user.currentRank === "Gold" ? "50" : "0"}% điểm
-                  </div>
+
                   <Button
                     variant="outline"
                     className="w-full mt-4"
-                    onClick={() => navigate("/rank")}
+                    onClick={() =>
+                      navigate("/rank", {
+                        state: { agencyRankId: agency?.agency_rank_id },
+                      })
+                    }
                   >
                     <Info className="h-4 w-4 mr-2" />
                     Xem chi tiết hạng đại lý
@@ -524,9 +554,17 @@ export default function ShoppingCart() {
                       <span className="text-gray-600">Tạm tính</span>
                       <span>{formatPrice(getSubtotal())}</span>
                     </div>
+                    {/* Hiển thị chiết khấu theo rank nếu có */}
+                    {rankDiscountAmount > 0 && (
+                      <div className="flex justify-between text-blue-600">
+                        <span>Chiết khấu đại lý ({rankDiscountPercent}%)</span>
+                        <span>-{formatPrice(rankDiscountAmount)}</span>
+                      </div>
+                    )}
+                    {/* Giảm giá khuyến mãi nếu có */}
                     {discount > 0 && (
                       <div className="flex justify-between text-green-600">
-                        <span>Giảm giá</span>
+                        <span>Giảm giá khuyến mãi</span>
                         <span>-{formatPrice(discount)}</span>
                       </div>
                     )}

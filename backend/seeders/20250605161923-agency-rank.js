@@ -6,7 +6,7 @@ module.exports = {
     await queryInterface.bulkInsert('agency_rank', [
       {
         agency_rank_id: 1,
-        agency_rank_name: 'Bronnze',
+        agency_rank_name: 'Bronze',
         min_accumulated_value: 1000000,
         discount_percent: 10,
         note: "Hạng đồng",
