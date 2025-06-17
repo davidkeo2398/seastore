@@ -7,6 +7,9 @@ const promotionService = require('./promotion-service');
 const agencyRankService = require('./agency-rank-service');
 const agencyService = require('./agency-service');
 
+//admin
+const orderAdminService = require('./admin/order-admin-service');
+
 module.exports = {
     authService,
     orderService,
@@ -14,5 +17,7 @@ module.exports = {
     categoriesService,
     promotionService,
     agencyRankService,
-    agencyService
+    agencyService,
+    //admin
+    orderAdminService,
 };

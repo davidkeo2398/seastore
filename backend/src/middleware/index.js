@@ -1,6 +1,7 @@
-const authMiddleware = require("./auth-middleware");
+const {authMiddleware, adminAuthMiddleware} = require("./auth-middleware");
 
 
 module.exports = {
-    authMiddleware
+    authMiddleware,
+    adminAuthMiddleware
 }

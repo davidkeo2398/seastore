@@ -21,4 +21,10 @@ router.use('/promotion', promotionRoutes);
 router.use('/agency', agencyRoutes);
 router.use('/agency-rank', agencyRankRoutes);
 
-module.exports = router;
+//admin
+const adminRouter = express.Router();
+const orderAdminRoutes = require('./admin/order-admin-route');
+
+adminRouter.use('/order', orderAdminRoutes);
+
+module.exports = {router, adminRouter};
