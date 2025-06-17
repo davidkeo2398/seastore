@@ -55,8 +55,10 @@ const adminMiddleware = (req, res, next) => {
     next();
   });
 };
-const rotues = require('./src/routes/index');
-app.use('/api', rotues);
+const {router, adminRouter} = require('./src/routes/index');
+app.use('/api', router);
+//admin
+app.use('/api/admin', adminRouter);
 
 // Login route
 // app.post('/login', (req, res) => {
