@@ -577,7 +577,7 @@ export default function ShoppingCart() {
                   <Separator className="my-4" />
 
                   {/* Coupon Code Input */}
-                  <div className="mb-4">
+                  <div className={`mb-4 ${userInfo.role?.role_name === "admin_agency" ? "opacity-50 pointer-events-none" : ""}`}>
                     <p className="text-sm font-medium mb-2">Mã giảm giá</p>
                     <div className="flex space-x-2 ">
                       <Select
@@ -586,7 +586,7 @@ export default function ShoppingCart() {
                           setCouponCode(value === "none" ? "" : value);
                           getDiscount(value);
                         }}
-                        disabled={isApplyingCoupon || appliedCoupon !== null}
+                        disabled={isApplyingCoupon || appliedCoupon !== null || userInfo.role_name === "admin_agency"}
                       >
                         <SelectTrigger className="w-[300px]">
                           <SelectValue placeholder="Chọn mã giảm giá" />
@@ -610,7 +610,7 @@ export default function ShoppingCart() {
                         placeholder="Nhập mã giảm giá"
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value)}
-                        disabled={isApplyingCoupon || appliedCoupon !== null}
+                        disabled={isApplyingCoupon || appliedCoupon !== null || userInfo.role_name === "admin_agency"}
                         className="flex-1"
                       />
                       {appliedCoupon ? (
@@ -627,7 +627,7 @@ export default function ShoppingCart() {
                       ) : (
                         <Button
                           onClick={applyCoupon}
-                          disabled={isApplyingCoupon || !couponCode.trim()}
+                          disabled={isApplyingCoupon || !couponCode.trim() || userInfo.role_name === "admin_agency"}
                           className="shrink-0 bg-blue-600 hover:bg-blue-700 text-bl"
                         >
                           {isApplyingCoupon ? "..." : "Áp dụng"}

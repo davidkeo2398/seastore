@@ -132,12 +132,12 @@ export default function PayCheckout() {
   const [touchedAddress, setTouchedAddress] = useState(false);
 
   const [discount, setDiscount] = useState(0);
-  const [calRankDiscount, setCalRankDiscount] = useState(0)
+  const [calRankDiscount, setCalRankDiscount] = useState(0);
 
   useEffect(() => {
-    setDiscount(localStorage.getItem('discount'));
-    setCalRankDiscount(localStorage.getItem('calRankDiscount'));
-    setOrderSummary(JSON.parse(localStorage.getItem('cart')));
+    setDiscount(localStorage.getItem("discount"));
+    setCalRankDiscount(localStorage.getItem("calRankDiscount"));
+    setOrderSummary(JSON.parse(localStorage.getItem("cart")));
   }, []);
   const [paycheck, setPaycheck] = useState([]);
   useEffect(() => {
@@ -263,33 +263,77 @@ export default function PayCheckout() {
     });
     console.log("products", products);
 
-    if (userInfo.role && userInfo.role.role_name === "admin_agency") {
-      const payload = {
-        user_email: userInfo.user.email,
-        address_agency: formData.address_user,
-        agency_name: formData.full_name,
-        phone_agency: formData.phone_user,
-        total: getCartTotal() - discount - calRankDiscount,
-        promotion_id: 1,
-        order_date: getCurrentDateTime(),
-        payment_method: "cash",
-        products: products,
-        promotion_code: localStorage.getItem('promotion_code')
-      };
-      console.log("payload", payload);
-      // setIsProcessing(true);
-      const result = await axiosInstance.post("/order", payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log("create order", result);
-      removeFromCart();
-      navigate('/orderTracking');
-      // alert("Thanh toán thành công!");
-      // setIsProcessing(false);
+    let finalTotal = getCartTotal();
+    let promotionId = null;
+    const promotion_code = localStorage.getItem("promotion_code");
+
+    if (userInfo.role?.role_name === "user") {
+      finalTotal = getCartTotal() - discount;
+      promotionId = 1; //Giả sử ID mặc định cho người dùng
+      // promotion_code: localStorage.getItem("promotion_code");
+    } else if (userInfo.role && userInfo.role.role_name === "admin_agency") {
+      finalTotal = getCartTotal() - calRankDiscount;
+      promotionId = 1; //Giả sử ID mặc định cho người dùng
+      // promotion_code: localStorage.getItem("promotion_code");
     }
+    const payload = {
+      user_email: userInfo.user.email,
+      address_agency: formData.address_user,
+      agency_name: formData.full_name,
+      phone_agency: formData.phone_user,
+      total: finalTotal,
+      promotion_id: promotionId,
+      order_date: getCurrentDateTime(),
+      payment_method: "cash",
+      products: products,
+      promotion_code: promotion_code,
+    };
+    console.log("payload", payload);
+
+    console.log("promotion_code lấy từ localStorage:", promotion_code);
+    
+
+
+    const result = await axiosInstance.post("/order", payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log("create order for other roles", result);
+    removeFromCart();
+    navigate("/orderTracking");
+    // alert("Thanh toán thành công!");
+    // setIsProcessing(false);
   };
+
+  //   if (userInfo.role && userInfo.role.role_name === "admin_agency" || userInfo.role?.role_name === "user") {
+  //     const payload = {
+  //       user_email: userInfo.user.email,
+  //       address_agency: formData.address_user,
+  //       agency_name: formData.full_name,
+  //       phone_agency: formData.phone_user,
+  //       total: getCartTotal(),
+  //       // - discount - calRankDiscount,
+  //       promotion_id: null,
+  //       order_date: getCurrentDateTime(),
+  //       payment_method: "cash",
+  //       products: products,
+  //       promotion_code: localStorage.getItem('promotion_code')
+  //     };
+  //     console.log("payload", payload);
+  //     // setIsProcessing(true);
+  //     const result = await axiosInstance.post("/order", payload, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     console.log("create order for other roles", result);
+  //     removeFromCart();
+  //     navigate('/orderTracking');
+  //     // alert("Thanh toán thành công!");
+  //     // setIsProcessing(false);
+  //   }
+  // };
 
   const renderPaymentForm = () => {
     switch (selectedPayment) {
@@ -791,11 +835,18 @@ export default function PayCheckout() {
                     </div>
                     <div className="flex justify-between text-sm text-green-600">
                       <span>Giảm giá</span>
-                      <span>-{formatPrice(localStorage.getItem('discount') || 0)}</span>
+                      <span>
+                        -{formatPrice(localStorage.getItem("discount") || 0)}
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm text-green-600">
                       <span>Chiết khấu</span>
-                      <span>-{formatPrice(localStorage.getItem('calRankDiscount') || 0)}</span>
+                      <span>
+                        -
+                        {formatPrice(
+                          localStorage.getItem("calRankDiscount") || 0
+                        )}
+                      </span>
                     </div>
                   </div>
 
