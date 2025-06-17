@@ -1,13 +1,37 @@
-
-import { useState } from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { toast } from "sonner"
+import { useEffect, useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
 import {
   Trash2,
   Search,
@@ -21,7 +45,8 @@ import {
   User,
   MapPin,
   Plus,
-} from "lucide-react"
+} from "lucide-react";
+import axiosInstance from "@/lib/axios";
 
 // Mock data for demonstration
 const mockOrders = [
@@ -105,89 +130,139 @@ const mockOrders = [
     shipping_method: "express",
     items_count: 2,
   },
-]
-
-
+];
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState(mockOrders)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [paymentFilter, setPaymentFilter] = useState("all")
-  const [selectedOrder, setSelectedOrder] = useState(null)
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
+  const [orders, setOrders] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [paymentFilter, setPaymentFilter] = useState("all");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+
+  const fetchOrders = async () => {
+    try {
+      const orders = await axiosInstance("/admin/order");
+      setOrders(orders.data.data);
+    } catch (error) {
+      setOrders([]);
+      console.error("Get orders fail: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const handleDelete = (order_id) => {
     if (!window.confirm("Bạn có chắc chắn muốn xóa đơn hàng này không?")) {
-      return
+      return;
     }
 
-    setOrders((prevOrders) => prevOrders.filter((order) => order.order_id !== order_id))
-    toast.success("Xóa đơn hàng thành công!")
-  }
+    setOrders((prevOrders) =>
+      prevOrders.filter((order) => order.order_id !== order_id)
+    );
+    toast.success("Xóa đơn hàng thành công!");
+  };
 
   const handleStatusChange = (order_id, newStatus) => {
     setOrders((prevOrders) =>
-      prevOrders.map((order) => (order.order_id === order_id ? { ...order, status: newStatus } : order)),
-    )
-    toast.success("Cập nhật trạng thái đơn hàng thành công!")
-  }
+      prevOrders.map((order) =>
+        order.order_id === order_id ? { ...order, status: newStatus } : order
+      )
+    );
+    toast.success("Cập nhật trạng thái đơn hàng thành công!");
+  };
 
   const handleViewDetails = (order) => {
-    setSelectedOrder(order)
-    setIsDetailDialogOpen(true)
-  }
+    setSelectedOrder(order);
+    setIsDetailDialogOpen(true);
+  };
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
-      order.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.order_id.toLowerCase().includes(searchTerm.toLowerCase())
+      order.order_id.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === "all" || order.status === statusFilter
-    const matchesPayment = paymentFilter === "all" || order.payment_status === paymentFilter
+    const matchesStatus =
+      statusFilter === "all" || order.status === statusFilter;
+    const matchesPayment =
+      paymentFilter === "all" || order.payment_status === paymentFilter;
 
-    return matchesSearch && matchesStatus && matchesPayment
-  })
+    return matchesSearch && matchesStatus && matchesPayment;
+  });
 
-  const totalOrders = orders.length
+  const totalOrders = orders.length;
   const totalRevenue = orders
     .filter((order) => order.payment_status === "paid")
-    .reduce((sum, order) => sum + order.total, 0)
-  const pendingOrders = orders.filter((order) => order.status === "pending").length
-  const completedOrders = orders.filter((order) => order.status === "completed").length
+    .reduce((sum, order) => sum + order.total, 0);
+  const pendingOrders = orders.filter(
+    (order) => order.status === "pending"
+  ).length;
+  const completedOrders = orders.filter(
+    (order) => order.status === "completed"
+  ).length;
 
   const getStatusBadge = (status) => {
     switch (status) {
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">Chờ xử lý</Badge>
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+            Chờ xử lý
+          </Badge>
+        );
       case "processing":
-        return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">Đang xử lý</Badge>
+        return (
+          <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+            Đang xử lý
+          </Badge>
+        );
       case "shipped":
-        return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">Đã gửi</Badge>
+        return (
+          <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">
+            Đã gửi
+          </Badge>
+        );
       case "completed":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Hoàn thành</Badge>
+        return (
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+            Hoàn thành
+          </Badge>
+        );
       case "cancelled":
-        return <Badge variant="destructive">Đã hủy</Badge>
+        return <Badge variant="destructive">Đã hủy</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline">{status}</Badge>;
     }
-  }
+  };
 
   const getPaymentBadge = (status) => {
     switch (status) {
-      case "paid":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Đã thanh toán</Badge>
+      case "completed":
+        return (
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+            Đã thanh toán
+          </Badge>
+        );
       case "pending":
-        return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200">Chờ thanh toán</Badge>
+        return (
+          <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200">
+            Chờ thanh toán
+          </Badge>
+        );
       case "failed":
-        return <Badge variant="destructive">Thất bại</Badge>
-      case "refunded":
-        return <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-200">Đã hoàn tiền</Badge>
+        return <Badge variant="destructive">Thất bại</Badge>;
+      case "cancelled":
+        return (
+          <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-200">
+            Đã hoàn tiền
+          </Badge>
+        );
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline">{status}</Badge>;
     }
-  }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
@@ -195,7 +270,9 @@ export default function OrdersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Quản lý đơn hàng</h1>
-          <p className="text-muted-foreground mt-1">Theo dõi và xử lý đơn hàng của khách hàng</p>
+          <p className="text-muted-foreground mt-1">
+            Theo dõi và xử lý đơn hàng của khách hàng
+          </p>
         </div>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
@@ -221,7 +298,9 @@ export default function OrdersPage() {
             <DollarSign className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{totalRevenue.toLocaleString("vi-VN")} đ</div>
+            <div className="text-2xl font-bold text-green-600">
+              {totalRevenue.toLocaleString("vi-VN")} đ
+            </div>
             <p className="text-xs text-muted-foreground">Đã thanh toán</p>
           </CardContent>
         </Card>
@@ -231,7 +310,9 @@ export default function OrdersPage() {
             <Clock className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{pendingOrders}</div>
+            <div className="text-2xl font-bold text-orange-600">
+              {pendingOrders}
+            </div>
             <p className="text-xs text-muted-foreground">Đơn hàng mới</p>
           </CardContent>
         </Card>
@@ -241,7 +322,9 @@ export default function OrdersPage() {
             <Package className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{completedOrders}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {completedOrders}
+            </div>
             <p className="text-xs text-muted-foreground">Đã giao hàng</p>
           </CardContent>
         </Card>
@@ -251,7 +334,9 @@ export default function OrdersPage() {
       <Card>
         <CardHeader>
           <CardTitle>Danh sách đơn hàng</CardTitle>
-          <CardDescription>Tìm kiếm và quản lý đơn hàng của khách hàng</CardDescription>
+          <CardDescription>
+            Tìm kiếm và quản lý đơn hàng của khách hàng
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -315,7 +400,9 @@ export default function OrdersPage() {
                       <div className="flex flex-col items-center gap-2">
                         <ShoppingCart className="h-8 w-8 text-muted-foreground" />
                         <p className="text-muted-foreground">
-                          {searchTerm || statusFilter !== "all" || paymentFilter !== "all"
+                          {searchTerm ||
+                          statusFilter !== "all" ||
+                          paymentFilter !== "all"
                             ? "Không tìm thấy đơn hàng phù hợp"
                             : "Chưa có đơn hàng nào"}
                         </p>
@@ -326,18 +413,24 @@ export default function OrdersPage() {
                   filteredOrders.map((order) => (
                     <TableRow key={order.order_id}>
                       <TableCell>
-                        <code className="bg-muted px-2 py-1 rounded text-sm">{order.order_id}</code>
+                        <code className="bg-muted px-2 py-1 rounded text-sm">
+                          {order.order_id}
+                        </code>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3 text-muted-foreground" />
-                          {new Date(order.order_date).toLocaleDateString("vi-VN")}
+                          {new Date(order.order_date).toLocaleDateString(
+                            "vi-VN"
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
                           <div className="font-medium">{order.name}</div>
-                          <div className="text-sm text-muted-foreground">{order.email}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {order.email}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell className="max-w-[200px]">
@@ -359,25 +452,35 @@ export default function OrdersPage() {
                           {order.items_count} sản phẩm
                         </div>
                       </TableCell>
-                      <TableCell className="font-medium">{order.total.toLocaleString("vi-VN")} đ</TableCell>
+                      <TableCell className="font-medium">
+                        {order.total.toLocaleString("vi-VN")} đ
+                      </TableCell>
                       <TableCell>
                         <Select
                           value={order.status}
-                          onValueChange={(value) => handleStatusChange(order.order_id, value)}
+                          onValueChange={(value) =>
+                            handleStatusChange(order.order_id, value)
+                          }
                         >
                           <SelectTrigger className="w-[130px] h-8">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="pending">Chờ xử lý</SelectItem>
-                            <SelectItem value="processing">Đang xử lý</SelectItem>
+                            <SelectItem value="processing">
+                              Đang xử lý
+                            </SelectItem>
                             <SelectItem value="shipped">Đã gửi</SelectItem>
-                            <SelectItem value="completed">Hoàn thành</SelectItem>
+                            <SelectItem value="completed">
+                              Hoàn thành
+                            </SelectItem>
                             <SelectItem value="cancelled">Đã hủy</SelectItem>
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell>{getPaymentBadge(order.payment_status)}</TableCell>
+                      <TableCell>
+                        {getPaymentBadge(order.status)}
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button
@@ -415,7 +518,9 @@ export default function OrdersPage() {
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Chi tiết đơn hàng</DialogTitle>
-            <DialogDescription>Thông tin chi tiết về đơn hàng {selectedOrder?.order_id}</DialogDescription>
+            <DialogDescription>
+              Thông tin chi tiết về đơn hàng {selectedOrder?.order_id}
+            </DialogDescription>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-6">
@@ -435,8 +540,15 @@ export default function OrdersPage() {
                   <h4 className="font-medium">Thông tin đơn hàng</h4>
                   <div className="space-y-1 text-sm">
                     <div>Mã: {selectedOrder.order_id}</div>
-                    <div>Ngày: {new Date(selectedOrder.order_date).toLocaleDateString("vi-VN")}</div>
-                    <div>Phương thức giao hàng: {selectedOrder.shipping_method}</div>
+                    <div>
+                      Ngày:{" "}
+                      {new Date(selectedOrder.order_date).toLocaleDateString(
+                        "vi-VN"
+                      )}
+                    </div>
+                    <div>
+                      Phương thức giao hàng: {selectedOrder.shipping_method}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -445,18 +557,23 @@ export default function OrdersPage() {
                 <div className="text-sm space-y-1">
                   <div>{selectedOrder.address}</div>
                   <div>
-                    {selectedOrder.city}, {selectedOrder.country} {selectedOrder.zipCode}
+                    {selectedOrder.city}, {selectedOrder.country}{" "}
+                    {selectedOrder.zipCode}
                   </div>
                 </div>
               </div>
               <div className="flex items-center justify-between pt-4 border-t">
                 <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">Trạng thái đơn hàng</div>
+                  <div className="text-sm text-muted-foreground">
+                    Trạng thái đơn hàng
+                  </div>
                   {getStatusBadge(selectedOrder.status)}
                 </div>
                 <div className="space-y-1 text-right">
                   <div className="text-sm text-muted-foreground">Tổng tiền</div>
-                  <div className="text-2xl font-bold">{selectedOrder.total.toLocaleString("vi-VN")} đ</div>
+                  <div className="text-2xl font-bold">
+                    {selectedOrder.total.toLocaleString("vi-VN")} đ
+                  </div>
                 </div>
               </div>
             </div>
@@ -464,5 +581,5 @@ export default function OrdersPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
