@@ -48,89 +48,90 @@ import {
 } from "lucide-react";
 import axiosInstance from "@/lib/axios";
 
+//hạn sử dụng sản phẩm, khi đặt hành thì ưu tiên xử lý hàng sắp hết date
 // Mock data for demonstration
-const mockOrders = [
-  {
-    order_id: "ORD001",
-    order_date: "2024-03-01",
-    name: "Nguyễn Văn An",
-    email: "nguyenvanan@example.com",
-    address: "123 Đường Lê Lợi, Quận 1",
-    city: "TP.HCM",
-    country: "Việt Nam",
-    zipCode: "70000",
-    total: 2999000,
-    iduser: "USER001",
-    status: "completed",
-    payment_status: "paid",
-    shipping_method: "express",
-    items_count: 3,
-  },
-  {
-    order_id: "ORD002",
-    order_date: "2024-03-02",
-    name: "Trần Thị Bình",
-    email: "tranthibinh@example.com",
-    address: "456 Đường Nguyễn Huệ, Quận 3",
-    city: "TP.HCM",
-    country: "Việt Nam",
-    zipCode: "70000",
-    total: 1599000,
-    iduser: "USER002",
-    status: "processing",
-    payment_status: "paid",
-    shipping_method: "standard",
-    items_count: 2,
-  },
-  {
-    order_id: "ORD003",
-    order_date: "2024-03-03",
-    name: "Lê Văn Cường",
-    email: "levancuong@example.com",
-    address: "789 Đường Võ Văn Tần, Quận 5",
-    city: "TP.HCM",
-    country: "Việt Nam",
-    zipCode: "70000",
-    total: 4599000,
-    iduser: "USER003",
-    status: "pending",
-    payment_status: "pending",
-    shipping_method: "express",
-    items_count: 1,
-  },
-  {
-    order_id: "ORD004",
-    order_date: "2024-03-04",
-    name: "Phạm Thị Dung",
-    email: "phamthidung@example.com",
-    address: "321 Đường Điện Biên Phủ, Quận 10",
-    city: "TP.HCM",
-    country: "Việt Nam",
-    zipCode: "70000",
-    total: 649000,
-    iduser: "USER004",
-    status: "shipped",
-    payment_status: "paid",
-    shipping_method: "standard",
-    items_count: 4,
-  },
-  {
-    order_id: "ORD005",
-    order_date: "2024-03-05",
-    name: "Hoàng Văn Em",
-    email: "hoangvanem@example.com",
-    address: "654 Đường Cách Mạng Tháng 8, Quận Tân Bình",
-    city: "TP.HCM",
-    country: "Việt Nam",
-    zipCode: "70000",
-    total: 1699000,
-    iduser: "USER005",
-    status: "cancelled",
-    payment_status: "refunded",
-    shipping_method: "express",
-    items_count: 2,
-  },
-];
+// const mockOrders = [
+//   {
+//     order_id: "ORD001",
+//     order_date: "2024-03-01",
+//     name: "Nguyễn Văn An",
+//     email: "nguyenvanan@example.com",
+//     address: "123 Đường Lê Lợi, Quận 1",
+//     city: "TP.HCM",
+//     country: "Việt Nam",
+//     zipCode: "70000",
+//     total: 2999000,
+//     iduser: "USER001",
+//     status: "completed",
+//     payment_status: "paid",
+//     shipping_method: "express",
+//     items_count: 3,
+//   },
+//   {
+//     order_id: "ORD002",
+//     order_date: "2024-03-02",
+//     name: "Trần Thị Bình",
+//     email: "tranthibinh@example.com",
+//     address: "456 Đường Nguyễn Huệ, Quận 3",
+//     city: "TP.HCM",
+//     country: "Việt Nam",
+//     zipCode: "70000",
+//     total: 1599000,
+//     iduser: "USER002",
+//     status: "processing",
+//     payment_status: "paid",
+//     shipping_method: "standard",
+//     items_count: 2,
+//   },
+//   {
+//     order_id: "ORD003",
+//     order_date: "2024-03-03",
+//     name: "Lê Văn Cường",
+//     email: "levancuong@example.com",
+//     address: "789 Đường Võ Văn Tần, Quận 5",
+//     city: "TP.HCM",
+//     country: "Việt Nam",
+//     zipCode: "70000",
+//     total: 4599000,
+//     iduser: "USER003",
+//     status: "pending",
+//     payment_status: "pending",
+//     shipping_method: "express",
+//     items_count: 1,
+//   },
+//   {
+//     order_id: "ORD004",
+//     order_date: "2024-03-04",
+//     name: "Phạm Thị Dung",
+//     email: "phamthidung@example.com",
+//     address: "321 Đường Điện Biên Phủ, Quận 10",
+//     city: "TP.HCM",
+//     country: "Việt Nam",
+//     zipCode: "70000",
+//     total: 649000,
+//     iduser: "USER004",
+//     status: "shipped",
+//     payment_status: "paid",
+//     shipping_method: "standard",
+//     items_count: 4,
+//   },
+//   {
+//     order_id: "ORD005",
+//     order_date: "2024-03-05",
+//     name: "Hoàng Văn Em",
+//     email: "hoangvanem@example.com",
+//     address: "654 Đường Cách Mạng Tháng 8, Quận Tân Bình",
+//     city: "TP.HCM",
+//     country: "Việt Nam",
+//     zipCode: "70000",
+//     total: 1699000,
+//     iduser: "USER005",
+//     status: "cancelled",
+//     payment_status: "refunded",
+//     shipping_method: "express",
+//     items_count: 2,
+//   },
+// ];
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -142,10 +143,11 @@ export default function OrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      const orders = await axiosInstance("/admin/order");
-      setOrders(orders.data.data);
+      const response = await axiosInstance.get("/admin/order");
+      setOrders(response.data.data || []);
     } catch (error) {
       setOrders([]);
+      toast.error("Lấy danh sách đơn hàng thất bại!");
       console.error("Get orders fail: ", error);
     }
   };
@@ -165,15 +167,31 @@ export default function OrdersPage() {
     toast.success("Xóa đơn hàng thành công!");
   };
 
-  const handleStatusChange = (order_id, newStatus) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.order_id === order_id ? { ...order, status: newStatus } : order
-      )
-    );
-    toast.success("Cập nhật trạng thái đơn hàng thành công!");
-  };
+  // const handleStatusChange = (order_id, newStatus) => {
+  //   setOrders((prevOrders) =>
+  //     prevOrders.map((order) =>
+  //       order.order_id === order_id ? { ...order, status: newStatus } : order
+  //     )
+  //   );
+  //   toast.success("Cập nhật trạng thái đơn hàng thành công!");
+  // };
 
+  const handleStatusChange = async (order_id, newStatus) => {
+    try {
+      await axiosInstance.patch(`/admin/order/${order_id}`, {
+        status: newStatus,
+      });
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.order_id === order_id ? { ...order, status: newStatus } : order
+        )
+      );
+      toast.success("Cập nhật trạng thái đơn hàng thành công");
+    } catch (error) {
+      toast.error("Cập nhật trạng thái thất bại");
+      console.error("Update status fail:", error);
+    }
+  };
   const handleViewDetails = (order) => {
     setSelectedOrder(order);
     setIsDetailDialogOpen(true);
@@ -181,8 +199,8 @@ export default function OrdersPage() {
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
-      order.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.order_id.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
@@ -195,7 +213,10 @@ export default function OrdersPage() {
 
   const totalOrders = orders.length;
   const totalRevenue = orders
-    .filter((order) => order.payment_status === "paid")
+    .filter(
+      (order) =>
+        order.payment_status === "paid" || order.payment_method === "cod"
+    )
     .reduce((sum, order) => sum + order.total, 0);
   const pendingOrders = orders.filter(
     (order) => order.status === "pending"
@@ -386,7 +407,6 @@ export default function OrdersPage() {
                   <TableHead>Ngày đặt</TableHead>
                   <TableHead>Khách hàng</TableHead>
                   <TableHead>Địa chỉ</TableHead>
-                  <TableHead>Số lượng</TableHead>
                   <TableHead>Tổng tiền</TableHead>
                   <TableHead>Trạng thái</TableHead>
                   <TableHead>Thanh toán</TableHead>
@@ -396,7 +416,7 @@ export default function OrdersPage() {
               <TableBody>
                 {filteredOrders.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-8">
+                    <TableCell colSpan={8} className="text-center py-8">
                       <div className="flex flex-col items-center gap-2">
                         <ShoppingCart className="h-8 w-8 text-muted-foreground" />
                         <p className="text-muted-foreground">
@@ -427,9 +447,11 @@ export default function OrdersPage() {
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          <div className="font-medium">{order.name}</div>
+                          <div className="font-medium">
+                            {order.user_name || "N/A"}
+                          </div>
                           <div className="text-sm text-muted-foreground">
-                            {order.email}
+                            {order.user?.email || "N/A"}
                           </div>
                         </div>
                       </TableCell>
@@ -437,23 +459,24 @@ export default function OrdersPage() {
                         <div className="flex items-start gap-1">
                           <MapPin className="h-3 w-3 text-muted-foreground mt-1 flex-shrink-0" />
                           <div className="text-sm">
-                            <div className="truncate" title={order.address}>
-                              {order.address}
+                            <div
+                              className="truncate"
+                              title={order.address_agency}
+                            >
+                              {order.address_agency}
                             </div>
                             <div className="text-muted-foreground">
-                              {order.city}, {order.country}
+                              {" "}
+                              {order.country || "Việt Nam"}
                             </div>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <Package className="h-3 w-3 text-muted-foreground" />
-                          {order.items_count} sản phẩm
-                        </div>
-                      </TableCell>
                       <TableCell className="font-medium">
-                        {order.total.toLocaleString("vi-VN")} đ
+                        {new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(order.total)}
                       </TableCell>
                       <TableCell>
                         <Select
@@ -478,9 +501,7 @@ export default function OrdersPage() {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell>
-                        {getPaymentBadge(order.status)}
-                      </TableCell>
+                      <TableCell>{getPaymentBadge(order.status)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button
@@ -491,9 +512,9 @@ export default function OrdersPage() {
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="sm" title="Chỉnh sửa">
+                          {/* <Button variant="outline" size="sm" title="Chỉnh sửa">
                             <Edit className="h-4 w-4" />
-                          </Button>
+                          </Button> */}
                           <Button
                             variant="destructive"
                             size="sm"
@@ -530,10 +551,8 @@ export default function OrdersPage() {
                   <div className="space-y-1 text-sm">
                     <div className="flex items-center gap-2">
                       <User className="h-3 w-3" />
-                      {selectedOrder.name}
+                      {selectedOrder.user_name || "N/A"}
                     </div>
-                    <div>{selectedOrder.email}</div>
-                    <div>ID: {selectedOrder.iduser}</div>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -546,19 +565,20 @@ export default function OrdersPage() {
                         "vi-VN"
                       )}
                     </div>
-                    <div>
+                    {/* <div>
                       Phương thức giao hàng: {selectedOrder.shipping_method}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
               <div className="space-y-2">
                 <h4 className="font-medium">Địa chỉ giao hàng</h4>
                 <div className="text-sm space-y-1">
-                  <div>{selectedOrder.address}</div>
+                  <div>{selectedOrder.address_agency}</div>
                   <div>
-                    {selectedOrder.city}, {selectedOrder.country}{" "}
-                    {selectedOrder.zipCode}
+                    {/* {selectedOrder.city || "N/A"},{" "} */}
+                    {selectedOrder.country || "Việt Nam"}{" "}
+                    {selectedOrder.zipCode || ""}
                   </div>
                 </div>
               </div>
@@ -572,7 +592,10 @@ export default function OrdersPage() {
                 <div className="space-y-1 text-right">
                   <div className="text-sm text-muted-foreground">Tổng tiền</div>
                   <div className="text-2xl font-bold">
-                    {selectedOrder.total.toLocaleString("vi-VN")} đ
+                    {new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(selectedOrder.total)}
                   </div>
                 </div>
               </div>

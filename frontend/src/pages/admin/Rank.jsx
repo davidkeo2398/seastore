@@ -406,11 +406,11 @@ export default function AdminAngencyRank() {
                     <TableRow>
                       <TableHead>Thành viên</TableHead>
                       <TableHead>Hạng</TableHead>
-                      <TableHead>Điểm khả dụng</TableHead>
                       <TableHead>Tổng chi tiêu</TableHead>
                       <TableHead>Giảm giá</TableHead>
                       <TableHead>Tiến độ hạng</TableHead>
-                      <TableHead>Hoạt động cuối</TableHead>
+                      <TableHead>Điểm còn hiệu lực đến</TableHead>
+
                       <TableHead className="text-right">Hành động</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -436,16 +436,6 @@ export default function AdminAngencyRank() {
                           <TableCell>
                             {getRankBadge(member.currentRank)}
                           </TableCell>
-                          <TableCell>
-                            <div className="space-y-1">
-                              <div className="font-medium">
-                                {member.availablePoints.toLocaleString()}
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                Tổng: {member.totalPoints.toLocaleString()}
-                              </div>
-                            </div>
-                          </TableCell>
                           <TableCell className="font-medium">
                             {formatPrice(member.totalSpent)}
                           </TableCell>
@@ -457,17 +447,11 @@ export default function AdminAngencyRank() {
                           <TableCell>
                             {nextRank ? (
                               <div className="space-y-1">
-                                <div className="flex items-center justify-between text-xs">
-                                  <span>Đến {nextRank.rank}</span>
-                                  <span>{nextRank.progress.toFixed(0)}%</span>
-                                </div>
-                                <Progress
-                                  value={nextRank.progress}
-                                  className="h-2"
-                                />
-                                <div className="text-xs text-muted-foreground">
-                                  Còn {formatPrice(nextRank.remaining)}
-                                </div>
+                                <span className="text-xs">
+                                  Đến {nextRank.rank} -{" "}
+                                  {nextRank.progress.toFixed(0)}% - Còn{" "}
+                                  {formatPrice(nextRank.remaining)}
+                                </span>
                               </div>
                             ) : (
                               <Badge className="bg-purple-100 text-purple-800">

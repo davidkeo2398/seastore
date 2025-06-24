@@ -5,6 +5,7 @@ const categoriesController = require('./categories-controller');
 const promotionController = require('./promotion-controller');
 const agencyController = require('./agency-controller');
 const agencyRankController = require('./agency-rank-controller');
+const momoController = require('./momo-controller')
 
 //admin
 const  orderAdminController = require('./admin/order-admin-controller');
@@ -18,5 +19,6 @@ module.exports = {
     agencyController,
     agencyRankController,
     //admin
-    orderAdminController
+    orderAdminController,
+    momoController
 }

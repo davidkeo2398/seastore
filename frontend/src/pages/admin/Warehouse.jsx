@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -74,11 +73,8 @@ const mockInventory = [
     warehouseId: "WH001",
     warehouseName: "Kho Trung tâm TP.HCM",
     quantity: 45,
-    minStock: 10,
-    maxStock: 100,
-    location: "A1-B2-C3",
     lastUpdated: "2024-03-01",
-    status: "in_stock",
+    expiryDate: "2025-12-31",
   },
   {
     id: "INV002",
@@ -87,11 +83,8 @@ const mockInventory = [
     warehouseId: "WH001",
     warehouseName: "Kho Trung tâm TP.HCM",
     quantity: 8,
-    minStock: 15,
-    maxStock: 80,
-    location: "A2-B1-C2",
     lastUpdated: "2024-02-28",
-    status: "low_stock",
+    expiryDate: "2026-06-30",
   },
   {
     id: "INV003",
@@ -100,11 +93,8 @@ const mockInventory = [
     warehouseId: "WH002",
     warehouseName: "Kho Hà Nội",
     quantity: 0,
-    minStock: 5,
-    maxStock: 30,
-    location: "B1-A3-C1",
     lastUpdated: "2024-02-25",
-    status: "out_of_stock",
+    expiryDate: "2025-11-20",
   },
   {
     id: "INV004",
@@ -113,11 +103,8 @@ const mockInventory = [
     warehouseId: "WH002",
     warehouseName: "Kho Hà Nội",
     quantity: 120,
-    minStock: 20,
-    maxStock: 150,
-    location: "C1-B2-A1",
     lastUpdated: "2024-03-02",
-    status: "in_stock",
+    expiryDate: "2026-01-15",
   },
 ]
 
@@ -164,19 +151,12 @@ const mockMovements = [
   },
 ]
 
-
-
-
-
-
-
 export default function WarehousePage() {
   const [warehouses, setWarehouses] = useState(mockWarehouses)
   const [inventory, setInventory] = useState(mockInventory)
   const [movements, setMovements] = useState(mockMovements)
   const [searchTerm, setSearchTerm] = useState("")
   const [warehouseFilter, setWarehouseFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
   const [isMovementDialogOpen, setIsMovementDialogOpen] = useState(false)
   const [movementForm, setMovementForm] = useState({
     type: "inbound",
@@ -216,27 +196,11 @@ export default function WarehousePage() {
       item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.sku.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesWarehouse = warehouseFilter === "all" || item.warehouseId === warehouseFilter
-    const matchesStatus = statusFilter === "all" || item.status === statusFilter
-    return matchesSearch && matchesWarehouse && matchesStatus
+    return matchesSearch && matchesWarehouse
   })
 
   const totalCapacity = warehouses.reduce((sum, wh) => sum + wh.capacity, 0)
   const totalCurrentStock = warehouses.reduce((sum, wh) => sum + wh.currentStock, 0)
-  const lowStockItems = inventory.filter((item) => item.status === "low_stock").length
-  const outOfStockItems = inventory.filter((item) => item.status === "out_of_stock").length
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "in_stock":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Còn hàng</Badge>
-      case "low_stock":
-        return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200">Sắp hết</Badge>
-      case "out_of_stock":
-        return <Badge variant="destructive">Hết hàng</Badge>
-      default:
-        return <Badge variant="outline">{status}</Badge>
-    }
-  }
 
   const getMovementIcon = (type) => {
     switch (type) {
@@ -386,26 +350,6 @@ export default function WarehousePage() {
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sắp hết hàng</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-orange-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{lowStockItems}</div>
-            <p className="text-xs text-muted-foreground">Sản phẩm cần nhập thêm</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Hết hàng</CardTitle>
-            <Package className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{outOfStockItems}</div>
-            <p className="text-xs text-muted-foreground">Sản phẩm hết hàng</p>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Main Content Tabs */}
@@ -448,17 +392,6 @@ export default function WarehousePage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Lọc theo trạng thái" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả trạng thái</SelectItem>
-                    <SelectItem value="in_stock">Còn hàng</SelectItem>
-                    <SelectItem value="low_stock">Sắp hết</SelectItem>
-                    <SelectItem value="out_of_stock">Hết hàng</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               <div className="rounded-md border">
@@ -468,10 +401,8 @@ export default function WarehousePage() {
                       <TableHead>Sản phẩm</TableHead>
                       <TableHead>SKU</TableHead>
                       <TableHead>Kho</TableHead>
-                      <TableHead>Vị trí</TableHead>
                       <TableHead>Số lượng</TableHead>
-                      <TableHead>Min/Max</TableHead>
-                      <TableHead>Trạng thái</TableHead>
+                      <TableHead>Hạn sử dụng</TableHead>
                       <TableHead>Cập nhật cuối</TableHead>
                       <TableHead className="text-right">Hành động</TableHead>
                     </TableRow>
@@ -484,21 +415,10 @@ export default function WarehousePage() {
                           <code className="bg-muted px-2 py-1 rounded text-sm">{item.sku}</code>
                         </TableCell>
                         <TableCell>{item.warehouseName}</TableCell>
+                        <TableCell>{item.quantity}</TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3 text-muted-foreground" />
-                            {item.location}
-                          </div>
+                          {new Date(item.expiryDate).toLocaleDateString("vi-VN")}
                         </TableCell>
-                        <TableCell>
-                          <span className={item.quantity <= item.minStock ? "text-orange-600 font-medium" : ""}>
-                            {item.quantity}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {item.minStock} / {item.maxStock}
-                        </TableCell>
-                        <TableCell>{getStatusBadge(item.status)}</TableCell>
                         <TableCell className="text-sm text-muted-foreground">
                           {new Date(item.lastUpdated).toLocaleDateString("vi-VN")}
                         </TableCell>

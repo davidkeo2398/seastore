@@ -6,6 +6,7 @@ const categoriesService = require('./categories-service');
 const promotionService = require('./promotion-service');
 const agencyRankService = require('./agency-rank-service');
 const agencyService = require('./agency-service');
+const momoService = require('./momo-service')
 
 //admin
 const orderAdminService = require('./admin/order-admin-service');
@@ -20,4 +21,5 @@ module.exports = {
     agencyService,
     //admin
     orderAdminService,
+    momoService
 };

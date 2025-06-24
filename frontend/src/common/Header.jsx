@@ -16,6 +16,9 @@ const Header = () => {
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
   // const userLoggedIn = useContext(AuthContext);
 
+  const isLoggedIn = !!user && !!user.user_name; // hoặc kiểm tra token
+  const isAdmin = user?.role_id === 1;
+
   // Xử lý đăng nhập thành công
   const handleLoginSuccess = (userData) => {
     console.log("User logged in:", userData);
@@ -35,7 +38,7 @@ const Header = () => {
     setUser(null);
     clearAuthToken();
     localStorage.clear();
-    navigate('/')
+    navigate("/");
   };
 
   // Hiển thị giao diện
@@ -58,12 +61,15 @@ const Header = () => {
         <Link to="/products" className="nav-link">
           Sản phẩm
         </Link>
-        <Link to="/admin" className="nav-link">
-          Trang quản trị
-        </Link>
-        <Link to="/orderTracking" className="nav-link">
+        {isAdmin && isLoggedIn && (
+          <Link to="/admin" className="nav-link">
+            Trang quản trị
+          </Link>
+        )}
+
+        {/* <Link to="/orderTracking" className="nav-link">
           Trang theo dõi đơn hàng
-        </Link>
+        </Link> */}
         {/* 5 */}
       </nav>
       {/* Cart and user info/buttons */}

@@ -109,7 +109,7 @@ function DialogTitle({
   );
 }
 
-function DialogDescription({
+function  DialogDescription({
   className,
   ...props
 }) {
