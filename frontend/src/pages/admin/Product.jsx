@@ -1,9 +1,22 @@
-import { useState } from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -12,79 +25,87 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "sonner"
-import { Trash2, Search, Package, Plus, Edit, ShoppingCart, DollarSign, Archive } from "lucide-react"
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import {
+  Trash2,
+  Search,
+  Package,
+  Plus,
+  Edit,
+  ShoppingCart,
+  DollarSign,
+  Archive,
+} from "lucide-react";
+import axiosInstance from "@/lib/axios";
 
 // Mock data for demonstration
-const mockProducts = [
-  {
-    id: "1",
-    name: "iPhone 15 Pro Max",
-    price: 29990000,
-    description: "Điện thoại thông minh cao cấp với chip A17 Pro",
-    category: "Điện thoại",
-    image: "/placeholder.svg?height=100&width=100",
-    type: "Electronics",
-    soluong: 25,
-    createdAt: "2024-01-15",
-  },
-  {
-    id: "2",
-    name: "Samsung Galaxy S24 Ultra",
-    price: 26990000,
-    description: "Flagship Android với S Pen tích hợp",
-    category: "Điện thoại",
-    image: "/placeholder.svg?height=100&width=100",
-    type: "Electronics",
-    soluong: 18,
-    createdAt: "2024-01-20",
-  },
-  {
-    id: "3",
-    name: "MacBook Pro M3",
-    price: 45990000,
-    description: "Laptop chuyên nghiệp với chip M3 mạnh mẽ",
-    category: "Laptop",
-    image: "/placeholder.svg?height=100&width=100",
-    type: "Electronics",
-    soluong: 12,
-    createdAt: "2024-02-01",
-  },
-  {
-    id: "4",
-    name: "AirPods Pro 2",
-    price: 6490000,
-    description: "Tai nghe không dây với chống ồn chủ động",
-    category: "Phụ kiện",
-    image: "/placeholder.svg?height=100&width=100",
-    type: "Electronics",
-    soluong: 45,
-    createdAt: "2024-02-05",
-  },
-  {
-    id: "5",
-    name: "iPad Air M2",
-    price: 16990000,
-    description: "Máy tính bảng đa năng cho công việc và giải trí",
-    category: "Tablet",
-    image: "/placeholder.svg?height=100&width=100",
-    type: "Electronics",
-    soluong: 8,
-    createdAt: "2024-02-10",
-  },
-]
-
-
+// const mockProducts = [
+//   {
+//     id: "1",
+//     name: "iPhone 15 Pro Max",
+//     price: 29990000,
+//     description: "Điện thoại thông minh cao cấp với chip A17 Pro",
+//     category: "Điện thoại",
+//     image: "/placeholder.svg?height=100&width=100",
+//     type: "Electronics",
+//     soluong: 25,
+//     createdAt: "2024-01-15",
+//   },
+//   {
+//     id: "2",
+//     name: "Samsung Galaxy S24 Ultra",
+//     price: 26990000,
+//     description: "Flagship Android với S Pen tích hợp",
+//     category: "Điện thoại",
+//     image: "/placeholder.svg?height=100&width=100",
+//     type: "Electronics",
+//     soluong: 18,
+//     createdAt: "2024-01-20",
+//   },
+//   {
+//     id: "3",
+//     name: "MacBook Pro M3",
+//     price: 45990000,
+//     description: "Laptop chuyên nghiệp với chip M3 mạnh mẽ",
+//     category: "Laptop",
+//     image: "/placeholder.svg?height=100&width=100",
+//     type: "Electronics",
+//     soluong: 12,
+//     createdAt: "2024-02-01",
+//   },
+//   {
+//     id: "4",
+//     name: "AirPods Pro 2",
+//     price: 6490000,
+//     description: "Tai nghe không dây với chống ồn chủ động",
+//     category: "Phụ kiện",
+//     image: "/placeholder.svg?height=100&width=100",
+//     type: "Electronics",
+//     soluong: 45,
+//     createdAt: "2024-02-05",
+//   },
+//   {
+//     id: "5",
+//     name: "iPad Air M2",
+//     price: 16990000,
+//     description: "Máy tính bảng đa năng cho công việc và giải trí",
+//     category: "Tablet",
+//     image: "/placeholder.svg?height=100&width=100",
+//     type: "Electronics",
+//     soluong: 8,
+//     createdAt: "2024-02-10",
+//   },
+// ]
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState(mockProducts)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isEditMode, setIsEditMode] = useState(false)
+  const [products, setProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     price: 0,
@@ -93,16 +114,37 @@ export default function ProductsPage() {
     image: "",
     type: "",
     soluong: 0,
-  })
-   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "price" || name === "soluong" ? Number(value) : value,
-    }))
-  }
- 
- 
+  });
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axiosInstance.get("/admin/products");
+      if (response.data && response.data.data) {
+        const fetchProducts = response.data.data.map((p) => ({
+          ...p,
+          id: p.product_id,
+          name: p.product_name,
+          category:
+            p.category && p.category.category_name
+              ? p.category.category_name
+              : "N/A",
+        }));
+
+        setProducts(fetchProducts);
+      }
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+      toast.error("Không thể tải danh sách sản phẩm.");
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const handleInputChange = (e) => {
+    setIsDialogOpen(true);
+  };
 
   const resetForm = () => {
     setFormData({
@@ -113,57 +155,71 @@ export default function ProductsPage() {
       image: "",
       type: "",
       soluong: 0,
-    })
-    setIsEditMode(false)
-  }
-
-  
+    });
+    setIsEditMode(false);
+  };
 
   const handleEdit = (product) => {
-    setFormData(product)
-    setIsEditMode(true)
-    setIsDialogOpen(true)
-  }
+    setFormData(product);
+    setIsEditMode(true);
+    setIsDialogOpen(true);
+  };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
-      return
+      return;
     }
 
-    setProducts((prev) => prev.filter((product) => product.id !== id))
-    toast.success("Xóa sản phẩm thành công!")
-  }
+    try {
+      await axiosInstance.delete(`/admin/products/${id}`);
+      toast.success("Xóa sản phẩm thành công!");
+      fetchProducts();
+    } catch (error) {
+      console.error("Failed to delete product:", error);
+      toast.error("Xóa sản phẩm thất bại.");
+    }
+  };
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchTerm.toLowerCase())
+      (product.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (product.category || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (product.description || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
-    const matchesCategory = categoryFilter === "all" || product.category === categoryFilter
+    const matchesCategory =
+      categoryFilter === "all" || product.category === categoryFilter;
 
-    return matchesSearch && matchesCategory
-  })
+    return matchesSearch && matchesCategory;
+  });
 
-  const totalProducts = products.length
-  const totalValue = products.reduce((sum, product) => sum + product.price * product.soluong, 0)
-  const lowStockProducts = products.filter((product) => product.soluong < 10).length
-  const categories = [...new Set(products.map((product) => product.category))]
+  const totalProducts = products.length;
+  const totalValue = products.reduce(
+    (sum, product) => sum + (product.price || 0) * (product.soluong || 0),
+    0
+  );
+  const lowStockProducts = products.filter(
+    (product) => product.soluong < 10
+  ).length;
+  const categories = [...new Set(products.map((product) => product.category))];
 
-  function handleSubmit(e) {
-    e.preventDefault()
+  async function handleSubmit(e) {
+    e.preventDefault();
 
     if (!formData.name || !formData.category || !formData.price) {
-      toast.error("Vui lòng nhập đầy đủ thông tin sản phẩm!")
-      return
+      toast.error("Vui lòng nhập đầy đủ thông tin sản phẩm!");
+      return;
     }
 
     if (isEditMode) {
       // Cập nhật sản phẩm
       setProducts((prev) =>
         prev.map((p) => (p.id === formData.id ? { ...formData } : p))
-      )
-      toast.success("Cập nhật sản phẩm thành công!")
+      );
+      toast.success("Cập nhật sản phẩm thành công!");
     } else {
       // Thêm sản phẩm mới
       setProducts((prev) => [
@@ -173,12 +229,12 @@ export default function ProductsPage() {
           id: Date.now().toString(),
           createdAt: new Date().toISOString().slice(0, 10),
         },
-      ])
-      toast.success("Thêm sản phẩm thành công!")
+      ]);
+      toast.success("Thêm sản phẩm thành công!");
     }
 
-    setIsDialogOpen(false)
-    resetForm()
+    setIsDialogOpen(false);
+    resetForm();
   }
 
   return (
@@ -187,13 +243,15 @@ export default function ProductsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Quản lý sản phẩm</h1>
-          <p className="text-muted-foreground mt-1">Quản lý kho hàng và thông tin sản phẩm</p>
+          <p className="text-muted-foreground mt-1">
+            Quản lý kho hàng và thông tin sản phẩm
+          </p>
         </div>
         <Dialog
           open={isDialogOpen}
           onOpenChange={(open) => {
-            setIsDialogOpen(open)
-            if (!open) resetForm()
+            setIsDialogOpen(open);
+            if (!open) resetForm();
           }}
         >
           <DialogTrigger asChild>
@@ -204,16 +262,26 @@ export default function ProductsPage() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>{isEditMode ? "Cập nhật sản phẩm" : "Thêm sản phẩm mới"}</DialogTitle>
+              <DialogTitle>
+                {isEditMode ? "Cập nhật sản phẩm" : "Thêm sản phẩm mới"}
+              </DialogTitle>
               <DialogDescription>
-                {isEditMode ? "Chỉnh sửa thông tin sản phẩm" : "Nhập thông tin sản phẩm mới"}
+                {isEditMode
+                  ? "Chỉnh sửa thông tin sản phẩm"
+                  : "Nhập thông tin sản phẩm mới"}
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Tên sản phẩm</Label>
-                  <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required />
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="category">Danh mục</Label>
@@ -252,7 +320,13 @@ export default function ProductsPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="type">Loại sản phẩm</Label>
-                <Input id="type" name="type" value={formData.type} onChange={handleInputChange} required />
+                <Input
+                  id="type"
+                  name="type"
+                  value={formData.type}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="image">URL hình ảnh</Label>
@@ -277,10 +351,16 @@ export default function ProductsPage() {
                 />
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsDialogOpen(false)}
+                >
                   Hủy
                 </Button>
-                <Button type="submit">{isEditMode ? "Cập nhật" : "Thêm sản phẩm"}</Button>
+                <Button type="submit">
+                  {isEditMode ? "Cập nhật" : "Thêm sản phẩm"}
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -305,8 +385,12 @@ export default function ProductsPage() {
             <DollarSign className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{totalValue.toLocaleString("vi-VN")} đ</div>
-            <p className="text-xs text-muted-foreground">Tổng giá trị hàng tồn</p>
+            <div className="text-2xl font-bold text-green-600">
+              {totalValue.toLocaleString("vi-VN")} đ
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Tổng giá trị hàng tồn
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -315,8 +399,12 @@ export default function ProductsPage() {
             <Archive className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{lowStockProducts}</div>
-            <p className="text-xs text-muted-foreground">Sản phẩm {"< 10"} cái</p>
+            <div className="text-2xl font-bold text-orange-600">
+              {lowStockProducts}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Sản phẩm {"< 10"} cái
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -325,7 +413,9 @@ export default function ProductsPage() {
             <ShoppingCart className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{categories.length}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {categories.length}
+            </div>
             <p className="text-xs text-muted-foreground">Loại sản phẩm</p>
           </CardContent>
         </Card>
@@ -335,7 +425,9 @@ export default function ProductsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Danh sách sản phẩm</CardTitle>
-          <CardDescription>Tìm kiếm và quản lý sản phẩm trong kho</CardDescription>
+          <CardDescription>
+            Tìm kiếm và quản lý sản phẩm trong kho
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -352,7 +444,7 @@ export default function ProductsPage() {
             <select
               className="w-[180px] border rounded px-2 py-1"
               value={categoryFilter}
-              onChange={e => setCategoryFilter(e.target.value)}
+              onChange={(e) => setCategoryFilter(e.target.value)}
             >
               <option value="all">Tất cả danh mục</option>
               {categories.map((category) => (
@@ -372,7 +464,6 @@ export default function ProductsPage() {
                   <TableHead>Tên sản phẩm</TableHead>
                   <TableHead>Danh mục</TableHead>
                   <TableHead>Giá</TableHead>
-                  <TableHead>Số lượng</TableHead>
                   <TableHead>Trạng thái</TableHead>
                   <TableHead>Ngày tạo</TableHead>
                   <TableHead className="text-right">Hành động</TableHead>
@@ -381,7 +472,7 @@ export default function ProductsPage() {
               <TableBody>
                 {filteredProducts.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8">
+                    <TableCell colSpan={7} className="text-center py-8">
                       <div className="flex flex-col items-center gap-2">
                         <Package className="h-8 w-8 text-muted-foreground" />
                         <p className="text-muted-foreground">
@@ -402,32 +493,30 @@ export default function ProductsPage() {
                           className="w-16 h-16 object-cover rounded-md border"
                         />
                       </TableCell>
-                      <TableCell className="font-medium">{product.name}</TableCell>
+                      <TableCell className="font-medium">
+                        {product.name}
+                      </TableCell>
                       <TableCell>
                         <Badge variant="outline">{product.category}</Badge>
                       </TableCell>
-                      <TableCell className="font-medium">{product.price.toLocaleString("vi-VN")} đ</TableCell>
-                      <TableCell>
-                        <span className={product.soluong < 10 ? "text-orange-600 font-medium" : ""}>
-                          {product.soluong}
-                        </span>
+                      <TableCell className="font-medium">
+                        
+                        {(product.price || 0).toLocaleString("vi-VN")} đ
                       </TableCell>
                       <TableCell>
                         <Badge
-                          variant={product.soluong > 0 ? "default" : "destructive"}
-                          className={
-                            product.soluong > 10
-                              ? "bg-green-100 text-green-800 hover:bg-green-200"
-                              : product.soluong > 0
-                                ? "bg-orange-100 text-orange-800 hover:bg-orange-200"
-                                : ""
-                          }
+                          variant={"default"}
+                          className={"bg-green-100 text-green-800 hover:bg-green-200"}
                         >
-                          {product.soluong > 10 ? "Còn hàng" : product.soluong > 0 ? "Sắp hết" : "Hết hàng"}
+                          Còn hàng
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {new Date(product.createdAt).toLocaleDateString("vi-VN")}
+                        {product.createdAt
+                          ? new Date(product.createdAt).toLocaleDateString(
+                              "vi-VN"
+                            )
+                          : "N/A"}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -458,5 +547,5 @@ export default function ProductsPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

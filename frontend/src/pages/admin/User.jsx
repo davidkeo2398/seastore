@@ -147,7 +147,7 @@ export default function UsersPage() {
     }
   };
 
-  useEffect(() => {
+  useEffect(() => {+
     fetchUsers();
   }, []);
 
@@ -192,7 +192,12 @@ export default function UsersPage() {
             date: new Date().toISOString().split("T")[0],
           };
           toast.success(`Đã cảnh cáo người dùng ${user.user_name}`);
-          return { ...user, warnings: [...(user.warnings || []), newWarning] };
+          
+          // Deep copy to prevent mutating shared state
+          const updatedUser = JSON.parse(JSON.stringify(user));
+          updatedUser.warnings.push(newWarning);
+          
+          return updatedUser;
         }
         return user;
       })

@@ -15,11 +15,7 @@ export default function AdminLayout() {
     <div className="min-h-screen flex bg-gray-50">
       {/* Sidebar */}
       <aside className="w-64 flex flex-col bg-white border-r border-blue-100 shadow-sm">
-        <div className="h-16 flex items-center px-6 bg-blue-600">
-          <h1 className="text-4xl font-bold text-white leading-tight">
-            Tép Bạc Admin
-          </h1>
-        </div>
+        <div className="h-16" />
         <nav className="flex-1 px-4 py-4 space-y-1 bg-white">
           <Link to="/admin/dashboard">
             <Button
