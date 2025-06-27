@@ -21,33 +21,37 @@ const Warehouse = WarehouseModel(sequelize);
 const Product = ProductModel(sequelize);
 const Promotion = PromotionModel(sequelize);
 
-// User - Role
-Role.hasMany(User, { foreignKey: 'role_id', as: 'users' });
-User.belongsTo(Role, { foreignKey: 'role_id', as: 'role' });
+// // User - Role
+// Role.hasMany(User, { foreignKey: 'role_id', as: 'users' });
+// User.belongsTo(Role, { foreignKey: 'role_id', as: 'role' });
 
-// User - Order
-User.hasMany(Order, { foreignKey: 'iduser', as: 'orders' });
-Order.belongsTo(User, { foreignKey: 'iduser', as: 'user' });
+// // User - Order
+// User.hasMany(Order, { foreignKey: 'user_id', as: 'orders' });
+// Order.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
-// Order - OrderItem
-Order.hasMany(OrderItem, { foreignKey: 'order_id', as: 'items' });
-OrderItem.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+// // Order - OrderItem
+// Order.hasMany(OrderItem, { foreignKey: 'order_id', as: 'items' });
+// OrderItem.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
 
-// Product - OrderItem
-Product.hasMany(OrderItem, { foreignKey: 'product_id', as: 'orderItems' });
-OrderItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+// // Product - OrderItem
+// Product.hasMany(OrderItem, { foreignKey: 'product_id', as: 'orderItems' });
+// OrderItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
 
-// Category - Product
-Categories.hasMany(Product, { foreignKey: 'category_id', as: 'products' });
-Product.belongsTo(Categories, { foreignKey: 'category_id', as: 'category' });
+// // Category - Product
+// Categories.hasMany(Product, { foreignKey: 'category_id', as: 'products' });
+// Product.belongsTo(Categories, { foreignKey: 'category_id', as: 'category' });
 
-// AgencyRank - Agency
-AgencyRank.hasMany(Agency, { foreignKey: 'agency_rank_id', as: 'agencies' });
-Agency.belongsTo(AgencyRank, { foreignKey: 'agency_rank_id', as: 'rank' });
+// // Warehouse - Product
+// Warehouse.hasMany(Product, { foreignKey: 'warehouse_id', as: 'products' });
+// Product.belongsTo(Warehouse, { foreignKey: 'warehouse_id', as: 'warehouse' });
 
-// User - Agency (Assuming a user can be an agency)
-User.hasOne(Agency, { foreignKey: 'iduser', as: 'agencyInfo' });
-Agency.belongsTo(User, { foreignKey: 'iduser', as: 'userInfo' });
+// // AgencyRank - Agency
+// AgencyRank.hasMany(Agency, { foreignKey: 'agency_rank_id', as: 'agencies' });
+// Agency.belongsTo(AgencyRank, { foreignKey: 'agency_rank_id', as: 'rank' });
+
+// // User - Agency (Assuming a user can be an agency)
+// User.hasOne(Agency, { foreignKey: 'user_id', as: 'agencyInfo' });
+// Agency.belongsTo(User, { foreignKey: 'user_id', as: 'userInfo' });
 
 // Sync all models
 sequelize.sync()

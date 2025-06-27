@@ -23,11 +23,6 @@ router.use("/agency-rank", agencyRankRoutes);
 router.use('/momo', momoRoute);
 
 //admin
-const adminRouter = express.Router();
-const orderAdminRoutes = require("./admin/order-admin-route");
-const userAdminRoutes = require("./admin/user-admin-route");
-
-adminRouter.use("/order", orderAdminRoutes);
-adminRouter.use("/user", userAdminRoutes);
+const { adminRouter } = require("./admin/index");
 
 module.exports = { router, adminRouter };

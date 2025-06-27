@@ -1,9 +1,10 @@
-const { Order } = require("../../Model/Index");
+const { Order, Categories } = require("../../Model/Index");
 
 module.exports = {
     getOrders: async()=> {
         try{
-            const orders = Order.findAll();
+            const orders = await Order.findAll();
+            console.log(orders);
             return orders;
         }
         catch(error){
