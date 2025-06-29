@@ -98,7 +98,7 @@ module.exports = {
         allowNull: false
       },
       payment_method: {
-        type: Sequelize.ENUM('cash', 'paypal', 'bank_transfer', 'momo'),
+        type: Sequelize.ENUM('cash', 'paypal', 'bank_transfer', 'momo', 'vnpay'),
         allowNull: false
       },
       promotion_code: {

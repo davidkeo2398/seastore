@@ -42,7 +42,9 @@ module.exports = {
     let amount = totalNeedToPay; // so tien can thanh toan
     let bankCode = bankName; // Ma so Ngan hang dung de thanh toan
 
-    let locale = localeLanguage;
+    let locale = localeLanguage || null;
+    console.log("debug vnpay", locale)
+
     if (locale === null || locale === "") {
       locale = "vn";
     }
@@ -55,7 +57,7 @@ module.exports = {
     vnp_Params["vnp_CurrCode"] = currCode;
     vnp_Params["vnp_TxnRef"] = orderId;
     vnp_Params["vnp_OrderInfo"] = "Thanh toan cho ma GD:" + orderId;
-    vnp_Params["vnp_OrderType"] = "other";
+    vnp_Params["vnp_OrderType"] = order_id;
     vnp_Params["vnp_Amount"] = amount * 100;
     vnp_Params["vnp_ReturnUrl"] = returnUrl;
     vnp_Params["vnp_IpAddr"] = ipAddr;
@@ -63,7 +65,7 @@ module.exports = {
     if (bankCode !== null && bankCode !== "") {
       vnp_Params["vnp_BankCode"] = bankCode;
     }
-    vnp_Params["vnp_OrderSeastore"] = order_id;
+    // vnp_Params["vnp_OrderSeastore"] = order_id;
 
 
     vnp_Params = sortObject(vnp_Params);
@@ -75,6 +77,7 @@ module.exports = {
     let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
     vnp_Params["vnp_SecureHash"] = signed;
     vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
+    console.log('vnpUrl', returnUrl)
     return vnpUrl;
   },
 };

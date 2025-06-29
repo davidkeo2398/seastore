@@ -29,7 +29,7 @@ module.exports = {
         total: (Math.random() * 100).toFixed(2), // Random total between 0 and 100
         promotion_id: Math.floor(Math.random() * 10) + 1, // Random promotion ID between 1 and 10
         order_date: faker.date.past().toISOString().slice(0, 19).replace('T', ' '),
-        payment_method: faker.helpers.arrayElement(['cash', 'paypal', 'bank_transfer', 'momo']),
+        payment_method: faker.helpers.arrayElement(['cash', 'paypal', 'bank_transfer', 'momo', 'vnpay']),
         promotion_code: faker.string.alphanumeric(10), // Random alphanumeric code
         status: faker.helpers.arrayElement(['pending', 'completed', 'cancelled']),
         createdAt: new Date(),
