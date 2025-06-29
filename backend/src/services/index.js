@@ -6,7 +6,8 @@ const categoriesService = require('./categories-service');
 const promotionService = require('./promotion-service');
 const agencyRankService = require('./agency-rank-service');
 const agencyService = require('./agency-service');
-const momoService = require('./momo-service')
+const momoService = require('./momo-service');
+const vnpayService = require('./vnpay-service');
 
 //admin
 const orderAdminService = require('./admin/order-admin-service');
@@ -24,11 +25,15 @@ module.exports = {
     promotionService,
     agencyRankService,
     agencyService,
+    
+    //Thanh toan ngan han
+    vnpayService,
+    momoService,
+
     //admin
     orderAdminService,
     productAdminService,
     rankAdminService,
     userAdminService,
     warehouseAdminService,
-    momoService
 };
