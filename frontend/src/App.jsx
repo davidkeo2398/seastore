@@ -25,7 +25,7 @@ import ProductList from "./pages/ProductList";
 import AdminAngencyRank from "./pages/admin/Rank";
 import AgencyRankPage from "./pages/AngencyRank";
 import OrderTracking from "./pages/OrderTracking";
-
+import OrderSuccess from "./pages/OrderSuccess";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -55,6 +55,7 @@ function App() {
             <Route path="*" element={<NotFound />} />\
             <Route path="rank" element={<AgencyRankPage />} />
             <Route path="orderTracking" element={<OrderTracking />} />
+            <Route path="orderSuccess" element={<OrderSuccess />} />
           </Route>
 
           <Route path="/admin" element={<AdminLayout />}>
@@ -64,7 +65,7 @@ function App() {
             <Route path="products" element={<ProductsPage />} />
             <Route path="warehouse" element={<WarehousePage />} />
             <Route path="orders" element={<OrdersPage />} />
-            <Route path="adminrank" element={<AdminAngencyRank/>} />
+            <Route path="adminrank" element={<AdminAngencyRank />} />
           </Route>
         </Routes>
       </main>

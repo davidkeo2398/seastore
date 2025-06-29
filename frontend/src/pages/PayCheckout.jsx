@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "../css/PaymentCheckout.css";
 import {
   CreditCard,
@@ -56,31 +56,38 @@ import { useNavigate } from "react-router-dom";
 // };
 
 const paymentMethods = [
+  // {
+  //   id: "credit-card",
+  //   name: "Thẻ tín dụng/Ghi nợ",
+  //   description: "Visa, Mastercard, JCB",
+  //   icon: CreditCard,
+  //   popular: true,
+  // },
+  // {
+  //   id: "e-wallet",
+  //   name: "Ví điện tử",
+  //   description: " ZaloPay",
+  //   icon: Smartphone,
+  //   popular: true,
+  // },
   {
-    id: "credit-card",
-    name: "Thẻ tín dụng/Ghi nợ",
-    description: "Visa, Mastercard, JCB",
-    icon: CreditCard,
-    popular: true,
-  },
-  {
-    id: "e-wallet",
+    id: "VNPay",
     name: "Ví điện tử",
-    description: "MoMo, ZaloPay, ViettelPay",
+    description: " VNPay",
     icon: Smartphone,
     popular: true,
   },
-  {
-    id: "bank-transfer",
-    name: "Chuyển khoản ngân hàng",
-    description: "Internet Banking, QR Code",
-    icon: Building2,
-    popular: false,
-  },
+  // {
+  //   id: "bank-transfer",
+  //   name: "Chuyển khoản ngân hàng",
+  //   description: "Internet Banking, QR Code",
+  //   icon: Building2,
+  //   popular: false,
+  // },
   {
     id: "cod",
     name: "Thanh toán khi nhận hàng",
-    description: "Tiền mặt hoặc thẻ",
+    description: "Tiền mặt",
     icon: Truck,
     popular: false,
   },
@@ -133,6 +140,9 @@ export default function PayCheckout() {
 
   const [discount, setDiscount] = useState(0);
   const [calRankDiscount, setCalRankDiscount] = useState(0);
+
+  const [showSuccess, setShowSuccess] = useState(false);
+  const timeoutRef = useRef(null);
 
   useEffect(() => {
     setDiscount(localStorage.getItem("discount"));
@@ -252,6 +262,20 @@ export default function PayCheckout() {
       return;
     }
 
+    // Nếu chọn ví điện tử và loại là momo thì giả lập thanh toán thành công
+    // if (selectedPayment === "e-wallet" && formData.eWalletType === "momo") {
+    //   if (!formData.eWalletPhone || formData.eWalletPhone.length < 10) {
+    //     alert("Vui lòng nhập số điện thoại ví MoMo hợp lệ");
+    //     return;
+    //   }
+    //   setShowSuccess(true);
+    //   timeoutRef.current = setTimeout(() => {
+    //     navigate("/orderSuccess");
+    //   }, 2000);
+    //   return;
+    // }
+    // navigate("/orderSuccess");
+
     console.log("form data", formData);
     console.log("userInfo", userInfo);
     console.log("cart", orderSummary);
@@ -284,15 +308,13 @@ export default function PayCheckout() {
       total: finalTotal,
       promotion_id: promotionId,
       order_date: getCurrentDateTime(),
-      payment_method: "cash",
+      payment_method: selectedPayment.toLowerCase(),
       products: products,
       promotion_code: promotion_code,
     };
     console.log("payload", payload);
 
     console.log("promotion_code lấy từ localStorage:", promotion_code);
-    
-
 
     const result = await axiosInstance.post("/order", payload, {
       headers: {
@@ -301,7 +323,21 @@ export default function PayCheckout() {
     });
     console.log("create order for other roles", result);
     removeFromCart();
-    navigate("/orderTracking");
+    if (selectedPayment === "VNPay") {
+      const payloadVNPay = {
+        totalNeedToPay: finalTotal,
+        bankName: "NCB",
+        order_id: result.data.data.order.order_id,
+        localeLanguage: "vn",
+      };
+      const response = await axiosInstance.post(
+        "/vnpay/create_payment_url",
+        payloadVNPay
+      );
+      window.location.href = response.data.data;
+    } else {
+      navigate("/orderTracking");
+    }
     // alert("Thanh toán thành công!");
     // setIsProcessing(false);
   };
@@ -342,8 +378,8 @@ export default function PayCheckout() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <Label htmlFor="cardNumber">Số thẻ</Label>
-                <Input
+                {/* <Label htmlFor="cardNumber">Số thẻ</Label> */}
+                {/* <Input
                   id="cardNumber"
                   placeholder="1234 5678 9012 3456"
                   value={formData.cardNumber}
@@ -351,10 +387,10 @@ export default function PayCheckout() {
                     handleInputChange("cardNumber", e.target.value)
                   }
                   maxLength={19}
-                />
+                /> */}
               </div>
               <div>
-                <Label htmlFor="expiryDate">Ngày hết hạn</Label>
+                {/* <Label htmlFor="expiryDate">Ngày hết hạn</Label>
                 <Input
                   id="expiryDate"
                   placeholder="MM/YY"
@@ -363,20 +399,20 @@ export default function PayCheckout() {
                     handleInputChange("expiryDate", e.target.value)
                   }
                   maxLength={5}
-                />
+                /> */}
               </div>
               <div>
-                <Label htmlFor="cvv">CVV</Label>
+                {/* <Label htmlFor="cvv">CVV</Label>
                 <Input
                   id="cvv"
                   placeholder="123"
                   value={formData.cvv}
                   onChange={(e) => handleInputChange("cvv", e.target.value)}
                   maxLength={4}
-                />
+                /> */}
               </div>
               <div className="col-span-2">
-                <Label htmlFor="cardName">Tên trên thẻ</Label>
+                {/* <Label htmlFor="cardName">Tên trên thẻ</Label>
                 <Input
                   id="cardName"
                   placeholder="NGUYEN VAN A"
@@ -384,12 +420,12 @@ export default function PayCheckout() {
                   onChange={(e) =>
                     handleInputChange("cardName", e.target.value)
                   }
-                />
+                /> */}
               </div>
             </div>
             <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <Shield className="h-4 w-4" />
-              <span>Thông tin thẻ được mã hóa SSL 256-bit</span>
+              {/* <Shield className="h-4 w-4" /> */}
+              {/* <span>Thông tin thẻ được mã hóa SSL 256-bit</span> */}
             </div>
           </div>
         );
@@ -405,18 +441,19 @@ export default function PayCheckout() {
                   handleInputChange("eWalletType", value)
                 }
               >
-                <SelectTrigger>
+                {/* <SelectTrigger>
                   <SelectValue placeholder="Chọn ví điện tử" />
-                </SelectTrigger>
+                </SelectTrigger> */}
                 <SelectContent>
-                  <SelectItem value="momo">MoMo</SelectItem>
-                  <SelectItem value="zalopay">ZaloPay</SelectItem>
-                  <SelectItem value="viettelpay">ViettelPay</SelectItem>
+                  {/* <SelectItem value="momo">MoMo</SelectItem> */}
+                  {/* <SelectItem value="zalopay">ZaloPay</SelectItem>
+                  <SelectItem value="viettelpay">ViettelPay</SelectItem> */}
                   <SelectItem value="vnpay">VNPay</SelectItem>
+                  <SelectItem value="cod">Tiền mặt</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div>
+            {/* <div>
               <Label htmlFor="eWalletPhone">Số điện thoại</Label>
               <Input
                 id="eWalletPhone"
@@ -426,7 +463,7 @@ export default function PayCheckout() {
                   handleInputChange("eWalletPhone", e.target.value)
                 }
               />
-            </div>
+            </div> */}
             <div className="p-4 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-800">
                 Bạn sẽ được chuyển đến ứng dụng ví điện tử để hoàn tất thanh
@@ -496,6 +533,31 @@ export default function PayCheckout() {
         return null;
     }
   };
+
+  // Hiển thị thông báo thành công khi thanh toán MoMo
+  if (showSuccess) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="bg-green-100 border border-green-300 rounded-lg p-8 text-center shadow-md">
+          <h2 className="text-2xl font-bold text-green-700 mb-2">
+            Thanh toán thành công!
+          </h2>
+          <p className="text-green-800 mb-4">
+            Cảm ơn bạn đã sử dụng MoMo Test. Đang chuyển hướng...
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button onClick={() => navigate("/")}>Mua tiếp</Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate("/orderTracking")}
+            >
+              Xem đơn đã mua
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
