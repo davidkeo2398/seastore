@@ -4,7 +4,7 @@ const { productAdminService } = require("../../services");
 module.exports = {
   getProducts: async (req, res) => {
     try {
-      const result = await productAdminService.getProducts;
+      const result = await productAdminService.getProducts();
       res
         .status(200)
         .json({ message: "Lấy danh sách sản phẩm thành công", data: result });

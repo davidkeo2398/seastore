@@ -3,21 +3,7 @@ const { Product, Warehouse, Categories } = require("../../Model/Index");
 module.exports = {
   getProducts: async () => {
     try {
-      const product = await Product.findAll({
-        include: [
-          {
-            model: Categories,
-            as: "category",
-            attributes: ["category_name"],
-          },
-          {
-            model: Warehouse,
-            as: "warehouse",
-            attributes: ["warehouse_name"],
-          },
-        ],
-      });
-      console.log("lỗi", product)
+      const product = await Product.findAll();
       return product;
     } catch (error) {
       console.error("Lỗi khi lấy danh sách sản phẩm:", error);
@@ -41,7 +27,7 @@ module.exports = {
           },
         ],
       });
-      return product;
+      return productId ? product : null; // Trả về null nếu không tìm thấy sản phẩm
     } catch (error) {
       console.error("Lỗi khi lấy chi tiết sản phẩm:", error);
       throw new Error("Không thể lấy chi tiết sản phẩm");

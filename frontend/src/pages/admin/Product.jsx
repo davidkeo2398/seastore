@@ -41,7 +41,7 @@ import {
 } from "lucide-react";
 import axiosInstance from "@/lib/axios";
 
-// Mock data for demonstration
+//Mock data for demonstration
 // const mockProducts = [
 //   {
 //     id: "1",
@@ -115,6 +115,7 @@ export default function ProductsPage() {
     type: "",
     soluong: 0,
   });
+  const [category, setCategory] = useState([]);
 
   const fetchProducts = async () => {
     try {
@@ -138,8 +139,21 @@ export default function ProductsPage() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await axiosInstance.get("/category");
+      if (response.data && response.data.data) {
+        setCategory(response.data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+      toast.error("Không thể tải danh sách sản phẩm.");
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const handleInputChange = (e) => {
@@ -256,7 +270,7 @@ export default function ProductsPage() {
         >
           <DialogTrigger asChild>
             <Button className="gap-2">
-              <Plus className="h-4 w-4" />
+              <Plus variant="outline" className="h-4 w-4" />
               Thêm sản phẩm
             </Button>
           </DialogTrigger>
@@ -379,7 +393,7 @@ export default function ProductsPage() {
             <p className="text-xs text-muted-foreground">Sản phẩm trong kho</p>
           </CardContent>
         </Card>
-        <Card>
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Giá trị kho</CardTitle>
             <DollarSign className="h-4 w-4 text-green-600" />
@@ -392,8 +406,8 @@ export default function ProductsPage() {
               Tổng giá trị hàng tồn
             </p>
           </CardContent>
-        </Card>
-        <Card>
+        </Card> */}
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Sắp hết hàng</CardTitle>
             <Archive className="h-4 w-4 text-orange-600" />
@@ -406,7 +420,7 @@ export default function ProductsPage() {
               Sản phẩm {"< 10"} cái
             </p>
           </CardContent>
-        </Card>
+        </Card> */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Danh mục</CardTitle>
@@ -485,28 +499,34 @@ export default function ProductsPage() {
                   </TableRow>
                 ) : (
                   filteredProducts.map((product) => (
-                    <TableRow key={product.id}>
+                    <TableRow key={product.product_id}>
                       <TableCell>
                         <img
                           src={product.image || "/placeholder.svg"}
-                          alt={product.name}
+                          alt={product.product_name}
                           className="w-16 h-16 object-cover rounded-md border"
                         />
                       </TableCell>
                       <TableCell className="font-medium">
-                        {product.name}
+                        {product.product_name}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">{product.category}</Badge>
+                        <Badge variant="outline">
+                          {category.find(
+                            (item) =>
+                              item.category_id === product.category_id
+                          )?.category_name || "N/A"}
+                        </Badge>
                       </TableCell>
                       <TableCell className="font-medium">
-                        
                         {(product.price || 0).toLocaleString("vi-VN")} đ
                       </TableCell>
                       <TableCell>
                         <Badge
                           variant={"default"}
-                          className={"bg-green-100 text-green-800 hover:bg-green-200"}
+                          className={
+                            "bg-green-100 text-green-800 hover:bg-green-200"
+                          }
                         >
                           Còn hàng
                         </Badge>

@@ -5,15 +5,15 @@ module.exports = {
   getUsers: async () => {
     try {
       const users = await User.findAll({
-        include: [
-          {
-            model: Role,
-            as: "role",
-            attributes: ["role_name"],
-          },
-        ],
-        attributes: { exclude: ["password"] },
-        order: [["createdAt", "DESC"]],
+        // include: [
+        //   {
+        //     model: Role,
+        //     as: "role",
+        //     attributes: ["role_name"],
+        //   },
+        // ],
+        // attributes: { exclude: ["password"] },
+        // order: [["createdAt", "DESC"]],
       });
       return users;
     } catch (error) {

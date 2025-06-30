@@ -38,8 +38,8 @@ module.exports = (sequelize) => {
   );
   Categories.associate = (models) => {
     Categories.hasMany(models.Product, {
-      foreignKey: "category_id",
-      as: "products",
+      foreignKey: 'category_id',
+      as: 'products',
     });
   };
   return Categories;

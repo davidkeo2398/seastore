@@ -69,21 +69,21 @@ export default function AgencyRankPage() {
               <div className="text-red-600">Lỗi: {error}</div>
             ) : agencyRankDetails ? (
               <>
-                <p>
+                {/* <p>
                   <strong>Id hạng:</strong> {agencyRankDetails.agency_rank_id}
-                </p>
+                </p> */}
 
                 <p>
                   <strong>Tên hạng:</strong> {agencyRankDetails.agency_rank_name}
                 </p>
 
                 <p>
-                  <strong>Giá trị tích lũy tối thiểu:</strong>{" "}
+                  <strong>Giá trị tối thiểu của hạng hiện tại:</strong>{" "}
                   {formatCurrency(agencyRankDetails.min_accumulated_value)}
                 </p>
 
                 <p>
-                  <strong>Phần trăm được giảm:</strong> {agencyRankDetails.discount_percent}%
+                  <strong>Chiết khấu được giảm:</strong> {agencyRankDetails.discount_percent}%
                 </p>
                 {agencyRankDetails.note && (
                   <p>

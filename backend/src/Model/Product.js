@@ -104,14 +104,19 @@ module.exports = (sequelize) => {
       timestamps: true,
     }
   );
+
   Product.associate = (models) => {
-    Product.hasMany(models.OrderItem, {
-      foreignKey: "order_id",
-      as: "item",
-    });
     Product.belongsTo(models.Categories, {
-      foreignKey: "category_id",
-      as: "category",
+      foreignKey: 'category_id',
+      as: 'category',
+    });
+    Product.belongsTo(models.Warehouse, {
+      foreignKey: 'warehouse_id',
+      as: 'warehouse',
+    });
+    Product.hasMany(models.OrderItem, { 
+      foreignKey: 'product_id', 
+      as: 'orderItems' 
     });
   };
 

@@ -42,8 +42,8 @@ module.exports = (sequelize) => {
   );
   Warehouse.associate = (models) => {
     Warehouse.hasMany(models.Product, {
-      foreignKey: "warehouse_id",
-      as: "products",
+      foreignKey: 'warehouse_id',
+      as: 'products',
     });
   };
   return Warehouse;

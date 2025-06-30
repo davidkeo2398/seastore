@@ -200,15 +200,15 @@ export default function OrdersPage() {
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       order.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.order_id.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       statusFilter === "all" || order.status === statusFilter;
-    const matchesPayment =
-      paymentFilter === "all" || order.payment_status === paymentFilter;
+    // const matchesPayment =
+    //   paymentFilter === "all" || order.payment_status === paymentFilter;
 
-    return matchesSearch && matchesStatus && matchesPayment;
+    return matchesSearch && matchesStatus;
   });
 
   const totalOrders = orders.length;
@@ -384,7 +384,7 @@ export default function OrdersPage() {
                 <SelectItem value="cancelled">Đã hủy</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={paymentFilter} onValueChange={setPaymentFilter}>
+            {/* <Select value={paymentFilter} onValueChange={setPaymentFilter}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Lọc thanh toán" />
               </SelectTrigger>
@@ -395,7 +395,7 @@ export default function OrdersPage() {
                 <SelectItem value="failed">Thất bại</SelectItem>
                 <SelectItem value="refunded">Đã hoàn tiền</SelectItem>
               </SelectContent>
-            </Select>
+            </Select> */}
           </div>
 
           {/* Table */}
@@ -409,7 +409,7 @@ export default function OrdersPage() {
                   <TableHead>Địa chỉ</TableHead>
                   <TableHead>Tổng tiền</TableHead>
                   <TableHead>Trạng thái</TableHead>
-                  <TableHead>Thanh toán</TableHead>
+                  {/* <TableHead>Thanh toán</TableHead> */}
                   <TableHead className="text-right">Hành động</TableHead>
                 </TableRow>
               </TableHeader>
@@ -451,7 +451,7 @@ export default function OrdersPage() {
                             {order.user_name || "N/A"}
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            {order.user?.email || "N/A"}
+                            {order.user_email || "N/A"}
                           </div>
                         </div>
                       </TableCell>
@@ -501,7 +501,7 @@ export default function OrdersPage() {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell>{getPaymentBadge(order.status)}</TableCell>
+                      {/* <TableCell>{getPaymentBadge(order.status)}</TableCell> */}
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button

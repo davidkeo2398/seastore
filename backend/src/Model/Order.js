@@ -95,7 +95,7 @@ module.exports = (sequelize) => {
         defaultValue: "cash", // Default payment method
       },
       status: {
-        type: DataTypes.ENUM("pending", "completed", "cancelled"),
+        type: DataTypes.ENUM("pending", "processing", "shipped", "completed", "cancelled"),
         allowNull: false,
         defaultValue: "pending", // Default status
       },

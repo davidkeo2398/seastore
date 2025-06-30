@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import axiosInstance from "@/lib/axios";
+import setAuthToken from "@/ultils/Authentication";
 
 export default function Login ({ onClose }) {
      const [errorMessages, setErrorMessages] = useState("");
@@ -13,7 +14,7 @@ export default function Login ({ onClose }) {
     try {
       const { data } = await axiosInstance.post("/login", { password, email });
       if (data.token) {
-        document.cookie = `token=${data.token}; max-age=14400; path=/`;
+        setAuthToken(data.token);
         if (data.user.isAdmin) {
           window.location.href = '/admin';
         } else {
