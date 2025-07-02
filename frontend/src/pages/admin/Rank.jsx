@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -51,127 +51,135 @@ import {
   Eye,
   Calendar,
 } from "lucide-react";
+import axiosInstance from "@/lib/axios";
 
 // Mock data for members
-const mockMembers = [
-  {
-    id: "MEM001",
-    name: "Nguyễn Văn An",
-    email: "nguyenvanan@example.com",
-    phone: "0901234567",
-    currentRank: "Gold",
-    totalSpent: 15000000,
-    totalPoints: 2500,
-    usedPoints: 500,
-    availablePoints: 2000,
-    joinDate: "2023-01-15",
-    lastActivity: "2024-03-01",
-    discountPercentage: 10,
-    nextRankProgress: 75,
-    ordersCount: 25,
-  },
-  {
-    id: "MEM002",
-    name: "Trần Thị Bình",
-    email: "tranthibinh@example.com",
-    phone: "0912345678",
-    currentRank: "Silver",
-    totalSpent: 8000000,
-    totalPoints: 1200,
-    usedPoints: 200,
-    availablePoints: 1000,
-    joinDate: "2023-03-20",
-    lastActivity: "2024-02-28",
-    discountPercentage: 5,
-    nextRankProgress: 60,
-    ordersCount: 18,
-  },
-  {
-    id: "MEM003",
-    name: "Lê Văn Cường",
-    email: "levancuong@example.com",
-    phone: "0923456789",
-    currentRank: "Platinum",
-    totalSpent: 35000000,
-    totalPoints: 5000,
-    usedPoints: 1000,
-    availablePoints: 4000,
-    joinDate: "2022-08-10",
-    lastActivity: "2024-03-02",
-    discountPercentage: 15,
-    nextRankProgress: 40,
-    ordersCount: 45,
-  },
-  {
-    id: "MEM004",
-    name: "Phạm Thị Dung",
-    email: "phamthidung@example.com",
-    phone: "0934567890",
-    currentRank: "Bronze",
-    totalSpent: 2500000,
-    totalPoints: 400,
-    usedPoints: 50,
-    availablePoints: 350,
-    joinDate: "2024-01-05",
-    lastActivity: "2024-02-25",
-    discountPercentage: 2,
-    nextRankProgress: 25,
-    ordersCount: 8,
-  },
-  {
-    id: "MEM005",
-    name: "Hoàng Văn Em",
-    email: "hoangvanem@example.com",
-    phone: "0945678901",
-    currentRank: "Diamond",
-    totalSpent: 75000000,
-    totalPoints: 12000,
-    usedPoints: 3000,
-    availablePoints: 9000,
-    joinDate: "2022-05-15",
-    lastActivity: "2024-03-01",
-    discountPercentage: 20,
-    nextRankProgress: 100,
-    ordersCount: 89,
-  },
-];
+// const mockMembers = [
+//   {
+//     id: "MEM001",
+//     name: "Nguyễn Văn An",
+//     email: "nguyenvanan@example.com",
+//     phone: "0901234567",
+//     currentRank: "Gold",
+//     totalSpent: 15000000,
+//     totalPoints: 2500,
+//     usedPoints: 500,
+//     availablePoints: 2000,
+//     joinDate: "2023-01-15",
+//     lastActivity: "2024-03-01",
+//     discountPercentage: 10,
+//     nextRankProgress: 75,
+//     ordersCount: 25,
+//   },
+//   {
+//     id: "MEM002",
+//     name: "Trần Thị Bình",
+//     email: "tranthibinh@example.com",
+//     phone: "0912345678",
+//     currentRank: "Silver",
+//     totalSpent: 8000000,
+//     totalPoints: 1200,
+//     usedPoints: 200,
+//     availablePoints: 1000,
+//     joinDate: "2023-03-20",
+//     lastActivity: "2024-02-28",
+//     discountPercentage: 5,
+//     nextRankProgress: 60,
+//     ordersCount: 18,
+//   },
+//   {
+//     id: "MEM003",
+//     name: "Lê Văn Cường",
+//     email: "levancuong@example.com",
+//     phone: "0923456789",
+//     currentRank: "Platinum",
+//     totalSpent: 35000000,
+//     totalPoints: 5000,
+//     usedPoints: 1000,
+//     availablePoints: 4000,
+//     joinDate: "2022-08-10",
+//     lastActivity: "2024-03-02",
+//     discountPercentage: 15,
+//     nextRankProgress: 40,
+//     ordersCount: 45,
+//   },
+//   {
+//     id: "MEM004",
+//     name: "Phạm Thị Dung",
+//     email: "phamthidung@example.com",
+//     phone: "0934567890",
+//     currentRank: "Bronze",
+//     totalSpent: 2500000,
+//     totalPoints: 400,
+//     usedPoints: 50,
+//     availablePoints: 350,
+//     joinDate: "2024-01-05",
+//     lastActivity: "2024-02-25",
+//     discountPercentage: 2,
+//     nextRankProgress: 25,
+//     ordersCount: 8,
+//   },
+//   {
+//     id: "MEM005",
+//     name: "Hoàng Văn Em",
+//     email: "hoangvanem@example.com",
+//     phone: "0945678901",
+//     currentRank: "Diamond",
+//     totalSpent: 75000000,
+//     totalPoints: 12000,
+//     usedPoints: 3000,
+//     availablePoints: 9000,
+//     joinDate: "2022-05-15",
+//     lastActivity: "2024-03-01",
+//     discountPercentage: 20,
+//     nextRankProgress: 100,
+//     ordersCount: 89,
+//   },
+// ];
 
 // Rank configuration
-const rankConfig = {
-  Bronze: {
-    threshold: 0,
-    discount: 2,
-    color: "bg-orange-100 text-orange-800",
-    icon: Award,
-  },
-  Silver: {
-    threshold: 5000000,
-    discount: 5,
-    color: "bg-gray-100 text-gray-800",
-    icon: Star,
-  },
-  Gold: {
-    threshold: 10000000,
-    discount: 10,
-    color: "bg-yellow-100 text-yellow-800",
-    icon: Trophy,
-  },
-  Platinum: {
-    threshold: 25000000,
-    discount: 15,
-    color: "bg-blue-100 text-blue-800",
-    icon: Crown,
-  },
-  Diamond: {
-    threshold: 50000000,
-    discount: 20,
-    color: "bg-purple-100 text-purple-800",
-    icon: Gift,
-  },
+// const rankConfig = {
+//   Bronze: {
+//     threshold: 0,
+//     discount: 2,
+//     color: "bg-orange-100 text-orange-800",
+//     icon: Award,
+//   },
+//   Silver: {
+//     threshold: 5000000,
+//     discount: 5,
+//     color: "bg-gray-100 text-gray-800",
+//     icon: Star,
+//   },
+//   Gold: {
+//     threshold: 10000000,
+//     discount: 10,
+//     color: "bg-yellow-100 text-yellow-800",
+//     icon: Trophy,
+//   },
+//   Platinum: {
+//     threshold: 25000000,
+//     discount: 15,
+//     color: "bg-blue-100 text-blue-800",
+//     icon: Crown,
+//   },
+//   Diamond: {
+//     threshold: 50000000,
+//     discount: 20,
+//     color: "bg-purple-100 text-purple-800",
+//     icon: Gift,
+//   },
+// };
+const rankConfigIconsColors = {
+  Bronze: { color: "bg-orange-100 text-orange-800", icon: Award },
+  Silver: { color: "bg-gray-100 text-gray-800", icon: Star },
+  Gold: { color: "bg-yellow-100 text-yellow-800", icon: Trophy },
+  Platinum: { color: "bg-blue-100 text-blue-800", icon: Crown },
+  Diamond: { color: "bg-purple-100 text-purple-800", icon: Gift },
 };
-
 export default function AdminAngencyRank() {
-  const [members, setMembers] = useState(mockMembers);
+  const [members, setMembers] = useState([]);
+  const [ranks, setRanks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [rankFilter, setRankFilter] = useState("all");
   const [selectedMember, setSelectedMember] = useState(null);
@@ -182,6 +190,25 @@ export default function AdminAngencyRank() {
     amount: 0,
     reason: "",
   });
+
+  const fetchRanks = async () => {
+    try {
+      const response = await axiosInstance.get("/admin/rank");
+      setRanks(response.data.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách hạng:", error);
+      toast.error("Không thể tải danh sách hạng. Vui lòng thử lại sau.");
+    }
+  };
+  const fetchMembersWithRank = async () => {
+    try {
+      const response = await axiosInstance.get("/admin/rank/members");
+      setMembers(response.data.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách thành viên:", error);
+      toast.error("Không thể tải danh sách thành viên. Vui lòng thử lại sau.");
+    }
+  };
 
   const handleViewDetails = (member) => {
     setSelectedMember(member);
@@ -225,7 +252,7 @@ export default function AdminAngencyRank() {
     const matchesSearch =
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.id.toLowerCase().includes(searchTerm.toLowerCase());
+      String(member.id).toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesRank =
       rankFilter === "all" || member.currentRank === rankFilter;
@@ -253,13 +280,13 @@ export default function AdminAngencyRank() {
     }).format(price);
   };
 
-  const getRankBadge = (rank) => {
-    const config = rankConfig[rank];
+  const getRankBadge = (rankName) => {
+    const config = rankConfig[rankName];
     const IconComponent = config.icon;
     return (
       <Badge className={config.color}>
         <IconComponent className="h-3 w-3 mr-1" />
-        {rank}
+        {rankName}
       </Badge>
     );
   };
@@ -292,7 +319,7 @@ export default function AdminAngencyRank() {
             Theo dõi điểm tích lũy và hạng thành viên
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2 text-black">
           <Plus className="h-4 w-4" />
           Thêm thành viên
         </Button>
@@ -314,7 +341,7 @@ export default function AdminAngencyRank() {
             </p>
           </CardContent>
         </Card>
-        <Card>
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Tổng điểm</CardTitle>
             <Star className="h-4 w-4 text-yellow-600" />
@@ -325,8 +352,8 @@ export default function AdminAngencyRank() {
             </div>
             <p className="text-xs text-muted-foreground">Điểm tích lũy</p>
           </CardContent>
-        </Card>
-        <Card>
+        </Card> */}
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Tổng chi tiêu</CardTitle>
             <DollarSign className="h-4 w-4 text-green-600" />
@@ -339,8 +366,8 @@ export default function AdminAngencyRank() {
               Doanh thu từ thành viên
             </p>
           </CardContent>
-        </Card>
-        <Card>
+        </Card> */}
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Giảm giá TB</CardTitle>
             <TrendingUp className="h-4 w-4 text-blue-600" />
@@ -353,7 +380,7 @@ export default function AdminAngencyRank() {
               Mức giảm giá trung bình
             </p>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Main Content */}
@@ -391,11 +418,18 @@ export default function AdminAngencyRank() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tất cả hạng</SelectItem>
-                    {Object.keys(rankConfig).map((rank) => (
-                      <SelectItem key={rank} value={rank}>
-                        {rank}
-                      </SelectItem>
-                    ))}
+                    {ranks.map(
+                      (
+                        rank // Sử dụng danh sách hạng từ API
+                      ) => (
+                        <SelectItem
+                          key={rank.agency_rank_id}
+                          value={rank.agency_rank_name}
+                        >
+                          {rank.agency_rank_name}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -508,7 +542,8 @@ export default function AdminAngencyRank() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-4">
-                {Object.entries(rankConfig).map(([rank, config]) => {
+                {ranks.map((rank) => {
+                  // Sử dụng dữ liệu hạng từ API
                   const IconComponent = config.icon;
                   return (
                     <Card key={rank} className="p-4">
@@ -552,7 +587,8 @@ export default function AdminAngencyRank() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {Object.keys(rankConfig).map((rank) => {
+                  {ranks.map((rank) => {
+                    // Sử dụng dữ liệu hạng từ API
                     const count = members.filter(
                       (m) => m.currentRank === rank
                     ).length;
@@ -602,7 +638,7 @@ export default function AdminAngencyRank() {
                     </div>
                   </div>
                 </div>
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <h4 className="font-medium">Thống kê</h4>
                   <div className="space-y-1 text-sm">
                     <div>Số đơn hàng: {selectedMember.ordersCount}</div>
@@ -612,9 +648,9 @@ export default function AdminAngencyRank() {
                     <div>Hạng hiện tại: {selectedMember.currentRank}</div>
                     <div>Giảm giá: {selectedMember.discountPercentage}%</div>
                   </div>
-                </div>
+                </div> */}
               </div>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <h4 className="font-medium">Điểm tích lũy</h4>
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div className="p-3 bg-blue-50 rounded-lg">
@@ -642,7 +678,7 @@ export default function AdminAngencyRank() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           )}
         </DialogContent>

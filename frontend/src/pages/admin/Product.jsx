@@ -102,20 +102,37 @@ import axiosInstance from "@/lib/axios";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
+  const [units, setUnits] = useState([
+    "kg",
+    "g",
+    "lit",
+    "Dang",
+    "cai",
+    "hop",
+    "chai",
+    "coc",
+    "thung",
+  ]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
+    product_name: "",
     price: 0,
     description: "",
-    category: "",
+    old_price: "",
     image: "",
-    type: "",
-    soluong: 0,
+    category_id: "",
+    agency_id: "",
+    warehouse_id: "",
+    unit: "",
+    number_of_inventory: 0,
   });
   const [category, setCategory] = useState([]);
+  const [agencies, setAgencies] = useState([]);
+  const [warehouses, setWarehouses] = useState([]);
 
   const fetchProducts = async () => {
     try {
@@ -147,28 +164,59 @@ export default function ProductsPage() {
       }
     } catch (error) {
       console.error("Failed to fetch categories:", error);
-      toast.error("Không thể tải danh sách sản phẩm.");
+      toast.error("Không thể tải danh sách danh mục.");
     }
   };
+
+  const fetchAgencies = async () => {
+    try {
+      const res = await axiosInstance.get("/agency");
+      if (res.data && res.data.data) setAgencies(res.data.data);
+    } catch (error) {
+      toast.error("Không thể tải danh sách đại lý.");
+    }
+  };
+
+  // const fetchWarehouses = async () => {
+  //   try {
+  //     const res = await axiosInstance.get("/warehouse");
+  //     if (res.data && res.data.data) setWarehouses(res.data.data);
+  //   } catch (error) {
+  //     toast.error("Không thể tải danh sách kho.");
+  //   }
+  // };
 
   useEffect(() => {
     fetchProducts();
     fetchCategories();
+    fetchAgencies();
+    // fetchWarehouses();
   }, []);
 
   const handleInputChange = (e) => {
-    setIsDialogOpen(true);
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Nếu muốn cho phép thêm mới vào danh sách frontend (không ảnh hưởng backend)
+    if (value && !units.includes(value)) {
+      setUnits((prev) => [...prev, value]);
+    }
   };
 
   const resetForm = () => {
     setFormData({
-      name: "",
+      product_name: "",
       price: 0,
       description: "",
-      category: "",
+      old_price: "",
       image: "",
-      type: "",
-      soluong: 0,
+      category_id: "",
+      agency_id: "",
+      warehouse_id: "",
+      unit: "",
+      number_of_inventory: 0,
     });
     setIsEditMode(false);
   };
@@ -194,6 +242,17 @@ export default function ProductsPage() {
     }
   };
 
+  const handleUnitChange = (e) => {
+    const value = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      unit: value,
+    }));
+    if (value && !units.includes(value)) {
+      setUnits((prev) => [...prev, value]);
+    }
+  };
+
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
       (product.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -205,7 +264,8 @@ export default function ProductsPage() {
         .includes(searchTerm.toLowerCase());
 
     const matchesCategory =
-      categoryFilter === "all" || product.category === categoryFilter;
+      categoryFilter === "all" ||
+      String(product.category_id) === String(categoryFilter);
 
     return matchesSearch && matchesCategory;
   });
@@ -222,31 +282,53 @@ export default function ProductsPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
-    if (!formData.name || !formData.category || !formData.price) {
-      toast.error("Vui lòng nhập đầy đủ thông tin sản phẩm!");
+    console.log("Submit form", formData);
+    if (
+      !formData.product_name ||
+      !formData.category_id ||
+      !formData.agency_id ||
+      !formData.price ||
+      !formData.unit ||
+      // !formData.warehouse_id ||
+      formData.number_of_inventory === ""
+    ) {
+      toast.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
       return;
     }
-
     if (isEditMode) {
-      // Cập nhật sản phẩm
+      // Cập nhật sản phẩm (nếu cần, có thể bổ sung API PUT ở đây)
       setProducts((prev) =>
         prev.map((p) => (p.id === formData.id ? { ...formData } : p))
       );
       toast.success("Cập nhật sản phẩm thành công!");
     } else {
-      // Thêm sản phẩm mới
-      setProducts((prev) => [
-        ...prev,
-        {
-          ...formData,
-          id: Date.now().toString(),
-          createdAt: new Date().toISOString().slice(0, 10),
-        },
-      ]);
-      toast.success("Thêm sản phẩm thành công!");
+      try {
+        const productData = {
+          product_name: formData.product_name,
+          price: Number(formData.price),
+          description: formData.description,
+          old_price: formData.old_price
+            ? Number(formData.old_price)
+            : undefined,
+          image: formData.image,
+          category_id: Number(formData.category_id),
+          agency_id: Number(formData.agency_id),
+          warehouse_id: formData.warehouse_id
+            ? Number(formData.warehouse_id)
+            : null, 
+          unit: formData.unit,
+          number_of_inventory: Number(formData.number_of_inventory),
+        };
+        await axiosInstance.post("/admin/products", productData);
+        toast.success("Thêm sản phẩm thành công!");
+        fetchProducts();
+      } catch (error) {
+        console.error("Lỗi khi thêm sản phẩm:", error);
+        alert("Lỗi khi thêm sản phẩm: " + error.message);
+        toast.error("Thêm sản phẩm thất bại!");
+        return;
+      }
     }
-
     setIsDialogOpen(false);
     resetForm();
   }
@@ -269,8 +351,8 @@ export default function ProductsPage() {
           }}
         >
           <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus variant="outline" className="h-4 w-4" />
+            <Button className="gap-2 text-black">
+              <Plus variant="outline" className="h-4 w-4 text-black" />
               Thêm sản phẩm
             </Button>
           </DialogTrigger>
@@ -288,59 +370,105 @@ export default function ProductsPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Tên sản phẩm</Label>
+                  <Label htmlFor="product_name">Tên sản phẩm</Label>
                   <Input
-                    id="name"
-                    name="name"
-                    value={formData.name}
+                    id="product_name"
+                    name="product_name"
+                    value={formData.product_name}
                     onChange={handleInputChange}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="category">Danh mục</Label>
-                  <Input
-                    id="category"
-                    name="category"
-                    value={formData.category}
+                  <Label htmlFor="category_id">Danh mục</Label>
+                  <select
+                    id="category_id"
+                    name="category_id"
+                    value={formData.category_id}
                     onChange={handleInputChange}
                     required
-                  />
+                    className="w-full border rounded px-2 py-1"
+                  >
+                    <option value="">Chọn danh mục</option>
+                    {category.map((cat) => (
+                      <option key={cat.category_id} value={cat.category_id}>
+                        {cat.category_name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="agency_id">Đại lý</Label>
+                  <select
+                    id="agency_id"
+                    name="agency_id"
+                    value={formData.agency_id}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full border rounded px-2 py-1"
+                  >
+                    <option value="">Chọn đại lý</option>
+                    {agencies.map((a) => (
+                      <option key={a.agency_id} value={a.agency_id}>
+                        {a.agency_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* <div className="space-y-2">
+                  <Label htmlFor="warehouse_id">Kho</Label>
+                  <select id="warehouse_id" name="warehouse_id" value={formData.warehouse_id} onChange={handleInputChange} required className="w-full border rounded px-2 py-1">
+                    <option value="">Chọn kho</option>
+                    {warehouses.map((w) => (
+                      <option key={w.warehouse_id} value={w.warehouse_id}>{w.warehouse_name}</option>
+                    ))}
+                  </select>
+                </div> */}
+                <div className="space-y-2">
+                  <Label htmlFor="unit">Đơn vị tính</Label>
+                  <Input
+                    id="unit"
+                    name="unit"
+                    value={formData.unit}
+                    onChange={handleUnitChange}
+                    list="unit-list"
+                    required
+                    placeholder="Chọn hoặc nhập đơn vị"
+                    className="w-full border rounded px-2 py-1"
+                  />
+                  <datalist id="unit-list">
+                    {units.map((u) => (
+                      <option key={u} value={u} />
+                    ))}
+                  </datalist>
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="price">Giá (VNĐ)</Label>
                   <Input
                     id="price"
                     name="price"
                     type="number"
+                    min={0}
                     value={formData.price}
                     onChange={handleInputChange}
                     required
                   />
                 </div>
+                {/* <div className="space-y-2">
+                  <Label htmlFor="number_of_inventory">Số lượng tồn kho</Label>
+                  <Input id="number_of_inventory" name="number_of_inventory" type="number" min={0} value={formData.number_of_inventory} onChange={handleInputChange} required />
+                </div> */}
                 <div className="space-y-2">
-                  <Label htmlFor="soluong">Số lượng</Label>
+                  <Label htmlFor="old_price">Giá cũ (nếu có)</Label>
                   <Input
-                    id="soluong"
-                    name="soluong"
+                    id="old_price"
+                    name="old_price"
                     type="number"
-                    value={formData.soluong}
+                    min={0}
+                    value={formData.old_price}
                     onChange={handleInputChange}
-                    required
                   />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="type">Loại sản phẩm</Label>
-                <Input
-                  id="type"
-                  name="type"
-                  value={formData.type}
-                  onChange={handleInputChange}
-                  required
-                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="image">URL hình ảnh</Label>
@@ -350,7 +478,6 @@ export default function ProductsPage() {
                   value={formData.image}
                   onChange={handleInputChange}
                   placeholder="https://example.com/image.jpg"
-                  required
                 />
               </div>
               <div className="space-y-2">
@@ -361,7 +488,6 @@ export default function ProductsPage() {
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={3}
-                  required
                 />
               </div>
               <DialogFooter>
@@ -372,7 +498,7 @@ export default function ProductsPage() {
                 >
                   Hủy
                 </Button>
-                <Button type="submit">
+                <Button type="submit" variant="outline">
                   {isEditMode ? "Cập nhật" : "Thêm sản phẩm"}
                 </Button>
               </DialogFooter>
@@ -428,14 +554,14 @@ export default function ProductsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              {categories.length}
+              {category.length}
             </div>
             <p className="text-xs text-muted-foreground">Loại sản phẩm</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Search and Filters */}
+      {/*Tìm kiếm và bộ lọc */}
       <Card>
         <CardHeader>
           <CardTitle>Danh sách sản phẩm</CardTitle>
@@ -461,9 +587,9 @@ export default function ProductsPage() {
               onChange={(e) => setCategoryFilter(e.target.value)}
             >
               <option value="all">Tất cả danh mục</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
+              {category.map((cat, index) => (
+                <option key={cat.category_id || index} value={cat.category_id}>
+                  {cat.category_name}
                 </option>
               ))}
             </select>
@@ -513,8 +639,7 @@ export default function ProductsPage() {
                       <TableCell>
                         <Badge variant="outline">
                           {category.find(
-                            (item) =>
-                              item.category_id === product.category_id
+                            (item) => item.category_id === product.category_id
                           )?.category_name || "N/A"}
                         </Badge>
                       </TableCell>

@@ -254,7 +254,7 @@ export default function UsersPage() {
             Quản lý tài khoản người dùng trong hệ thống
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2 text-black">
           <Plus className="h-4 w-4" />
           Thêm người dùng
         </Button>

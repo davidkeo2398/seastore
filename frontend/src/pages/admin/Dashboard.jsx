@@ -26,16 +26,16 @@ export default function DashboardStats({ stats }) {
   const [users, setUsers] = useState([]);
 
   const statsConfig = [
-    {
-      title: "Tổng kho",
-      value: safeStats.totalWarehouse,
-      change: safeStats.warehouseChange,
-      icon: Warehouse,
-      color: "bg-blue-600",
-      lightColor: "bg-blue-50",
-      textColor: "text-blue-600",
-      borderColor: "border-blue-200",
-    },
+    // {
+    //   title: "Tổng kho",
+    //   value: safeStats.totalWarehouse,
+    //   change: safeStats.warehouseChange,
+    //   icon: Warehouse,
+    //   color: "bg-blue-600",
+    //   lightColor: "bg-blue-50",
+    //   textColor: "text-blue-600",
+    //   borderColor: "border-blue-200",
+    // },
     {
       title: "Tổng sản phẩm",
       value: safeStats.totalProducts,

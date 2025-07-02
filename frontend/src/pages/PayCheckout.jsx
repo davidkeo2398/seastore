@@ -97,7 +97,7 @@ export default function PayCheckout() {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({});
   const [orderSummary, setOrderSummary] = useState([]);
-  const [selectedPayment, setSelectedPayment] = useState("credit-card");
+  const [selectedPayment, setSelectedPayment] = useState("cod");
   const [isProcessing, setIsProcessing] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [formData, setFormData] = useState({

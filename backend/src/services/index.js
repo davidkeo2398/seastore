@@ -36,4 +36,5 @@ module.exports = {
     rankAdminService,
     userAdminService,
     warehouseAdminService,
+    rankAdminService
 };

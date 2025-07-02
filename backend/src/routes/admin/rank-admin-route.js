@@ -1,6 +1,7 @@
 const express = require("express");
 const controller = require("../../controllers/admin/rank-admin-controller");
 const { adminAuthMiddleware } = require("../../middleware");
+const { updateRank } = require("../../services/admin/rank-admin-service");
 const router = express.Router();
 
 router.get("/", adminAuthMiddleware, controller.getRanks);

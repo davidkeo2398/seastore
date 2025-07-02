@@ -42,10 +42,14 @@ module.exports = {
       res
         .status(500)
         .json({ message: "Tạo sản phẩm thất bại", error: error.message });
+        res
+        .status(500)
+        .json({ message: "Tạo sản phẩm thất bại", error: error.message });
     }
   },
   updateProduct: async (req, res) => {
     try {
+      console.log("Dữ liệu nhận được để cập nhật:", req.body);
       const result = await productAdminService.updateProduct(
         req.params.id,
         req.body

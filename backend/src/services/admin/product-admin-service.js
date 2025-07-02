@@ -35,11 +35,41 @@ module.exports = {
   },
   createProduct: async (productData) => {
     try {
-      const newProduct = await Product.create(productData);
+      // Chỉ lấy các trường cần thiết để tạo sản phẩm
+      const {
+        product_name,
+        price,
+        description,
+        old_price,
+        image,
+        category_id,
+        agency_id,
+        warehouse_id,
+        unit,
+        number_of_inventory
+      } = productData;
+
+      // Validate đơn giản phía service (nếu muốn)
+      if (!product_name || !price || !category_id || !agency_id || !unit) {
+        throw new Error("Thiếu thông tin bắt buộc khi tạo sản phẩm");
+      }
+
+      const newProduct = await Product.create({
+        product_name,
+        price,
+        description,
+        old_price,
+        image,
+        category_id,
+        agency_id,
+        warehouse_id,
+        unit,
+        number_of_inventory
+      });
       return newProduct;
     } catch (error) {
       console.error("Lỗi khi tạo sản phẩm:", error);
-      throw new Error("Không thể tạo sản phẩm");
+      throw new Error(error.message || "Không thể tạo sản phẩm");
     }
   },
   updateProduct: async (productId, updateData) => {
@@ -48,7 +78,18 @@ module.exports = {
       if (!product) {
         throw new Error("Không tìm thấy sản phẩm");
       }
-      await product.update(updateData);
+      await product.update({
+         product_name: productData.product_name,
+      price: productData.price,
+      description: productData.description,
+      old_price: productData.old_price,
+      image: productData.image,
+      category_id: productData.category_id,
+      agency_id: productData.agency_id,
+      warehouse_id: productData.warehouse_id,
+      unit: productData.unit, 
+      number_of_inventory: productData.number_of_inventory,
+      });
       return product;
     } catch (error) {
       console.error("Lỗi khi cập nhật sản phẩm:", error);

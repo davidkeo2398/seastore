@@ -225,24 +225,45 @@ export default function OrdersPage() {
     (order) => order.status === "completed"
   ).length;
 
+  // const getStatusBadge = (status) => {
+  //   switch (status) {
+  //     case "pending":
+  //       return (
+  //         <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+  //           Chờ xử lý
+  //         </Badge>
+  //       );
+  //     // case "processing":
+  //     //   return (
+  //     //     <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+  //     //       Đang xử lý
+  //     //     </Badge>
+  //     //   );
+  //     // case "shipped":
+  //     //   return (
+  //     //     <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">
+  //     //       Đã gửi
+  //     //     </Badge>
+  //     //   );
+  //     case "completed":
+  //       return (
+  //         <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+  //           Hoàn thành
+  //         </Badge>
+  //       );
+  //     case "cancelled":
+  //       return <Badge variant="destructive">Đã hủy</Badge>;
+  //     default:
+  //       return <Badge variant="outline">{status}</Badge>;
+  //   }
+  // };
+
   const getStatusBadge = (status) => {
     switch (status) {
-      case "pending":
-        return (
-          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
-            Chờ xử lý
-          </Badge>
-        );
       case "processing":
         return (
-          <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
             Đang xử lý
-          </Badge>
-        );
-      case "shipped":
-        return (
-          <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">
-            Đã gửi
           </Badge>
         );
       case "completed":
@@ -251,8 +272,6 @@ export default function OrdersPage() {
             Hoàn thành
           </Badge>
         );
-      case "cancelled":
-        return <Badge variant="destructive">Đã hủy</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -377,11 +396,8 @@ export default function OrdersPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tất cả trạng thái</SelectItem>
-                <SelectItem value="pending">Chờ xử lý</SelectItem>
                 <SelectItem value="processing">Đang xử lý</SelectItem>
-                <SelectItem value="shipped">Đã gửi</SelectItem>
                 <SelectItem value="completed">Hoàn thành</SelectItem>
-                <SelectItem value="cancelled">Đã hủy</SelectItem>
               </SelectContent>
             </Select>
             {/* <Select value={paymentFilter} onValueChange={setPaymentFilter}>
@@ -489,15 +505,8 @@ export default function OrdersPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="pending">Chờ xử lý</SelectItem>
-                            <SelectItem value="processing">
-                              Đang xử lý
-                            </SelectItem>
-                            <SelectItem value="shipped">Đã gửi</SelectItem>
-                            <SelectItem value="completed">
-                              Hoàn thành
-                            </SelectItem>
-                            <SelectItem value="cancelled">Đã hủy</SelectItem>
+                            <SelectItem value="processing">Đang xử lý</SelectItem>
+                            <SelectItem value="completed">Hoàn thành</SelectItem>
                           </SelectContent>
                         </Select>
                       </TableCell>

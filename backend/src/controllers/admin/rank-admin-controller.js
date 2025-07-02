@@ -1,12 +1,15 @@
-const rankAdminService = require("../../services");
+const rankAdminService = require("../../services/admin/rank-admin-service");
 
 module.exports = {
   getRanks: async (req, res) => {
     try {
+      console.log("Đã nhận yêu cầu GET /admin/rank tại controller.");
       const data = await rankAdminService.getRanks();
+      console.log("Dữ liệu ranks nhận được từ service:", data);
       res.json({ message: "Lấy danh sách hạng thành công", data });
-    } catch (err) {
-      res.status(500).json({ message: "Lỗi lấy danh sách hạng", error: err.message });
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách hạng:", error);
+      res.status(500).json({ error: "Không thể lấy danh sách hạng" });
     }
   },
   createRank: async (req, res) => {
@@ -22,7 +25,9 @@ module.exports = {
       const data = await rankAdminService.updateRank(req.params.id, req.body);
       res.json({ message: "Cập nhật hạng thành công", data });
     } catch (err) {
-      res.status(500).json({ message: "Lỗi cập nhật hạng", error: err.message });
+      res
+        .status(500)
+        .json({ message: "Lỗi cập nhật hạng", error: err.message });
     }
   },
   deleteRank: async (req, res) => {
@@ -38,7 +43,9 @@ module.exports = {
       const data = await rankAdminService.getMembersWithRank();
       res.json({ message: "Lấy danh sách thành viên thành công", data });
     } catch (err) {
-      res.status(500).json({ message: "Lỗi lấy danh sách thành viên", error: err.message });
+      res
+        .status(500)
+        .json({ message: "Lỗi lấy danh sách thành viên", error: err.message });
     }
   },
 };

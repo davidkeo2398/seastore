@@ -59,12 +59,9 @@ module.exports = (sequelize) => {
       unit: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          isIn: ["kg", "g", "litre", "piece"], // Example units, adjust as needed
-        },
       },
       old_price: {
-        type: DataTypes.DECIMAL(10, 2), // Adjust precision and scale as needed
+        type: DataTypes.DECIMAL(10, 2), 
         allowNull: true,
         validate: {
           isDecimal: true, // Ensure it's a valid decimal number
@@ -80,7 +77,7 @@ module.exports = (sequelize) => {
       },
       warehouse_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true, // Allow NULL if the product is not associated with a warehouse
         references: {
           model: "Warehouse", // Assuming you have a Warehouse model
           key: "warehouse_id",
@@ -90,7 +87,7 @@ module.exports = (sequelize) => {
       },
       number_of_inventory: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true, // Allow NULL if the product does not have inventory tracking
         validate: {
           isInt: true, // Ensure it's an integer
           min: 0, // Inventory count must be non-negative

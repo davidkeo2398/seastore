@@ -35,7 +35,7 @@ export default function AdminLayout() {
               Quản lý sản phẩm
             </Button>
           </Link>
-          <Link to="/admin/warehouse">
+          {/* <Link to="/admin/warehouse">
             <Button
               variant="ghost"
               className="w-full justify-start text-gray-700 hover:text-blue-700 hover:bg-blue-50"
@@ -43,7 +43,7 @@ export default function AdminLayout() {
               <Warehouse className="mr-3 h-5 w-5 text-gray-400 group-hover:text-blue-500" />
               Quản lý kho
             </Button>
-          </Link>
+          </Link> */}
           <Link to="/admin/orders">
             <Button
               variant="ghost"
