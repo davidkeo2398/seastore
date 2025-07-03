@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,35 +11,12 @@ import {
 } from "lucide-react";
 
 export default function DashboardStats({ stats }) {
-  const defaultStats = {
-    totalWarehouse: 12,
-    totalProducts: 1247,
-    totalOrders: 856,
-    totalUsers: 2341,
-    warehouseChange: 2,
-    productsChange: 12,
-    ordersChange: -3,
-    usersChange: 8,
-  };
-
-  const safeStats = stats || defaultStats;
-  const [users, setUsers] = useState([]);
-
+  if (!stats) return <div>Đang tải số liệu...</div>;
   const statsConfig = [
-    // {
-    //   title: "Tổng kho",
-    //   value: safeStats.totalWarehouse,
-    //   change: safeStats.warehouseChange,
-    //   icon: Warehouse,
-    //   color: "bg-blue-600",
-    //   lightColor: "bg-blue-50",
-    //   textColor: "text-blue-600",
-    //   borderColor: "border-blue-200",
-    // },
     {
       title: "Tổng sản phẩm",
-      value: safeStats.totalProducts,
-      change: safeStats.productsChange,
+      value: stats.totalProducts || 0,
+      change: stats.productsChange,
       icon: Package,
       color: "bg-blue-500",
       lightColor: "bg-blue-50",
@@ -48,8 +25,8 @@ export default function DashboardStats({ stats }) {
     },
     {
       title: "Tổng đơn hàng",
-      value: safeStats.totalOrders,
-      change: safeStats.ordersChange,
+      value: stats.totalOrders || 0,
+      change: stats.ordersChange,
       icon: ShoppingCart,
       color: "bg-blue-700",
       lightColor: "bg-blue-50",
@@ -58,14 +35,24 @@ export default function DashboardStats({ stats }) {
     },
     {
       title: "Tổng người dùng",
-      value: safeStats.totalUsers,
-      change: safeStats.usersChange,
+      value: stats.totalUsers || 0,
+      change: stats.usersChange,
       icon: Users,
       color: "bg-blue-800",
       lightColor: "bg-blue-50",
       textColor: "text-blue-800",
       borderColor: "border-blue-200",
     },
+    // {
+    //   title: "Tổng hạng thành viên",
+    //   value: stats.totalMemberships || 0,
+    //   change: stats.membershipChange,
+    //   icon: Warehouse,
+    //   color: "bg-blue-600",
+    //   lightColor: "bg-blue-50",
+    //   textColor: "text-blue-600",
+    //   borderColor: "border-blue-200",
+    // },
   ];
 
   return (

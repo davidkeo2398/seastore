@@ -505,8 +505,10 @@ export default function OrdersPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="processing">Đang xử lý</SelectItem>
+                            <SelectItem value="pending">Đang xử lý</SelectItem>
                             <SelectItem value="completed">Hoàn thành</SelectItem>
+                            <SelectItem value="cancelled">Đã hủy</SelectItem>
+
                           </SelectContent>
                         </Select>
                       </TableCell>

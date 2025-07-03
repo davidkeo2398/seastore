@@ -58,6 +58,9 @@ const Header = () => {
         <Link to="/about" className="nav-link">
           Giới thiệu
         </Link>
+        <Link to="/orderTracking" className="nav-link">
+          Đơn hàng của tôi
+        </Link>
         <Link to="/products" className="nav-link">
           Sản phẩm
         </Link>

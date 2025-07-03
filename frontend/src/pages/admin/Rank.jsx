@@ -259,7 +259,9 @@ export default function AdminAngencyRank() {
       member.member_info.user_name
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      member.member_info.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.member_info.email
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       String(member.user_id).toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesRank =
@@ -455,9 +457,7 @@ export default function AdminAngencyRank() {
                       <TableHead>Tổng chi tiêu</TableHead>
                       <TableHead>Giảm giá</TableHead>
                       <TableHead>Tiến độ hạng</TableHead>
-                      {/* <TableHead>Điểm còn hiệu lực đến</TableHead> */}
-
-                      <TableHead className="text-right">Hành động</TableHead>
+                      <TableHead className="w-[150px] text-left">Hành động</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -490,10 +490,15 @@ export default function AdminAngencyRank() {
                           </TableCell>
                           <TableCell>
                             {member.rank_progress &&
-                            member.rank_progress.next_rank_name && member.rank_progress.next_rank_name !== "Đã đạt hạng cao nhất" ? (
+                            member.rank_progress.next_rank_name &&
+                            member.rank_progress.next_rank_name !==
+                              "Đã đạt hạng cao nhất" ? (
                               <div className="space-y-1">
-                                <span className="text-xs">
-                                  Còn {formatPrice(member.rank_progress.remaining)} để lên hạng {member.rank_progress.next_rank_name}
+                                <span className="text-s whitespace-nowrap">
+                                  Còn{" "}
+                                  {formatPrice(member.rank_progress.remaining)}{" "}
+                                  để lên hạng{" "}
+                                  {member.rank_progress.next_rank_name}
                                 </span>
                               </div>
                             ) : (
@@ -502,14 +507,14 @@ export default function AdminAngencyRank() {
                               </Badge>
                             )}
                           </TableCell>
-                          <TableCell>
-                            {/* <div className="flex items-center gap-1">
+                          {/* <TableCell>
+                            <div className="flex items-center gap-1">
                               <Calendar className="h-3 w-3 text-muted-foreground" />
                               {new Date(member.lastActivity).toLocaleDateString(
                                 "vi-VN"
                               )}
-                            </div> */}
-                          </TableCell>
+                            </div>
+                          </TableCell> */}
                           <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-2">
                               <Button
@@ -534,7 +539,7 @@ export default function AdminAngencyRank() {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan="7" className="text-center">
+                        <TableCell colSpan="6" className="text-center">
                           Không có thành viên nào phù hợp với tiêu chí tìm kiếm.
                         </TableCell>
                       </TableRow>
@@ -596,7 +601,7 @@ export default function AdminAngencyRank() {
         */}
 
         {/* Analytics Tab */}
-        <TabsContent value="analytics">
+        {/* <TabsContent value="analytics">
           <div className="grid gap-4">
             <Card>
               <CardHeader>
@@ -626,7 +631,7 @@ export default function AdminAngencyRank() {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
 
       {/* Member Detail Dialog */}

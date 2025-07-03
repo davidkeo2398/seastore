@@ -23,7 +23,7 @@ import axiosInstance from "@/lib/axios";
 //   price: 2500000,
 //   old_price: 3000000,
 //   unit: "chiếc",
-//   number_of_inventory: 15,
+//   `number_of_inventory`: 15,
 //   description:
 //     "Tai nghe không dây cao cấp với chất lượng âm thanh vượt trội, pin 30 giờ và công nghệ chống ồn chủ động. Thiết kế ergonomic mang lại sự thoải mái tối đa cho người sử dụng.",
 //   image:

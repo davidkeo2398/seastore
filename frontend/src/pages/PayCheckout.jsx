@@ -85,7 +85,7 @@ const paymentMethods = [
   //   popular: false,
   // },
   {
-    id: "cod",
+    id: "cash",
     name: "Thanh toán khi nhận hàng",
     description: "Tiền mặt",
     icon: Truck,
@@ -97,7 +97,7 @@ export default function PayCheckout() {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({});
   const [orderSummary, setOrderSummary] = useState([]);
-  const [selectedPayment, setSelectedPayment] = useState("cod");
+  const [selectedPayment, setSelectedPayment] = useState("cash");
   const [isProcessing, setIsProcessing] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [formData, setFormData] = useState({
@@ -301,7 +301,12 @@ export default function PayCheckout() {
       // promotion_code: localStorage.getItem("promotion_code");
     }
     const payload = {
-      user_email: userInfo.user.email,
+      user_email:
+        userInfo.email ||
+        userInfo.user_email ||
+        userInfo.user?.email ||
+        userInfo.user?.user_email ||
+        "",
       address_agency: formData.address_user,
       agency_name: formData.full_name,
       phone_agency: formData.phone_user,
@@ -323,7 +328,7 @@ export default function PayCheckout() {
     });
     console.log("create order for other roles", result);
     removeFromCart();
-    localStorage.removeItem('cart');
+    localStorage.removeItem("cart");
     if (selectedPayment === "VNPay") {
       const payloadVNPay = {
         totalNeedToPay: finalTotal,
@@ -339,8 +344,8 @@ export default function PayCheckout() {
     } else {
       navigate("/orderTracking");
     }
-    // alert("Thanh toán thành công!");
-    // setIsProcessing(false);
+    alert("Thanh toán thành công!");
+    setIsProcessing(false);
   };
 
   //   if (userInfo.role && userInfo.role.role_name === "admin_agency" || userInfo.role?.role_name === "user") {
@@ -474,42 +479,42 @@ export default function PayCheckout() {
           </div>
         );
 
-      case "bank-transfer":
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="bankCode">Chọn ngân hàng</Label>
-              <Select
-                value={formData.bankCode}
-                onValueChange={(value) => handleInputChange("bankCode", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Chọn ngân hàng" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="vcb">Vietcombank</SelectItem>
-                  <SelectItem value="tcb">Techcombank</SelectItem>
-                  <SelectItem value="mb">MB Bank</SelectItem>
-                  <SelectItem value="acb">ACB</SelectItem>
-                  <SelectItem value="vib">VIB</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <div className="flex items-start space-x-2">
-                <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                <div className="text-sm text-yellow-800">
-                  <p className="font-medium mb-1">Hướng dẫn chuyển khoản:</p>
-                  <ul className="space-y-1">
-                    <li>1. Chọn ngân hàng và tiến hành thanh toán</li>
-                    <li>2. Sử dụng mã QR hoặc thông tin tài khoản</li>
-                    <li>3. Đơn hàng sẽ được xử lý sau khi nhận được tiền</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+      // case "bank-transfer":
+      //   return (
+      //     <div className="space-y-4">
+      //       <div>
+      //         <Label htmlFor="bankCode">Chọn ngân hàng</Label>
+      //         <Select
+      //           value={formData.bankCode}
+      //           onValueChange={(value) => handleInputChange("bankCode", value)}
+      //         >
+      //           <SelectTrigger>
+      //             <SelectValue placeholder="Chọn ngân hàng" />
+      //           </SelectTrigger>
+      //           <SelectContent>
+      //             <SelectItem value="vcb">Vietcombank</SelectItem>
+      //             <SelectItem value="tcb">Techcombank</SelectItem>
+      //             <SelectItem value="mb">MB Bank</SelectItem>
+      //             <SelectItem value="acb">ACB</SelectItem>
+      //             <SelectItem value="vib">VIB</SelectItem>
+      //           </SelectContent>
+      //         </Select>
+      //       </div>
+      //       <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+      //         <div className="flex items-start space-x-2">
+      //           <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+      //           <div className="text-sm text-yellow-800">
+      //             <p className="font-medium mb-1">Hướng dẫn chuyển khoản:</p>
+      //             <ul className="space-y-1">
+      //               <li>1. Chọn ngân hàng và tiến hành thanh toán</li>
+      //               <li>2. Sử dụng mã QR hoặc thông tin tài khoản</li>
+      //               <li>3. Đơn hàng sẽ được xử lý sau khi nhận được tiền</li>
+      //             </ul>
+      //           </div>
+      //         </div>
+      //       </div>
+      //     </div>
+      //   );
 
       case "cod":
         return (
@@ -536,29 +541,29 @@ export default function PayCheckout() {
   };
 
   // Hiển thị thông báo thành công khi thanh toán MoMo
-  if (showSuccess) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="bg-green-100 border border-green-300 rounded-lg p-8 text-center shadow-md">
-          <h2 className="text-2xl font-bold text-green-700 mb-2">
-            Thanh toán thành công!
-          </h2>
-          <p className="text-green-800 mb-4">
-            Cảm ơn bạn đã sử dụng MoMo Test. Đang chuyển hướng...
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Button onClick={() => navigate("/")}>Mua tiếp</Button>
-            <Button
-              variant="outline"
-              onClick={() => navigate("/orderTracking")}
-            >
-              Xem đơn đã mua
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (showSuccess) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center min-h-[60vh]">
+  //       <div className="bg-green-100 border border-green-300 rounded-lg p-8 text-center shadow-md">
+  //         <h2 className="text-2xl font-bold text-green-700 mb-2">
+  //           Thanh toán thành công!
+  //         </h2>
+  //         <p className="text-green-800 mb-4">
+  //           Cảm ơn bạn đã sử dụng MoMo Test. Đang chuyển hướng...
+  //         </p>
+  //         <div className="flex gap-4 justify-center">
+  //           <Button onClick={() => navigate("/")}>Mua tiếp</Button>
+  //           <Button
+  //             variant="outline"
+  //             onClick={() => navigate("/orderTracking")}
+  //           >
+  //             Xem đơn đã mua
+  //           </Button>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="container mx-auto px-4 py-8">

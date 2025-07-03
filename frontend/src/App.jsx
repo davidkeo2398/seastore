@@ -8,7 +8,7 @@ import DashboardStats from "./pages/admin/Dashboard";
 import Login from "./pages/Login";
 import LoginDialog from "./pages/LoginDiaLog";
 import axiosInstance from "@/lib/axios";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./context/AuthContext";
 import RegisterPage from "./pages/RegisterDialog";
 import ProductDetailPage from "./pages/ProductDetail";
@@ -29,6 +29,19 @@ import OrderSuccess from "./pages/OrderSuccess";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
+  const [dashboardStats, setDashboardStats] = useState(null);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const res = await axiosInstance.get("/admin/dashboard-stats");
+        setDashboardStats(res.data.data);
+      } catch (e) {
+        setDashboardStats(null);
+      }
+    }
+    fetchStats();
+  }, []);
 
   return (
     <BrowserRouter>
@@ -59,8 +72,8 @@ function App() {
           </Route>
 
           <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<DashboardStats />} />
-            <Route path="dashboard" element={<DashboardStats />} />
+            <Route index element={<DashboardStats stats={dashboardStats} />} />
+            <Route path="dashboard" element={<DashboardStats stats={dashboardStats} />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="products" element={<ProductsPage />} />
             <Route path="warehouse" element={<WarehousePage />} />

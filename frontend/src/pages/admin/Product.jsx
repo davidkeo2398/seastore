@@ -125,10 +125,10 @@ export default function ProductsPage() {
     old_price: "",
     image: "",
     category_id: "",
-    agency_id: "",
+    agency_id: "1",
     warehouse_id: "",
     unit: "",
-    number_of_inventory: 0,
+    number_of_inventory: 50,
   });
   const [category, setCategory] = useState([]);
   const [agencies, setAgencies] = useState([]);
@@ -213,10 +213,10 @@ export default function ProductsPage() {
       old_price: "",
       image: "",
       category_id: "",
-      agency_id: "",
+      agency_id: "1",
       warehouse_id: "",
       unit: "",
-      number_of_inventory: 0,
+      number_of_inventory: 50,
     });
     setIsEditMode(false);
   };
@@ -286,10 +286,8 @@ export default function ProductsPage() {
     if (
       !formData.product_name ||
       !formData.category_id ||
-      !formData.agency_id ||
       !formData.price ||
       !formData.unit ||
-      // !formData.warehouse_id ||
       formData.number_of_inventory === ""
     ) {
       toast.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
@@ -312,7 +310,7 @@ export default function ProductsPage() {
             : undefined,
           image: formData.image,
           category_id: Number(formData.category_id),
-          agency_id: Number(formData.agency_id),
+          agency_id: formData.agency_id ? Number(formData.agency_id) : 1,
           warehouse_id: formData.warehouse_id
             ? Number(formData.warehouse_id)
             : null, 
@@ -397,7 +395,7 @@ export default function ProductsPage() {
                     ))}
                   </select>
                 </div>
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="agency_id">Đại lý</Label>
                   <select
                     id="agency_id"
@@ -414,7 +412,7 @@ export default function ProductsPage() {
                       </option>
                     ))}
                   </select>
-                </div>
+                </div> */}
                 {/* <div className="space-y-2">
                   <Label htmlFor="warehouse_id">Kho</Label>
                   <select id="warehouse_id" name="warehouse_id" value={formData.warehouse_id} onChange={handleInputChange} required className="w-full border rounded px-2 py-1">
@@ -604,7 +602,7 @@ export default function ProductsPage() {
                   <TableHead>Tên sản phẩm</TableHead>
                   <TableHead>Danh mục</TableHead>
                   <TableHead>Giá</TableHead>
-                  <TableHead>Trạng thái</TableHead>
+                  {/* <TableHead>Trạng thái</TableHead> */}
                   <TableHead>Ngày tạo</TableHead>
                   <TableHead className="text-right">Hành động</TableHead>
                 </TableRow>
@@ -646,7 +644,7 @@ export default function ProductsPage() {
                       <TableCell className="font-medium">
                         {(product.price || 0).toLocaleString("vi-VN")} đ
                       </TableCell>
-                      <TableCell>
+                      {/* <TableCell>
                         <Badge
                           variant={"default"}
                           className={
@@ -655,7 +653,7 @@ export default function ProductsPage() {
                         >
                           Còn hàng
                         </Badge>
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell className="text-sm text-muted-foreground">
                         {product.createdAt
                           ? new Date(product.createdAt).toLocaleDateString(

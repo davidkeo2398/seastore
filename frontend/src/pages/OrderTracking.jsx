@@ -29,14 +29,15 @@ import {
 } from "@/components/ui/table";
 import { useLocation } from "react-router-dom";
 
-
 export default function OrderTrackingWithCheckboxes() {
   const location = useLocation();
   const { order: createdOrder } = location.state || {}; // Lấy order từ location.state
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchOrderId, setSearchOrderId] = useState(createdOrder?.order_id?.toString() || ""); // Khởi tạo từ createdOrder
+  const [searchOrderId, setSearchOrderId] = useState(
+    createdOrder?.order_id?.toString() || ""
+  ); // Khởi tạo từ createdOrder
   const [isProcessing, setIsProcessing] = useState(false);
 
   // const [paymentProcessing, setPaymentProcessing] = useState(false);
@@ -321,11 +322,21 @@ export default function OrderTrackingWithCheckboxes() {
 
   //   } catch (error) {
   //     console.error(error);
-      
+
   //   }finally{
   //     setIsProcessing(false);
   //   }
   // }
+  const getStatusText = (status) => {
+    switch (status) {
+      case "processing":
+        return "Đang xử lý";
+      case "completed":
+        return "Hoàn thành";
+      default:
+        return status; // Hiển thị trạng thái gốc nếu không khớp
+    }
+  };
 
   const filteredOrders = orders.filter((order) => {
     const search = searchOrderId.toLowerCase();
@@ -353,7 +364,7 @@ export default function OrderTrackingWithCheckboxes() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Quản lý đơn hàng</h1>
+      <h1 className="text-3xl font-bold mb-6">Quản lý đơn hàng đã đặt</h1>
       {/* <div className="mb-4">
         <Input
           type="text"
@@ -366,9 +377,10 @@ export default function OrderTrackingWithCheckboxes() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead> 
+            <TableHead>Mã đơn hàng</TableHead>
             <TableHead>Tổng đơn</TableHead>
             <TableHead>Trạng thái</TableHead>
+            <TableHead>Phương thức thanh toán</TableHead>
             <TableHead>Ngày tạo</TableHead>
           </TableRow>
         </TableHeader>
@@ -376,10 +388,11 @@ export default function OrderTrackingWithCheckboxes() {
           {filteredOrders.length > 0 ? (
             filteredOrders.map((orders) => (
               <TableRow key={orders.order_id}>
-                <TableCell className="font-medium">{orders.order_id}</TableCell>
+                <TableCell className="font-medium">{orders.order_code}</TableCell>
                 <TableCell>{formatCurrency(orders.total)}</TableCell>
                 <TableCell>{orders.status}</TableCell>
-                <TableCell>{formatDate(orders.createdAt)}</TableCell>                    
+                <TableCell>{orders.payment_method}</TableCell>
+                <TableCell>{formatDate(orders.order_date)}</TableCell>
               </TableRow>
             ))
           ) : (
