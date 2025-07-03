@@ -34,15 +34,42 @@ module.exports = {
   },
   createProduct: async (req, res) => {
     try {
-      const result = await productAdminService.createProduct(req.body);
+      const {
+        product_name,
+        price,
+        description,
+        old_price,
+        image,
+        category_id,
+        agency_id,
+        warehouse_id,
+        unit,
+        number_of_inventory,
+        status
+      } = req.body;
+
+      if (!product_name || !price || !category_id || !agency_id || !unit) {
+        throw new Error("Thiếu thông tin bắt buộc khi tạo sản phẩm");
+      }
+
+      const result = await productAdminService.createProduct({
+        product_name,
+        price,
+        description,
+        old_price,
+        image,
+        category_id,
+        agency_id,
+        warehouse_id,
+        unit,
+        number_of_inventory,
+        status
+      });
       res
         .status(201)
         .json({ message: "Tạo sản phẩm thành công", data: result });
     } catch (error) {
       res
-        .status(500)
-        .json({ message: "Tạo sản phẩm thất bại", error: error.message });
-        res
         .status(500)
         .json({ message: "Tạo sản phẩm thất bại", error: error.message });
     }

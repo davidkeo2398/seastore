@@ -67,6 +67,11 @@ module.exports = (sequelize) => {
           min: 0, // Total cannot be negative
         },
       },
+      status: {
+        type: DataTypes.ENUM('processing', 'completed'),
+        allowNull: false,
+        defaultValue: 'processing',
+      },
       promotion_id: {
         type: DataTypes.INTEGER,
         allowNull: true,
@@ -90,7 +95,7 @@ module.exports = (sequelize) => {
         defaultValue: DataTypes.NOW, // Default to current date and time
       },
       payment_method: {
-        type: DataTypes.ENUM("cash", "paypal", "bank_transfer", "momo"),
+        type: DataTypes.ENUM("cash", "paypal", "bank_transfer", "momo", "vnpay"),
         allowNull: false,
         defaultValue: "cash", // Default payment method
       },

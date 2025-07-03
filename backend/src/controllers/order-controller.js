@@ -1,5 +1,6 @@
 const Order = require("../Model/Order");
 const { orderService } = require("../services/index");
+const { getOrderByUser } = require("../services/order-service");
 const generateCode = require("../utils/generateCode");
 
 module.exports = {
@@ -36,4 +37,22 @@ module.exports = {
       });
     }
   },
+
+  getOrderByUser: async (req, res) => {
+    try {
+      console.log("debug req", req.user);
+      const userId = req.user.user_id;
+      const orders = await getOrderByUser(userId);
+      return res.status(200).json({
+        message: "Get orders by user successfully",
+        data: orders,
+      });
+    } catch (error) {
+      return res.status(400).json({
+        message: "Get orders by user failed",
+        data: [],
+        error: error.message,
+      });
+    }
+  }
 };

@@ -1,14 +1,20 @@
-const { User, Order, OrderItem, Product, Agency, AgencyRank } = require('../Model/Index');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { generateToken } = require('../config/authentication');
-const { generateCode } = require('../utils/generateCode');
-const { sequelize } = require('../config/dbcontext');
-
+const {
+  User,
+  Order,
+  OrderItem,
+  Product,
+  Agency,
+  AgencyRank,
+} = require("../Model/Index");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { generateToken } = require("../config/authentication");
+const { generateCode } = require("../utils/generateCode");
+const { sequelize } = require("../config/dbcontext");
 
 module.exports = {
-    createOrder: async (orderData, userInfo) => {
-        const t = await sequelize.transaction();
+  createOrder: async (orderData, userInfo) => {
+     const t = await sequelize.transaction();
         try {
             const order_code = generateCode();
             const { user_id, user_name, first_name, last_name, email, phone, address, role_id, resources } = userInfo;
@@ -49,8 +55,8 @@ module.exports = {
                 payment_method: payment_method,
                 promotion_code: promotion_code ?? null,
                 status: 'completed'
-
             };
+            console.log('payload', payload);
             const newOrder = await Order.create(payload);
             const orderItems = await Promise.all(
                 products.map(product =>
@@ -113,56 +119,65 @@ module.exports = {
             await t.rollback();
             throw new Error('Failed to create order');
         }
-    },
-    getOrders: async () => {
-        try {
-            const orders = Order.findAll();
-            return orders;
-        }
-        catch (err) {
-            throw new Error('Fail to get orders: ', err)
-        }
-    },
-
-    getOrderById: async (orderId) => {
-        try {
-            const order = await Order.findByPk(orderId);
-            if (!order) {
-                throw new Error('Order not found');
-            }
-            return order;
-        } catch (error) {
-            console.error('Error fetching order:', error);
-            throw new Error('Failed to fetch order');
-        }
-    },
-
-    updateOrder: async (orderId, updateData) => {
-        try {
-            const [updatedRows, [updatedOrder]] = await Order.update(updateData, {
-                where: { order_id: orderId },
-                returning: true
-            });
-            if (updatedRows === 0) {
-                throw new Error('Order not found or no changes made');
-            }
-            return updatedOrder;
-        } catch (error) {
-            console.error('Error updating order:', error);
-            throw new Error('Failed to update order');
-        }
-    },
-
-    deleteOrder: async (orderId) => {
-        try {
-            const deletedRows = await Order.destroy({ where: { order_id: orderId } });
-            if (deletedRows === 0) {
-                throw new Error('Order not found');
-            }
-            return { message: 'Order deleted successfully' };
-        } catch (error) {
-            console.error('Error deleting order:', error);
-            throw new Error('Failed to delete order');
-        }
+  },
+  getOrders: async () => {
+    try {
+      const orders = Order.findAll();
+      return orders;
+    } catch (err) {
+      throw new Error("Fail to get orders: ", err);
     }
-}
+  },
+
+  getOrderById: async (orderId) => {
+    try {
+      const order = await Order.findByPk(orderId);
+      if (!order) {
+        throw new Error("Order not found");
+      }
+      return order;
+    } catch (error) {
+      console.error("Error fetching order:", error);
+      throw new Error("Failed to fetch order");
+    }
+  },
+
+  updateOrder: async (orderId, updateData) => {
+    try {
+      const [updatedRows, [updatedOrder]] = await Order.update(updateData, {
+        where: { order_id: orderId },
+        returning: true,
+      });
+      if (updatedRows === 0) {
+        throw new Error("Order not found or no changes made");
+      }
+      return updatedOrder;
+    } catch (error) {
+      console.error("Error updating order:", error);
+      throw new Error("Failed to update order");
+    }
+  },
+
+  deleteOrder: async (orderId) => {
+    try {
+      const deletedRows = await Order.destroy({ where: { order_id: orderId } });
+      if (deletedRows === 0) {
+        throw new Error("Order not found");
+      }
+      return { message: "Order deleted successfully" };
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      throw new Error("Failed to delete order");
+    }
+  },
+
+  getOrderByUser: async (userId) => {
+    try {
+      const orders = await Order.findAll({ where: { user_id: userId } });
+      return orders;
+    } catch (error) {
+      console.error("Error fetching orders by user:", error);
+      throw new Error("Failed to fetch orders by user");
+    }
+  }
+};

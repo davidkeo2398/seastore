@@ -28,14 +28,75 @@ module.exports = {
       updatedAt: new Date()
     }
     const admin2 = {
-      user_name: 'nametran123',
+      user_name: 'Admin1',
       first_name: 'Nam',
       last_name: 'Tran',
-      email: 'namtran123@gmail.com',
+      email: 'namtran_admin@gmail.com',
       password: hashedPassword,
       phone: faker.phone.number('##########'),
       address: faker.location.streetAddress(),
       role_id: 1,
+      agency_rank_id: 2,
+      resources: JSON.stringify({
+        canView: true,
+        canEdit: true,
+        warehouse_id: null,
+        agency_id: null,
+        isSuperAdmin: true
+      }),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+    const agency1 = {
+      user_name: 'Agency',
+      first_name: 'Nam',
+      last_name: 'Tran',
+      email: 'namtran_agency@gmail.com',
+      password: hashedPassword,
+      phone: faker.phone.number('##########'),
+      address: faker.location.streetAddress(),
+      role_id: 3,
+      agency_rank_id: 2,
+      resources: JSON.stringify({
+        canView: true,
+        canEdit: true,
+        warehouse_id: null,
+        agency_id: null,
+        isSuperAdmin: true
+      }),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+    const user = {
+      user_name: 'User',
+      first_name: 'Nam',
+      last_name: 'Tran',
+      email: 'namtran_user@gmail.com',
+      password: hashedPassword,
+      phone: faker.phone.number('##########'),
+      address: faker.location.streetAddress(),
+      role_id: 3,
+      agency_rank_id: 1,
+      resources: JSON.stringify({
+        canView: true,
+        canEdit: true,
+        warehouse_id: null,
+        agency_id: null,
+        isSuperAdmin: true
+      }),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+    const user2 = {
+      user_name: 'User1',
+      first_name: 'Nam',
+      last_name: 'Tran',
+      email: 'namtran_user1@gmail.com',
+      password: hashedPassword,
+      phone: faker.phone.number('##########'),
+      address: faker.location.streetAddress(),
+      role_id: 3,
+      agency_rank_id: 1,
       resources: JSON.stringify({
         canView: true,
         canEdit: true,

@@ -1,4 +1,5 @@
 const express = require("express");
+const { dashboardController } = require("../../controllers/admin");
 
 const adminRouter = express.Router();
 const orderAdminRoutes = require("./order-admin-route");
@@ -12,4 +13,5 @@ adminRouter.use("/user", userAdminRoutes);
 adminRouter.use("/products", productAdminRoutes);
 adminRouter.use("/rank", rankAdminRoutes);
 adminRouter.use("/warehouse", warehouseAdminRoutes);
+adminRouter.get("/dashboard-stats", dashboardController.getDashboardStats);
 module.exports = { adminRouter };
