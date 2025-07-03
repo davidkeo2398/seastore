@@ -21,37 +21,43 @@ const Warehouse = WarehouseModel(sequelize);
 const Product = ProductModel(sequelize);
 const Promotion = PromotionModel(sequelize);
 
-// // User - Role
-// Role.hasMany(User, { foreignKey: 'role_id', as: 'users' });
-// User.belongsTo(Role, { foreignKey: 'role_id', as: 'role' });
+// --- KÍCH HOẠT VÀ BỔ SUNG CÁC MỐI QUAN HỆ ---
+// User - Role
+Role.hasMany(User, { foreignKey: 'role_id', as: 'users' });
+User.belongsTo(Role, { foreignKey: 'role_id', as: 'role' });
 
-// // User - Order
-// User.hasMany(Order, { foreignKey: 'user_id', as: 'orders' });
-// Order.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+// User - Order
+User.hasMany(Order, { foreignKey: 'user_id', as: 'orders' });
+Order.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
-// // Order - OrderItem
-// Order.hasMany(OrderItem, { foreignKey: 'order_id', as: 'items' });
-// OrderItem.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
+// **BỔ SUNG MỐI QUAN HỆ CÒN THIẾU GIỮA USER VÀ AGENCYRANK**
+User.belongsTo(AgencyRank, { foreignKey: 'agency_rank_id', as: 'agencyRank' });
+AgencyRank.hasMany(User, { foreignKey: 'agency_rank_id', as: 'usersWithThisRank' }); // Thêm một alias khác để tránh trùng lặp
 
-// // Product - OrderItem
-// Product.hasMany(OrderItem, { foreignKey: 'product_id', as: 'orderItems' });
-// OrderItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+// Order - OrderItem
+Order.hasMany(OrderItem, { foreignKey: 'order_id', as: 'items' });
+OrderItem.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
 
-// // Category - Product
-// Categories.hasMany(Product, { foreignKey: 'category_id', as: 'products' });
-// Product.belongsTo(Categories, { foreignKey: 'category_id', as: 'category' });
+// Product - OrderItem
+Product.hasMany(OrderItem, { foreignKey: 'product_id', as: 'orderItems' });
+OrderItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
 
-// // Warehouse - Product
-// Warehouse.hasMany(Product, { foreignKey: 'warehouse_id', as: 'products' });
-// Product.belongsTo(Warehouse, { foreignKey: 'warehouse_id', as: 'warehouse' });
+// Category - Product
+Categories.hasMany(Product, { foreignKey: 'category_id', as: 'products' });
+Product.belongsTo(Categories, { foreignKey: 'category_id', as: 'category' });
 
-// // AgencyRank - Agency
-// AgencyRank.hasMany(Agency, { foreignKey: 'agency_rank_id', as: 'agencies' });
-// Agency.belongsTo(AgencyRank, { foreignKey: 'agency_rank_id', as: 'rank' });
+// Warehouse - Product
+Warehouse.hasMany(Product, { foreignKey: 'warehouse_id', as: 'products' });
+Product.belongsTo(Warehouse, { foreignKey: 'warehouse_id', as: 'warehouse' });
 
-// // User - Agency (Assuming a user can be an agency)
-// User.hasOne(Agency, { foreignKey: 'user_id', as: 'agencyInfo' });
-// Agency.belongsTo(User, { foreignKey: 'user_id', as: 'userInfo' });
+// AgencyRank - Agency
+AgencyRank.hasMany(Agency, { foreignKey: 'agency_rank_id', as: 'agencies' });
+Agency.belongsTo(AgencyRank, { foreignKey: 'agency_rank_id', as: 'rank' });
+
+// User - Agency
+User.hasOne(Agency, { foreignKey: 'user_id', as: 'agencyInfo' });
+Agency.belongsTo(User, { foreignKey: 'user_id', as: 'userInfo' });
+// --- KẾT THÚC ---
 
 // Sync all models
 sequelize.sync()

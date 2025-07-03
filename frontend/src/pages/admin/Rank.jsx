@@ -200,6 +200,7 @@ export default function AdminAngencyRank() {
       toast.error("Không thể tải danh sách hạng. Vui lòng thử lại sau.");
     }
   };
+
   const fetchMembersWithRank = async () => {
     try {
       const response = await axiosInstance.get("/admin/rank/members");
@@ -209,6 +210,11 @@ export default function AdminAngencyRank() {
       toast.error("Không thể tải danh sách thành viên. Vui lòng thử lại sau.");
     }
   };
+
+  useEffect(() => {
+    fetchRanks();
+    fetchMembersWithRank();
+  }, []);
 
   const handleViewDetails = (member) => {
     setSelectedMember(member);
@@ -250,12 +256,14 @@ export default function AdminAngencyRank() {
 
   const filteredMembers = members.filter((member) => {
     const matchesSearch =
-      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      String(member.id).toLowerCase().includes(searchTerm.toLowerCase());
+      member.member_info.user_name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      member.member_info.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      String(member.user_id).toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesRank =
-      rankFilter === "all" || member.currentRank === rankFilter;
+      rankFilter === "all" || member.rank_info.name === rankFilter;
 
     return matchesSearch && matchesRank;
   });
@@ -281,7 +289,11 @@ export default function AdminAngencyRank() {
   };
 
   const getRankBadge = (rankName) => {
-    const config = rankConfig[rankName];
+    const config = rankConfigIconsColors[rankName];
+    if (!config) {
+      // Thêm dòng này để phòng trường hợp có hạng không xác định
+      return <Badge variant="secondary">{rankName}</Badge>;
+    }
     const IconComponent = config.icon;
     return (
       <Badge className={config.color}>
@@ -319,10 +331,10 @@ export default function AdminAngencyRank() {
             Theo dõi điểm tích lũy và hạng thành viên
           </p>
         </div>
-        <Button className="gap-2 text-black">
+        {/* <Button className="gap-2 text-black">
           <Plus className="h-4 w-4" />
           Thêm thành viên
-        </Button>
+        </Button> */}
       </div>
 
       {/* Stats Cards */}
@@ -387,8 +399,8 @@ export default function AdminAngencyRank() {
       <Tabs defaultValue="members" className="space-y-4">
         <TabsList>
           <TabsTrigger value="members">Danh sách thành viên</TabsTrigger>
-          <TabsTrigger value="ranks">Cấu hình hạng</TabsTrigger>
-          <TabsTrigger value="analytics">Thống kê</TabsTrigger>
+          {/* <TabsTrigger value="ranks">Cấu hình hạng</TabsTrigger>
+          <TabsTrigger value="analytics">Thống kê</TabsTrigger> */}
         </TabsList>
 
         {/* Members Tab */}
@@ -443,48 +455,45 @@ export default function AdminAngencyRank() {
                       <TableHead>Tổng chi tiêu</TableHead>
                       <TableHead>Giảm giá</TableHead>
                       <TableHead>Tiến độ hạng</TableHead>
-                      <TableHead>Điểm còn hiệu lực đến</TableHead>
+                      {/* <TableHead>Điểm còn hiệu lực đến</TableHead> */}
 
                       <TableHead className="text-right">Hành động</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredMembers.map((member) => {
-                      const nextRank = getNextRank(
-                        member.currentRank,
-                        member.totalSpent
-                      );
-                      return (
-                        <TableRow key={member.id}>
+                    {filteredMembers.length > 0 ? (
+                      filteredMembers.map((member) => (
+                        <TableRow key={member.user_id}>
                           <TableCell>
                             <div className="space-y-1">
-                              <div className="font-medium">{member.name}</div>
+                              {/* <div className="font-medium">
+                                {member.user_id}
+                              </div> */}
                               <div className="text-sm text-muted-foreground">
-                                {member.email}
+                                {member.member_info.user_name}
                               </div>
                               <div className="text-xs text-muted-foreground">
-                                {member.id}
+                                {member.member_info.email}
                               </div>
                             </div>
                           </TableCell>
                           <TableCell>
-                            {getRankBadge(member.currentRank)}
+                            {getRankBadge(member.rank_info.name)}
                           </TableCell>
                           <TableCell className="font-medium">
-                            {formatPrice(member.totalSpent)}
+                            {formatPrice(member.total_spent)}
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline" className="text-green-600">
-                              {member.discountPercentage}%
+                              {member.rank_info.discount_percent}%
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            {nextRank ? (
+                            {member.rank_progress &&
+                            member.rank_progress.next_rank_name && member.rank_progress.next_rank_name !== "Đã đạt hạng cao nhất" ? (
                               <div className="space-y-1">
                                 <span className="text-xs">
-                                  Đến {nextRank.rank} -{" "}
-                                  {nextRank.progress.toFixed(0)}% - Còn{" "}
-                                  {formatPrice(nextRank.remaining)}
+                                  Còn {formatPrice(member.rank_progress.remaining)} để lên hạng {member.rank_progress.next_rank_name}
                                 </span>
                               </div>
                             ) : (
@@ -494,12 +503,12 @@ export default function AdminAngencyRank() {
                             )}
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-1">
+                            {/* <div className="flex items-center gap-1">
                               <Calendar className="h-3 w-3 text-muted-foreground" />
                               {new Date(member.lastActivity).toLocaleDateString(
                                 "vi-VN"
                               )}
-                            </div>
+                            </div> */}
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-2">
@@ -522,8 +531,14 @@ export default function AdminAngencyRank() {
                             </div>
                           </TableCell>
                         </TableRow>
-                      );
-                    })}
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan="7" className="text-center">
+                          Không có thành viên nào phù hợp với tiêu chí tìm kiếm.
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </div>
@@ -532,6 +547,7 @@ export default function AdminAngencyRank() {
         </TabsContent>
 
         {/* Ranks Tab */}
+        {/*
         <TabsContent value="ranks">
           <Card>
             <CardHeader>
@@ -577,6 +593,7 @@ export default function AdminAngencyRank() {
             </CardContent>
           </Card>
         </TabsContent>
+        */}
 
         {/* Analytics Tab */}
         <TabsContent value="analytics">

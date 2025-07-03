@@ -95,7 +95,13 @@ module.exports = (sequelize) => {
         defaultValue: "cash", // Default payment method
       },
       status: {
-        type: DataTypes.ENUM("pending", "processing", "shipped", "completed", "cancelled"),
+        type: DataTypes.ENUM(
+          "pending",
+          "processing",
+          "shipped",
+          "completed",
+          "cancelled"
+        ),
         allowNull: false,
         defaultValue: "pending", // Default status
       },
@@ -114,7 +120,7 @@ module.exports = (sequelize) => {
       foreignKey: "order_id",
       as: "items",
     });
-    Order.belongsTo(User, { foreignKey: "user_id", as: "user" });
+    Order.belongsTo(models.User, { foreignKey: "user_id", as: "user" });
   };
 
   return Order;

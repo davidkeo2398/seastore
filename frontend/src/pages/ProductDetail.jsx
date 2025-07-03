@@ -96,7 +96,8 @@ export default function ProductDetailPage() {
         const { data } = await axiosInstance.get(`/product`);
         console.log("debug related:", data.data);
         const related = data.data.filter(
-          (p) => p.category_id === product.category_id && p.id !== product.product_id
+          (p) =>
+            p.category_id === product.category_id && p.id !== product.product_id
         );
         console.log("debug related filter:", related);
         setRelatedProducts(related);
@@ -212,11 +213,76 @@ export default function ProductDetailPage() {
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-600">Đơn vị: {product.unit}</p>
+            {/* Quantity and Add to Cart */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Số lượng</span>
+
+                <div className="flex items-center border border-gray-300 rounded-md">
+                  <button
+                    type="button"
+                    className="px-3 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    disabled={quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <input
+                    id="quantity"
+                    type="number"
+                    min="1"
+                    max={product.number_of_inventory}
+                    value={quantity}
+                    onChange={(e) =>
+                      setQuantity(
+                        Math.max(1, Number.parseInt(e.target.value) || 1)
+                      )
+                    }
+                    className="w-16 px-3 py-2 text-center border-0 focus:ring-0 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    className="px-3 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                    onClick={() =>
+                      setQuantity(
+                        Math.min(product.number_of_inventory, quantity + 1)
+                      )
+                    }
+                    disabled={quantity >= product.number_of_inventory}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex space-x-4">
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={product.number_of_inventory === 0 || isAddingToCart}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400"
+                >
+                  {isAddingToCart ? (
+                    "Đang thêm..."
+                  ) : (
+                    <>
+                      <ShoppingCart className="mr-2 h-4 w-4 " />
+                      <span className="text-black">Thêm vào giỏ hàng</span>
+                    </>
+                  )}
+                </Button>
+                <Button variant="outline" size="icon">
+                  <Heart className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="icon">
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            {/* <p className="text-sm text-gray-600">Đơn vị: {product.unit}</p> */}
           </div>
 
           {/* Stock Status */}
-          <div className="flex items-center space-x-2">
+          {/* <div className="flex items-center space-x-2">
             <Package className="h-5 w-5 text-gray-400" />
             <span className="text-sm text-gray-600">
               Tồn kho:{" "}
@@ -239,7 +305,8 @@ export default function ProductDetailPage() {
                 Hết hàng
               </Badge>
             )}
-          </div>
+            
+          </div> */}
         </div>
 
         {/* Description */}
@@ -248,74 +315,6 @@ export default function ProductDetailPage() {
           <p className="text-gray-600 leading-relaxed">
             {product.description || "Không có mô tả cho sản phẩm này."}
           </p>
-        </div>
-
-        {/* Quantity and Add to Cart */}
-        <div className="space-y-4">
-          <div className="flex items-center space-x-4">
-            <label
-              htmlFor="quantity"
-              className="text-sm font-medium text-gray-700"
-            >
-              Số lượng:
-            </label>
-            <div className="flex items-center border border-gray-300 rounded-md">
-              <button
-                type="button"
-                className="px-3 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                disabled={quantity <= 1}
-              >
-                -
-              </button>
-              <input
-                id="quantity"
-                type="number"
-                min="1"
-                max={product.number_of_inventory}
-                value={quantity}
-                onChange={(e) =>
-                  setQuantity(Math.max(1, Number.parseInt(e.target.value) || 1))
-                }
-                className="w-16 px-3 py-2 text-center border-0 focus:ring-0 focus:outline-none"
-              />
-              <button
-                type="button"
-                className="px-3 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-                onClick={() =>
-                  setQuantity(
-                    Math.min(product.number_of_inventory, quantity + 1)
-                  )
-                }
-                disabled={quantity >= product.number_of_inventory}
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          <div className="flex space-x-4">
-            <Button
-              onClick={handleAddToCart}
-              disabled={product.number_of_inventory === 0 || isAddingToCart}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400"
-            >
-              {isAddingToCart ? (
-                "Đang thêm..."
-              ) : (
-                <>
-                  <ShoppingCart className="mr-2 h-4 w-4 " />
-                  <span className="text-black">Thêm vào giỏ hàng</span>
-                </>
-              )}
-            </Button>
-            <Button variant="outline" size="icon">
-              <Heart className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="icon">
-              <Share2 className="h-4 w-4" />
-            </Button>
-          </div>
         </div>
 
         {/* Shipping Info */}

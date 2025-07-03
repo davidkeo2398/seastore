@@ -28,6 +28,7 @@ import {
   ShieldCheck,
   Plus,
   Ban,
+  Edit,
 } from "lucide-react";
 import {
   Dialog,
@@ -124,6 +125,8 @@ export default function UsersPage() {
   const [isWarnDialogOpen, setIsWarnDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [warningReason, setWarningReason] = useState("");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editUser, setEditUser] = useState(null);
 
   // Kiểm tra user có bị khóa không
   const isUserLocked = (user) => {
@@ -167,71 +170,28 @@ export default function UsersPage() {
     }
   };
 
-  // Cảnh báo user
-  const handleWarnUser = (user) => {
-    if ((user.warnings?.length || 0) >= 3) {
-      handleLockUser(user.iduser);
-    } else {
-      setSelectedUser(user);
-      setWarningReason("");
-      setIsWarnDialogOpen(true);
+  const handleEdit = (user) => {
+    console.log("Chỉnh sửa người dùng:", user);
+    setEditUser(user);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditUser((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axiosInstance.put(`/admin/user/${editUser.user_id}`, editUser);
+      setUsers((prev) => prev.map((u) => (u.user_id === editUser.user_id ? { ...u, ...editUser } : u)));
+      setIsEditDialogOpen(false);
+      setEditUser(null);
+      window.location.reload();
+    } catch (error) {
+      alert("Cập nhật người dùng thất bại!");
     }
-  };
-
-  // Xác nhận cảnh báo
-  const handleConfirmWarning = () => {
-    if (!selectedUser || !warningReason.trim()) {
-      toast.error("Lý do cảnh cáo không được để trống.");
-      return;
-    }
-    setUsers((prevUsers) =>
-      prevUsers.map((user) => {
-        if (user.iduser === selectedUser.iduser && (user.warnings?.length || 0) < 3) {
-          const newWarning = {
-            reason: warningReason,
-            date: new Date().toISOString().split("T")[0],
-          };
-          toast.success(`Đã cảnh cáo người dùng ${user.user_name}`);
-          
-          // Deep copy to prevent mutating shared state
-          const updatedUser = JSON.parse(JSON.stringify(user));
-          updatedUser.warnings.push(newWarning);
-          
-          return updatedUser;
-        }
-        return user;
-      })
-    );
-    setIsWarnDialogOpen(false);
-  };
-
-  // Xóa cảnh cáo
-  const handleRemoveWarning = (iduser) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) => {
-        if (user.iduser === iduser && (user.warnings?.length || 0) > 0) {
-          toast.info(`Đã xóa 1 cảnh cáo cho người dùng ${user.user_name}`);
-          const updatedWarnings = user.warnings.slice(0, -1);
-          return { ...user, warnings: updatedWarnings, lockedUntil: null };
-        }
-        return user;
-      })
-    );
-  };
-
-  // Khóa user nếu quá 3 cảnh cáo
-  const handleLockUser = (iduser) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) => {
-        if (user.iduser === iduser) {
-          const lockUntilDate = new Date();
-          lockUntilDate.setDate(lockUntilDate.getDate() + 1); // khóa 1 ngày
-          toast.error(`Tài khoản ${user.user_name} đã bị khóa trong 1 ngày.`);
-          return { ...user, lockedUntil: lockUntilDate.toISOString() };
-        }
-        return user;
-      })
-    );
   };
 
   const filteredUsers = users.filter(
@@ -254,10 +214,10 @@ export default function UsersPage() {
             Quản lý tài khoản người dùng trong hệ thống
           </p>
         </div>
-        <Button className="gap-2 text-black">
+        {/* <Button className="gap-2 text-black">
           <Plus className="h-4 w-4" />
           Thêm người dùng
-        </Button>
+        </Button> */}
       </div>
 
       {/* Stats Cards */}
@@ -333,7 +293,7 @@ export default function UsersPage() {
                   <TableHead>Địa chỉ</TableHead>
                   <TableHead>Số điện thoại</TableHead>
                   <TableHead>Quyền</TableHead>
-                  <TableHead>Cảnh cáo</TableHead>
+                  {/* <TableHead>Cảnh cáo</TableHead> */}
                   <TableHead className="text-right">Hành động</TableHead>
                 </TableRow>
               </TableHeader>
@@ -381,7 +341,7 @@ export default function UsersPage() {
                               "User"}
                           </Badge>
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           {locked ? (
                             <Badge variant="destructive">Bị khóa</Badge>
                           ) : (
@@ -395,40 +355,17 @@ export default function UsersPage() {
                               {(user.warnings?.length || 0)} / 3
                             </span>
                           )}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">
-                            {user.role?.role_name !== 'admin' && (
-                              <>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleWarnUser(user)}
-                                  disabled={locked}
-                                  title={
-                                    isMaxWarnings
-                                      ? "Khóa tài khoản 1 ngày"
-                                      : "Cảnh cáo người dùng"
-                                  }
-                                >
-                                  {isMaxWarnings ? (
-                                    <Ban className="h-4 w-4" />
-                                  ) : (
-                                    <AlertTriangle className="h-4 w-4" />
-                                  )}
-                                </Button>
-                                {(user.warnings?.length || 0) > 0 && (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleRemoveWarning(user.iduser)}
-                                    title="Xóa cảnh cáo"
-                                  >
-                                    <ShieldCheck className="h-4 w-4" />
-                                  </Button>
-                                )}
-                              </>
-                            )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(user)}
+                              title="Chỉnh sửa người dùng"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
                             <Button
                               variant="destructive"
                               size="sm"
@@ -450,38 +387,80 @@ export default function UsersPage() {
         </CardContent>
       </Card>
 
-      <Dialog open={isWarnDialogOpen} onOpenChange={setIsWarnDialogOpen}>
-        <DialogContent>
+      {/* Edit User Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Cảnh cáo người dùng</DialogTitle>
-            <DialogDescription>
-              Bạn sắp cảnh cáo người dùng:{" "}
-              <strong>{selectedUser?.user_name}</strong>. Hành động này sẽ được
-              ghi lại.
-            </DialogDescription>
+            <DialogTitle>Chỉnh sửa người dùng</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="warningReason">Lý do cảnh cáo</Label>
-              <Textarea
-                id="warningReason"
-                placeholder="Nhập lý do cảnh cáo ở đây..."
-                value={warningReason}
-                onChange={(e) => setWarningReason(e.target.value)}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsWarnDialogOpen(false)}
-            >
-              Hủy
-            </Button>
-            <Button onClick={handleConfirmWarning} className="text-black">
-              Xác nhận cảnh báo
-            </Button>{" "}
-          </DialogFooter>
+          {editUser && (
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="user_name">Tên</Label>
+                  <Input
+                    id="user_name"
+                    name="user_name"
+                    value={editUser.user_name || ""}
+                    onChange={handleEditChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    value={editUser.email || ""}
+                    onChange={handleEditChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="address">Địa chỉ</Label>
+                  <Input
+                    id="address"
+                    name="address"
+                    value={editUser.address || ""}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Số điện thoại</Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    value={editUser.phone || ""}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="role_id">Quyền</Label>
+                  <select
+                    id="role_id"
+                    name="role_id"
+                    value={editUser.role_id || ""}
+                    onChange={handleEditChange}
+                    className="w-full border rounded px-2 py-1"
+                    required
+                  >
+                    <option value="">Chọn quyền</option>
+                    {/* <option value={1}>Admin</option> */}
+                    <option value={2}>User</option>
+                    <option value={3}>Agency</option>
+                  </select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                  Hủy
+                </Button>
+                <Button type="submit" variant="outline">
+                  Lưu thay đổi
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
         </DialogContent>
       </Dialog>
     </div>

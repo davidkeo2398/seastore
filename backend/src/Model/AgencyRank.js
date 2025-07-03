@@ -12,6 +12,11 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        allowNull: false,
+        // references: {
+        //   model: "agency_rank", // tên bảng tham chiếu
+        //   key: "agency_rank_id", // khóa chính của bảng tham chiếu
+        // },
       },
       agency_rank_name: {
         type: DataTypes.STRING,
@@ -41,10 +46,10 @@ module.exports = (sequelize) => {
     }
   );
   AgencyRank.associate = (models) => {
-    AgencyRank.hasMany(models.Agency, {
+    AgencyRank.hasMany(models.User, {
       foreignKey: "agency_rank_id",
-      as: "agencies",
+      as: "users",
     });
   };
   return AgencyRank;
-}; 
+};

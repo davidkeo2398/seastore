@@ -71,7 +71,7 @@ module.exports = (sequelize) => {
         defaultValue: 2, // Default role is 'user'
         references: {
           model: "Role", // Assuming you have a Role model
-          key: "id",
+          key: "role_id",
         },
       },
       agency_rank_id: {
@@ -107,10 +107,10 @@ module.exports = (sequelize) => {
     User.hasMany(models.Order, { foreignKey: "user_id", as: "orders" });
     User.hasOne(models.Agency, { foreignKey: "user_id", as: "agencyInfo" });
     User.belongsTo(models.Role, { foreignKey: "role_id", as: "role" });
-    // User.belongsTo(models.AgencyRank, {
-    //   foreignKey: "agency_rank_id",
-    //   as: "agencyRank",
-    // });
+    User.belongsTo(models.AgencyRank, {
+      foreignKey: "agency_rank_id",
+      as: "agencyRank",
+    });
   };
   return User;
 };

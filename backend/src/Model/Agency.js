@@ -64,7 +64,7 @@ module.exports = (sequelize) => {
       foreignKey: "agency_rank_id",
       as: "rank",
     });
-    Agency.belongsTo(User, { foreignKey: "user_id", as: "userInfo" });
+    Agency.belongsTo(models.User, { foreignKey: "user_id", as: "userInfo" });
   };
   return Agency;
 };

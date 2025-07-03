@@ -323,6 +323,7 @@ export default function PayCheckout() {
     });
     console.log("create order for other roles", result);
     removeFromCart();
+    localStorage.removeItem('cart');
     if (selectedPayment === "VNPay") {
       const payloadVNPay = {
         totalNeedToPay: finalTotal,
