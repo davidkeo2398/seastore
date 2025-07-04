@@ -5,6 +5,107 @@ const {
   Order,
   sequelize,
 } = require("../../Model/Index");
+
+// Lấy tất cả các hạng, sắp xếp tăng dần theo min_accumulated_value
+async function getAllRanks() {
+  return await AgencyRank.findAll({
+    order: [["min_accumulated_value", "ASC"]],
+  });
+}
+
+// Lấy tất cả user là thành viên (role_id = 3)
+async function getAllMembers() {
+  return await User.findAll({
+    where: { role_id: 3 },
+    attributes: [
+      "user_id",
+      "user_name",
+      "first_name",
+      "last_name",
+      "email",
+      "agency_rank_id",
+      [
+        sequelize.fn(
+          "SUM",
+          sequelize.literal(
+            "CASE WHEN `orders`.`status` = 'completed' THEN `orders`.`total` ELSE 0 END"
+          )
+        ),
+        "total_spent",
+      ],
+    ],
+    include: [
+      {
+        model: Order,
+        as: "orders",
+        attributes: [],
+        required: false,
+      },
+      {
+        model: AgencyRank,
+        as: "agencyRank",
+      },
+      {
+        model: Role,
+        as: "role",
+      },
+    ],
+    group: ["User.user_id", "agencyRank.agency_rank_id", "role.role_id"],
+  });
+}
+
+// Tính toán thông tin rank cho từng thành viên
+function buildMemberRankData(member, allRanks) {
+  const memberJson = member.get({ plain: true });
+  const totalSpent = parseFloat(memberJson.total_spent || 0);
+  const currentRank = memberJson.agencyRank;
+
+  let nextRank = null;
+  let rankProgress = 0;
+
+  if (currentRank) {
+    const currentRankIndex = allRanks.findIndex(
+      (r) => r.agency_rank_id === currentRank.agency_rank_id
+    );
+    if (currentRankIndex < allRanks.length - 1) {
+      nextRank = allRanks[currentRankIndex + 1];
+    }
+  } else {
+    nextRank = allRanks[0];
+  }
+
+  if (nextRank) {
+    const minForNextRank = nextRank.min_accumulated_value;
+    rankProgress = minForNextRank > 0 ? (totalSpent / minForNextRank) * 100 : 100;
+  } else {
+    rankProgress = 100;
+  }
+
+  return {
+    user_id: memberJson.user_id,
+    member_info: {
+      user_name: `${memberJson.first_name} ${memberJson.last_name}`,
+      email: memberJson.email,
+    },
+    rank_info: {
+      name: currentRank ? currentRank.agency_rank_name : "Chưa có hạng",
+      discount_percent: currentRank ? currentRank.discount_percent : 0,
+    },
+    total_spent: totalSpent,
+    rank_progress: {
+      percent: Math.min(rankProgress, 100).toFixed(2),
+      next_rank_name: nextRank
+        ? nextRank.agency_rank_name
+        : "Đã đạt hạng cao nhất",
+      remaining: nextRank
+        ? Math.max(0, nextRank.min_accumulated_value - totalSpent)
+        : 0,
+    },
+    rank_valid_until: memberJson.rank_expiration_date,
+    actions: ["view_details", "edit_rank"],
+  };
+}
+
 module.exports = {
   getRanks: async () => {
     try {
@@ -66,117 +167,11 @@ module.exports = {
     }
   },
 
-   getMembersWithRank: async () => {
+  getMembersWithRank: async () => {
     try {
-      // 1. Lấy tất cả các hạng để tính toán tiến độ
-      const allRanks = await AgencyRank.findAll({
-        order: [["min_accumulated_value", "ASC"]],
-      });
-
-      // 2. Lấy tất cả user là thành viên (role_id = 3)
-      const members = await User.findAll({
-        where: {
-          role_id: 3,
-        },
-        attributes: [
-          "user_id",
-          "user_name",
-          "first_name",
-          "last_name",
-          "email",
-          "agency_rank_id",
-          // "rank_expiration_date",
-          // Tính tổng chi tiêu từ các đơn hàng đã hoàn thành
-          [
-            sequelize.fn(
-              "SUM",
-              sequelize.literal(
-                "CASE WHEN `orders`.`status` = 'completed' THEN `orders`.`total` ELSE 0 END"
-              )
-            ),
-            "total_spent",
-          ],
-        ],
-        include: [
-          {
-            model: Order,
-            as: "orders",
-            attributes: [], // Không cần lấy chi tiết từng order ở đây
-            required: false, // LEFT JOIN để vẫn lấy user dù chưa có order
-          },
-          {
-            model: AgencyRank,
-            as: "agencyRank", // Phải có alias này trong model User
-          },
-          {
-            model: Role,
-            as: "role", // Phải có alias này trong model User
-          },
-        ],
-        group: ["User.user_id", "agencyRank.agency_rank_id", "role.role_id"],
-      });
-
-      // 3. Xử lý và tính toán thêm dữ liệu cho mỗi thành viên
-      const result = members.map((member) => {
-        const memberJson = member.get({ plain: true });
-        const totalSpent = parseFloat(memberJson.total_spent || 0);
-        const currentRank = memberJson.agencyRank;
-
-        let nextRank = null;
-        let rankProgress = 0;
-
-        if (currentRank) {
-          // Tìm hạng tiếp theo
-          const currentRankIndex = allRanks.findIndex(
-            (r) => r.agency_rank_id === currentRank.agency_rank_id
-          );
-          if (currentRankIndex < allRanks.length - 1) {
-            nextRank = allRanks[currentRankIndex + 1];
-          }
-        } else {
-          // Nếu chưa có hạng, hạng tiếp theo là hạng thấp nhất
-          nextRank = allRanks[0];
-        }
-
-        // Tính tiến độ lên hạng
-        if (nextRank) {
-          const minForNextRank = nextRank.min_accumulated_value;
-          // Tránh chia cho 0 nếu mốc đầu tiên là 0
-          if (minForNextRank > 0) {
-            rankProgress = (totalSpent / minForNextRank) * 100;
-          } else {
-            rankProgress = 100;
-          }
-        } else {
-          // Đã đạt hạng cao nhất
-          rankProgress = 100;
-        }
-
-        return {
-          user_id: memberJson.user_id,
-          member_info: {
-            user_name: `${memberJson.first_name} ${memberJson.last_name}`,
-            email: memberJson.email,
-          },
-          rank_info: {
-            name: currentRank ? currentRank.agency_rank_name : "Chưa có hạng",
-            discount_percent: currentRank ? currentRank.discount_percent : 0,
-          },
-          total_spent: totalSpent,
-          rank_progress: {
-            percent: Math.min(rankProgress, 100).toFixed(2),
-            next_rank_name: nextRank
-              ? nextRank.agency_rank_name
-              : "Đã đạt hạng cao nhất",
-            remaining: nextRank
-              ? Math.max(0, nextRank.min_accumulated_value - totalSpent)
-              : 0,
-          },
-          rank_valid_until: memberJson.rank_expiration_date,
-          actions: ["view_details", "edit_rank"],
-        };
-      });
-
+      const allRanks = await getAllRanks();
+      const members = await getAllMembers();
+      const result = members.map((member) => buildMemberRankData(member, allRanks));
       return result;
     } catch (error) {
       console.error("Lỗi khi lấy danh sách thành viên theo hạng:", error);

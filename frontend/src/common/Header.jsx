@@ -19,7 +19,11 @@ const Header = () => {
   // const userLoggedIn = useContext(AuthContext);
 
   const isLoggedIn = !!user && !!user.user_name; // hoặc kiểm tra token
-  const isAdmin = user?.role_name === "admin";
+  const isAdmin = user?.role_id === 1; // Kiểm tra xem người dùng có phải là admin không
+
+  console.log("user:", user);
+  console.log("isAdmin:", isAdmin);
+
 
   // Xử lý đăng nhập thành công
   const handleLoginSuccess = (userData) => {
@@ -27,6 +31,7 @@ const Header = () => {
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
     setShowLoginDialog(false);
+    
   };
 
   // Xử lý đăng ký thành công
@@ -62,14 +67,15 @@ const Header = () => {
         <Link to="/about" className="nav-link" onClick={closeMenu}>
           Giới thiệu
         </Link>
+        
+        <Link to="/products" className="nav-link" onClick={closeMenu}>
+          Danh mục
+        </Link>
         <Link to="/orderTracking" className="nav-link" onClick={closeMenu}>
           Đơn hàng của tôi
         </Link>
-        <Link to="/products" className="nav-link" onClick={closeMenu}>
-          Sản phẩm
-        </Link>
         {isAdmin && isLoggedIn && (
-          <Link to="/admin" className="nav-link" onClick={closeMenu}>
+          <Link to="/admin" className="nav-link" >
             Trang quản trị
           </Link>
         )}

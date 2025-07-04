@@ -328,9 +328,9 @@ export default function AdminAngencyRank() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Quản lý thành viên</h1>
+          <h1 className="text-3xl font-bold">Quản lý hạng đại lý</h1>
           <p className="text-muted-foreground mt-1">
-            Theo dõi điểm tích lũy và hạng thành viên
+            Theo dõi điểm tích lũy và hạng đại lý
           </p>
         </div>
         {/* <Button className="gap-2 text-black">
@@ -649,12 +649,12 @@ export default function AdminAngencyRank() {
                 <div className="space-y-2">
                   <h4 className="font-medium">Thông tin cá nhân</h4>
                   <div className="space-y-1 text-sm">
-                    <div>Tên: {selectedMember.name}</div>
-                    <div>Email: {selectedMember.email}</div>
-                    <div>Điện thoại: {selectedMember.phone}</div>
+                    <div>Tên: {selectedMember.member_info.user_name}</div>
+                    <div>Email: {selectedMember.member_info.email}</div>
+                    <div>Điện thoại: {selectedMember.member_info.phone}</div>
                     <div>
                       Ngày tham gia:{" "}
-                      {new Date(selectedMember.joinDate).toLocaleDateString(
+                      {new Date(selectedMember.member_info.crea).toLocaleDateString(
                         "vi-VN"
                       )}
                     </div>

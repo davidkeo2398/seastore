@@ -133,6 +133,12 @@ import axiosInstance from "@/lib/axios";
 //   },
 // ];
 
+function calculateTotalRevenue(orders) {
+  return orders
+    .filter((order) => order.status === "completed")
+    .reduce((sum, order) => sum + (Number(order.total) || 0), 0);
+}
+
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -212,12 +218,7 @@ export default function OrdersPage() {
   });
 
   const totalOrders = orders.length;
-  const totalRevenue = orders
-    .filter(
-      (order) =>
-        order.payment_status === "paid" || order.payment_method === "cod"
-    )
-    .reduce((sum, order) => sum + order.total, 0);
+  const totalRevenue = calculateTotalRevenue(orders);
   const pendingOrders = orders.filter(
     (order) => order.status === "pending"
   ).length;
@@ -304,21 +305,52 @@ export default function OrdersPage() {
     }
   };
 
+  // Tính tổng tiền theo user
+  const userTotals = {};
+  orders.forEach((order) => {
+    if (!order.user_id) return;
+    if (!userTotals[order.user_id]) {
+      userTotals[order.user_id] = {
+        user_name: order.user_name,
+        user_email: order.user_email,
+        total: 0,
+      };
+    }
+    userTotals[order.user_id].total += Number(order.total) || 0;
+    console.log("userTotals", userTotals);
+  });
+
+  // Tìm user có tổng tiền lớn nhất
+  const topBuyer = Object.values(userTotals).reduce(
+    (max, user) => (user.total > (max?.total || 0) ? user : max),
+    null
+  );
+  console.log("topBuyer", topBuyer);
+
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Quản lý đơn hàng</h1>
-          <p className="text-muted-foreground mt-1">
-            Theo dõi và xử lý đơn hàng của khách hàng
-          </p>
-        </div>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Tạo đơn hàng
-        </Button>
-      </div>
+      {/* Top Buyer */}
+      {topBuyer && (
+        <Card className="mb-4 border-2 border-yellow-400">
+          <CardHeader>
+            <CardTitle>Người mua hàng cao nhất</CardTitle>
+            <CardDescription>
+              {topBuyer.user_name || "N/A"} ({topBuyer.user_email || "N/A"})
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-lg">
+              Tổng tiền:{" "}
+              <span className="font-bold text-green-600">
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(topBuyer.total)}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -340,6 +372,7 @@ export default function OrdersPage() {
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
               {totalRevenue.toLocaleString("vi-VN")} đ
+              {console.log("Lỗi tổng doanh thu:", totalRevenue)}
             </div>
             <p className="text-xs text-muted-foreground">Đã thanh toán</p>
           </CardContent>
@@ -450,7 +483,7 @@ export default function OrdersPage() {
                     <TableRow key={order.order_id}>
                       <TableCell>
                         <code className="bg-muted px-2 py-1 rounded text-sm">
-                          {order.order_id}
+                          {order.order_code}
                         </code>
                       </TableCell>
                       <TableCell>
@@ -506,9 +539,10 @@ export default function OrdersPage() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="pending">Đang xử lý</SelectItem>
-                            <SelectItem value="completed">Hoàn thành</SelectItem>
+                            <SelectItem value="completed">
+                              Hoàn thành
+                            </SelectItem>
                             <SelectItem value="cancelled">Đã hủy</SelectItem>
-
                           </SelectContent>
                         </Select>
                       </TableCell>
@@ -563,6 +597,12 @@ export default function OrdersPage() {
                     <div className="flex items-center gap-2">
                       <User className="h-3 w-3" />
                       {selectedOrder.user_name || "N/A"}
+                    </div>
+                    <div>
+                      <span className="font-medium">Số điện thoại: </span>
+                      {selectedOrder.phone_user ||
+                        selectedOrder.phone_agency ||
+                        "N/A"}
                     </div>
                   </div>
                 </div>

@@ -74,7 +74,8 @@ export default function AgencyRankPage() {
                 </p> */}
 
                 <p>
-                  <strong>Tên hạng:</strong> {agencyRankDetails.agency_rank_name}
+                  <strong>Tên hạng:</strong>{" "}
+                  {agencyRankDetails.agency_rank_name}
                 </p>
 
                 <p>
@@ -82,8 +83,10 @@ export default function AgencyRankPage() {
                   {formatCurrency(agencyRankDetails.min_accumulated_value)}
                 </p>
 
+
                 <p>
-                  <strong>Chiết khấu được giảm:</strong> {agencyRankDetails.discount_percent}%
+                  <strong>Chiết khấu được giảm:</strong>{" "}
+                  {agencyRankDetails.discount_percent}%
                 </p>
                 {agencyRankDetails.note && (
                   <p>

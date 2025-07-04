@@ -291,14 +291,16 @@ export default function PayCheckout() {
     let promotionId = null;
     const promotion_code = localStorage.getItem("promotion_code");
 
+    // Nếu có promotion_code thì lấy promotionId từ backend hoặc localStorage, nếu không thì để null
+    if (promotion_code) {
+      // Nếu bạn lưu promotion_id trong localStorage thì lấy ra, nếu không thì cần fetch từ backend
+      promotionId = Number(localStorage.getItem("promotion_id")) || null;
+    }
+
     if (userInfo.role?.role_name === "user") {
       finalTotal = getCartTotal() - discount;
-      promotionId = 1; //Giả sử ID mặc định cho người dùng
-      // promotion_code: localStorage.getItem("promotion_code");
     } else if (userInfo.role && userInfo.role.role_name === "admin_agency") {
       finalTotal = getCartTotal() - calRankDiscount;
-      promotionId = 1; //Giả sử ID mặc định cho người dùng
-      // promotion_code: localStorage.getItem("promotion_code");
     }
     const payload = {
       user_email:
