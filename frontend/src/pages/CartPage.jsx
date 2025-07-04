@@ -606,6 +606,7 @@ export default function ShoppingCart() {
                           ))}
                         </SelectContent>
                       </Select>
+                      {/*
                       <Input
                         placeholder="Nhập mã giảm giá"
                         value={couponCode}
@@ -633,8 +634,9 @@ export default function ShoppingCart() {
                           {isApplyingCoupon ? "..." : "Áp dụng"}
                         </Button>
                       )}
+                      */}
                     </div>
-
+                    {/*
                     {couponError && (
                       <Alert variant="destructive" className="mt-2 py-2">
                         <AlertDescription className="text-xs flex items-center">
@@ -653,6 +655,7 @@ export default function ShoppingCart() {
                         </AlertDescription>
                       </Alert>
                     )}
+                    */}
                   </div>
 
                   <div className="flex justify-between items-center mb-6">

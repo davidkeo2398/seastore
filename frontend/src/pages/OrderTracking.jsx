@@ -259,7 +259,7 @@ export default function OrderTrackingWithCheckboxes() {
 
   const fetchOrders = async () => {
     try {
-      const response = await axiosInstance.get("/order");
+      const response = await axiosInstance.get("/order/my-order");
       if (response.data && response.data.data.length > 0) {
         setOrders(response.data.data);
         setLoading(false);

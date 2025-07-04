@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import "../css/Header.css";
 import { Link, useNavigate } from "react-router-dom";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 import RegisterDialog from "@/pages/RegisterDialog";
 import LoginDialog from "@/pages/LoginDiaLog";
 import { AuthContext } from "@/context/AuthContext";
@@ -14,10 +14,12 @@ const Header = () => {
   const navigate = useNavigate();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for hamburger menu
+
   // const userLoggedIn = useContext(AuthContext);
 
   const isLoggedIn = !!user && !!user.user_name; // hoặc kiểm tra token
-  const isAdmin = user?.role_id === 1;
+  const isAdmin = user?.role_name === "admin";
 
   // Xử lý đăng nhập thành công
   const handleLoginSuccess = (userData) => {
@@ -41,31 +43,33 @@ const Header = () => {
     navigate("/");
   };
 
+  const closeMenu = () => setIsMenuOpen(false);
+
   // Hiển thị giao diện
   return (
     <header>
-      <Link to="/" className="logo">
+      <Link to="/" className="logo" onClick={closeMenu}>
         <img
           src="/images/whale_5729775.png"
           alt="Logo"
           className="logo-image w-12 h-12"
         />
       </Link>
-      <nav className="nav">
-        <Link to="/" className="nav-link">
+      <nav className={`nav ${isMenuOpen ? "active" : ""}`}>
+        <Link to="/" className="nav-link" onClick={closeMenu}>
           Trang chủ
         </Link>
-        <Link to="/about" className="nav-link">
+        <Link to="/about" className="nav-link" onClick={closeMenu}>
           Giới thiệu
         </Link>
-        <Link to="/orderTracking" className="nav-link">
+        <Link to="/orderTracking" className="nav-link" onClick={closeMenu}>
           Đơn hàng của tôi
         </Link>
-        <Link to="/products" className="nav-link">
+        <Link to="/products" className="nav-link" onClick={closeMenu}>
           Sản phẩm
         </Link>
         {isAdmin && isLoggedIn && (
-          <Link to="/admin" className="nav-link">
+          <Link to="/admin" className="nav-link" onClick={closeMenu}>
             Trang quản trị
           </Link>
         )}
@@ -89,7 +93,8 @@ const Header = () => {
             </button>
           </div>
         ) : (
-          <>
+          // NOTE: Gom 2 nút vào một div để dễ ẩn/hiện trên mobile
+          <div className="auth-buttons">
             <button
               onClick={() => setShowLoginDialog(true)}
               className="btn btn-login"
@@ -102,9 +107,15 @@ const Header = () => {
             >
               Đăng ký
             </button>
-          </>
+          </div>
         )}
       </div>
+      <button
+        className="menu-toggle"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+      >
+        {isMenuOpen ? <FaTimes /> : <FaBars />}
+      </button>
       {showLoginDialog && (
         <LoginDialog
           onClose={() => setShowLoginDialog(false)}

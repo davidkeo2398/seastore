@@ -1,4 +1,4 @@
-const Order = require("../Model/Order");
+const Order = require("../Model/Index");
 const { orderService } = require("../services/index");
 const { getOrderByUser } = require("../services/order-service");
 const generateCode = require("../utils/generateCode");
@@ -23,12 +23,19 @@ module.exports = {
 
   getOrders: async (req, res) => {
     try {
-      console.log("debug req", req.user);
-      const result = await orderService.getOrders();
-      return res.status(200).json({
-        message: "Get orders successfully",
-        data: result,
-      });
+      if (req.user && req.user.role && req.user.role.role_name === "admin") {
+        console.log("debug req", req.user);
+        const result = await orderService.getOrders();
+        return res.status(200).json({
+          message: "Get orders successfully",
+          data: result,
+        });
+      } else {
+        return res.status(403).json({
+          message: "Access denied. Only admin can view all orders.",
+          data: [],
+        });
+      }
     } catch (err) {
       return res.status(400).json({
         message: "Get orders failed",
@@ -42,7 +49,9 @@ module.exports = {
     try {
       console.log("debug req", req.user);
       const userId = req.user.user_id;
-      const orders = await getOrderByUser(userId);
+      // const orders = await Order.findAll({ where: { user_id: userId } });
+      const orders = await orderService.getOrderByUser(userId);
+
       return res.status(200).json({
         message: "Get orders by user successfully",
         data: orders,
@@ -54,5 +63,5 @@ module.exports = {
         error: error.message,
       });
     }
-  }
+  },
 };

@@ -26,6 +26,7 @@ import AdminAngencyRank from "./pages/admin/Rank";
 import AgencyRankPage from "./pages/AngencyRank";
 import OrderTracking from "./pages/OrderTracking";
 import OrderSuccess from "./pages/OrderSuccess";
+import { Navigate, Outlet } from "react-router-dom";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -42,6 +43,8 @@ function App() {
     }
     fetchStats();
   }, []);
+
+ 
 
   return (
     <BrowserRouter>
@@ -73,7 +76,10 @@ function App() {
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<DashboardStats stats={dashboardStats} />} />
-            <Route path="dashboard" element={<DashboardStats stats={dashboardStats} />} />
+            <Route
+              path="dashboard"
+              element={<DashboardStats stats={dashboardStats} />}
+            />
             <Route path="users" element={<UsersPage />} />
             <Route path="products" element={<ProductsPage />} />
             <Route path="warehouse" element={<WarehousePage />} />

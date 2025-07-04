@@ -65,7 +65,7 @@ import axiosInstance from "@/lib/axios";
 //   },
 // ];
 
-export default function CategoriesList() {
+export default function CategoriesList({ onCategorySelect, onShowAll }) {
   const [hovered, setHovered] = useState(null);
   const [categories, setCategories] = useState([]);
   const fetchCategories = async () => {
@@ -87,21 +87,25 @@ export default function CategoriesList() {
 
   return (
     <div className="categories-container">
-      <h2 className="categories-title">Tất cả danh mục của cửa hàng</h2>
+      <h2 className="categories-title">Tất cả danh mục </h2>
+
       <div className="categories-grid">
-        {categories.map((category, index) => (
+        {categories.map((category) => (
           <div
             className={`category-card ${
               hovered === category.id ? "hovered" : ""
             }`}
-            key={index}
+            key={category.category_id}
             onMouseEnter={() => setHovered(category.id)}
             onMouseLeave={() => setHovered(null)}
+            onClick={() =>
+              onCategorySelect && onCategorySelect(category.category_id)
+            } 
           >
             <img
               src={
                 category.category_id
-                  ?  `/images/category_${category.category_id}.png` // Giả sử ảnh được lưu theo định dạng category_id.png
+                  ? `/images/category_${category.category_id}.png` // Giả sử ảnh được lưu theo định dạng category_id.png
                   : "/images/default-category.png" // Ảnh mặc định nếu không có ảnh
               }
               alt={category.category_name}

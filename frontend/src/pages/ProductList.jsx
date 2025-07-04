@@ -4,7 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import axiosInstance from "@/lib/axios";
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export default function ProductList() {
   // const { products } = data;
@@ -46,6 +52,9 @@ export default function ProductList() {
       console.error("Error fetching categories:", error);
     }
   };
+  const handleCategorySelect = (categoryId) => {
+    setSelectedCategory(categoryId);
+  };
 
   const handleAddToCart = (product) => {
     addToCart(product, 1); // Default quantity of 1
@@ -60,6 +69,7 @@ export default function ProductList() {
       minimumFractionDigits: 0, // Không hiển thị số lẻ sau dấu phẩy (vd: 1.000.000₫ thay vì 1.000.000,00₫)
     }).format(amount);
   };
+  
   // const [products, setProducts] = useState([]);
   // useEffect(() => {
   //   fetchProducts();
@@ -77,10 +87,13 @@ export default function ProductList() {
   //     console.error("Error fetching products:", error);
   //   }
   // };
-   // Filter logic
-   const filteredProducts = allProducts.filter((product) => {
-    const matchesName = product.product_name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || product.category_id === selectedCategory;
+  // Filter logic
+  const filteredProducts = allProducts.filter((product) => {
+    const matchesName = product.product_name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" || product.category_id === selectedCategory;
     return matchesName && matchesCategory;
   });
   return (
@@ -93,10 +106,7 @@ export default function ProductList() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-xs"
         />
-        <Select
-          value={selectedCategory}
-          onValueChange={setSelectedCategory}
-        >
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Tất cả danh mục" />
           </SelectTrigger>
@@ -130,7 +140,9 @@ export default function ProductList() {
               <h3 className="product-title truncate">{product.product_name}</h3>
               <p className="product-desc truncate">{product.description}</p>
               <div className="product-meta flex justify-between items-center mb-3 text-sm">
-                <span className="product-price">{formatCurrency(product.price)} </span>
+                <span className="product-price">
+                  {formatCurrency(product.price)}{" "}
+                </span>
                 <span className="product-rate"> ⭐ {product.rate}</span>
               </div>
               <div className="product-actions flex gap-2 w-full">
