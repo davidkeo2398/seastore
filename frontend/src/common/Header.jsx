@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { use, useContext, useEffect, useState } from "react";
 import "../css/Header.css";
 import { Link, useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
@@ -23,6 +23,8 @@ const Header = () => {
 
   console.log("user:", user);
   console.log("isAdmin:", isAdmin);
+
+  // useEffect(() => {},[showLoginDialog]);
 
 
   // Xử lý đăng nhập thành công

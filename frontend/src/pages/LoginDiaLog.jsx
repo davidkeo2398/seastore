@@ -15,7 +15,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { GoogleLogin } from "@react-oauth/google";
 import { Link, useNavigate } from "react-router-dom";
 import { icons } from "lucide-react";
-import {signInWithPopup} from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "@/lib/firebase";
 import setAuthToken from "@/ultils/Authentication";
 
@@ -37,7 +37,10 @@ export default function LoginDialog({ onClose, onLoginSuccess }) {
     const password = form.password.value;
 
     try {
-      const { data } = await axiosInstance.post('auth/login', { email, password });
+      const { data } = await axiosInstance.post("auth/login", {
+        email,
+        password,
+      });
       console.log("Login response:", data.data.user);
 
       if (data.data.accessToken) {
@@ -47,11 +50,14 @@ export default function LoginDialog({ onClose, onLoginSuccess }) {
         onClose();
         onLoginSuccess(data.data.user);
         // navigate(data.data.user.isAdmin ? '/admin' : '/home');
+        location.reload();
       } else {
         setErrorMessages(data.message);
       }
     } catch (error) {
-      setErrorMessages(error.response?.data?.message || 'Đã xảy ra lỗi khi đăng nhập.');
+      setErrorMessages(
+        error.response?.data?.message || "Đã xảy ra lỗi khi đăng nhập."
+      );
     }
   };
   const handleGgLogin = () => {
@@ -62,7 +68,7 @@ export default function LoginDialog({ onClose, onLoginSuccess }) {
         setUser(user);
         setAuthToken(user.accessToken);
         return user;
-        
+
         // setUser({ iduser: user.uid, isAdmin: false });
       })
       .then((user) => {
@@ -73,7 +79,7 @@ export default function LoginDialog({ onClose, onLoginSuccess }) {
         console.error("Error during Google login:", error);
         setErrorMessages("Đăng nhập bằng Google thất bại.");
       });
-  }
+  };
 
   return (
     <Dialog

@@ -560,14 +560,14 @@ export default function OrdersPage() {
                           {/* <Button variant="outline" size="sm" title="Chỉnh sửa">
                             <Edit className="h-4 w-4" />
                           </Button> */}
-                          <Button
+                          {/* <Button
                             variant="destructive"
                             size="sm"
                             onClick={() => handleDelete(order.order_id)}
                             title="Xóa đơn hàng"
                           >
                             <Trash2 className="h-4 w-4 text-black" />
-                          </Button>
+                          </Button> */}
                         </div>
                       </TableCell>
                     </TableRow>

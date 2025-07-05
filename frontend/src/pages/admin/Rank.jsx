@@ -221,38 +221,38 @@ export default function AdminAngencyRank() {
     setIsDetailDialogOpen(true);
   };
 
-  const handlePointsAdjustment = (member) => {
-    setSelectedMember(member);
-    setIsPointsDialogOpen(true);
-  };
+  // const handlePointsAdjustment = (member) => {
+  //   setSelectedMember(member);
+  //   setIsPointsDialogOpen(true);
+  // };
 
-  const handleSavePointsAdjustment = () => {
-    if (!selectedMember) return;
+  // const handleSavePointsAdjustment = () => {
+  //   if (!selectedMember) return;
 
-    const newPoints =
-      pointsAdjustment.type === "add"
-        ? selectedMember.availablePoints + pointsAdjustment.amount
-        : selectedMember.availablePoints - pointsAdjustment.amount;
+  //   const newPoints =
+  //     pointsAdjustment.type === "add"
+  //       ? selectedMember.availablePoints + pointsAdjustment.amount
+  //       : selectedMember.availablePoints - pointsAdjustment.amount;
 
-    setMembers((prev) =>
-      prev.map((member) =>
-        member.id === selectedMember.id
-          ? {
-              ...member,
-              availablePoints: Math.max(0, newPoints),
-              totalPoints:
-                pointsAdjustment.type === "add"
-                  ? member.totalPoints + pointsAdjustment.amount
-                  : member.totalPoints,
-            }
-          : member
-      )
-    );
+  //   setMembers((prev) =>
+  //     prev.map((member) =>
+  //       member.id === selectedMember.id
+  //         ? {
+  //             ...member,
+  //             availablePoints: Math.max(0, newPoints),
+  //             totalPoints:
+  //               pointsAdjustment.type === "add"
+  //                 ? member.totalPoints + pointsAdjustment.amount
+  //                 : member.totalPoints,
+  //           }
+  //         : member
+  //     )
+  //   );
 
-    setIsPointsDialogOpen(false);
-    setPointsAdjustment({ type: "add", amount: 0, reason: "" });
-    toast.success("Cập nhật điểm thành công!");
-  };
+  //   setIsPointsDialogOpen(false);
+  //   setPointsAdjustment({ type: "add", amount: 0, reason: "" });
+  //   toast.success("Cập nhật điểm thành công!");
+  // };
 
   const filteredMembers = members.filter((member) => {
     const matchesSearch =
@@ -525,14 +525,14 @@ export default function AdminAngencyRank() {
                               >
                                 <Eye className="h-4 w-4" />
                               </Button>
-                              <Button
+                              {/* <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handlePointsAdjustment(member)}
                                 title="Điều chỉnh điểm"
                               >
                                 <Edit className="h-4 w-4" />
-                              </Button>
+                              </Button> */}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -651,10 +651,11 @@ export default function AdminAngencyRank() {
                   <div className="space-y-1 text-sm">
                     <div>Tên: {selectedMember.member_info.user_name}</div>
                     <div>Email: {selectedMember.member_info.email}</div>
-                    <div>Điện thoại: {selectedMember.member_info.phone}</div>
+                    <div>Điện thoại: {selectedMember.phone}</div>
+                    
                     <div>
                       Ngày tham gia:{" "}
-                      {new Date(selectedMember.member_info.crea).toLocaleDateString(
+                      {new Date(selectedMember.createdAt).toLocaleDateString(
                         "vi-VN"
                       )}
                     </div>
@@ -707,7 +708,7 @@ export default function AdminAngencyRank() {
       </Dialog>
 
       {/* Points Adjustment Dialog */}
-      <Dialog open={isPointsDialogOpen} onOpenChange={setIsPointsDialogOpen}>
+      {/* <Dialog open={isPointsDialogOpen} onOpenChange={setIsPointsDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Điều chỉnh điểm</DialogTitle>
@@ -771,7 +772,7 @@ export default function AdminAngencyRank() {
             <Button onClick={handleSavePointsAdjustment}>Lưu thay đổi</Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 }

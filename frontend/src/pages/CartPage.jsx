@@ -515,15 +515,7 @@ export default function ShoppingCart() {
                   )}
 
                   <Separator />
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
-                      Điểm hiện tại:
-                    </span>
-                    <span className="font-bold text-blue-700">
-                      {/* Cần userInfo.user.totalScore nếu có */}
-                      {userInfo.user?.total?.toLocaleString() || "0"}
-                    </span>
-                  </div>
+                  
 
                   <Button
                     variant="outline"

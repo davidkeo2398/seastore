@@ -23,6 +23,8 @@ async function getAllMembers() {
       "first_name",
       "last_name",
       "email",
+      "phone",
+      "createdAt",
       "agency_rank_id",
       [
         sequelize.fn(
@@ -83,6 +85,8 @@ function buildMemberRankData(member, allRanks) {
 
   return {
     user_id: memberJson.user_id,
+    phone: memberJson.phone,
+    createdAt: memberJson.createdAt,
     member_info: {
       user_name: `${memberJson.first_name} ${memberJson.last_name}`,
       email: memberJson.email,

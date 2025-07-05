@@ -27,6 +27,7 @@ import AgencyRankPage from "./pages/AngencyRank";
 import OrderTracking from "./pages/OrderTracking";
 import OrderSuccess from "./pages/OrderSuccess";
 import { Navigate, Outlet } from "react-router-dom";
+import Products from "./pages/Products";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -60,9 +61,9 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="about" element={<AboutPage />} />
-            <Route path="login" element={<LoginDialog />} />
-            <Route path="register" element={<RegisterPage />} />
-            <Route path="products" element={<ProductList />} />
+            <Route path="login" element={<LoginDialog />} />  //dang nhap
+            <Route path="register" element={<RegisterPage />} />  //dang ky
+            <Route path="products" element={<Products />} />
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="payment" element={<PaymentPage />} />

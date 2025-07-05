@@ -46,7 +46,7 @@ module.exports = {
         agency_id,
         warehouse_id,
         unit,
-        number_of_inventory
+        number_of_inventory,
       } = productData;
 
       // Validate đơn giản phía service (nếu muốn)
@@ -64,7 +64,7 @@ module.exports = {
         agency_id,
         warehouse_id,
         unit,
-        number_of_inventory
+        number_of_inventory,
       });
       return newProduct;
     } catch (error) {
@@ -79,16 +79,16 @@ module.exports = {
         throw new Error("Không tìm thấy sản phẩm");
       }
       await product.update({
-         product_name: productData.product_name,
-      price: productData.price,
-      description: productData.description,
-      old_price: productData.old_price,
-      image: productData.image,
-      category_id: productData.category_id,
-      agency_id: productData.agency_id,
-      warehouse_id: productData.warehouse_id,
-      unit: productData.unit, 
-      number_of_inventory: productData.number_of_inventory,
+        product_name: updateData.product_name,
+        price: updateData.price,
+        description: updateData.description,
+        old_price: updateData.old_price,
+        image: updateData.image,
+        category_id: updateData.category_id,
+        agency_id: updateData.agency_id,
+        warehouse_id: updateData.warehouse_id,
+        unit: updateData.unit,
+        number_of_inventory: updateData.number_of_inventory,
       });
       return product;
     } catch (error) {

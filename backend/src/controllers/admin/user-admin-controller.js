@@ -1,4 +1,6 @@
+const { where } = require("sequelize");
 const { userAdminService } = require("../../services");
+const { use } = require("react");
 
 module.exports = {
   getUsers: async (req, res) => {
@@ -69,4 +71,16 @@ module.exports = {
         .json({ message: "Xóa người dùng thất bại", error: error.message });
     }
   },
-};
+  updateUserStatus: async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+  try {
+    await userAdminService.updateUser(id, {status});
+    res.json({
+      message: "Cập nhật trạng thái người dùng thành công",
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Cập nhật trạng thái người dùng thất bại", error: error.message });
+  }
+}, 
+}

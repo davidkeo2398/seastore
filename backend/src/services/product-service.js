@@ -73,4 +73,5 @@ module.exports = {
       throw new Error("Get products by category fail: ", err);
     }
   },
-};
+  
+}

@@ -30,6 +30,7 @@ import { useCart } from "@/context/CartContext";
 import axiosInstance from "@/lib/axios";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import LoginDialog from "./LoginDiaLog";
 
 // Mock order data
 // const orderSummary = {
@@ -143,6 +144,7 @@ export default function PayCheckout() {
 
   const [showSuccess, setShowSuccess] = useState(false);
   const timeoutRef = useRef(null);
+  const [isShowLoginDialog, setIsShowLoginDialog] = useState(false);
 
   useEffect(() => {
     setDiscount(localStorage.getItem("discount"));
@@ -257,6 +259,13 @@ export default function PayCheckout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isProcessing) return; // Ngăn chặn gửi nhiều lần
+    if (!userInfo || !userInfo.role) {
+      alert("Vui lòng đăng nhập để thanh toán");
+      setIsShowLoginDialog(true);
+      // navigate("/login");
+      return;
+    }
     if (!formData.agreeTerms) {
       alert("Vui lòng đồng ý với điều khoản và điều kiện");
       return;
@@ -378,6 +387,14 @@ export default function PayCheckout() {
   //     // setIsProcessing(false);
   //   }
   // };
+  // Xử lý đăng nhập thành công
+  const handleLoginSuccess = (userData) => {
+    console.log("User logged in:", userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+    setUser(userData);
+    setShowLoginDialog(false);
+    
+  };
 
   const renderPaymentForm = () => {
     switch (selectedPayment) {
@@ -569,6 +586,12 @@ export default function PayCheckout() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {isShowLoginDialog && (
+        <LoginDialog
+          onClose={() => setIsShowLoginDialog(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      )}
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

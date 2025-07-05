@@ -90,14 +90,14 @@ export default function CategoriesList({ onCategorySelect, onShowAll }) {
       <h2 className="categories-title">Tất cả danh mục </h2>
 
       <div className="categories-grid">
-        {categories.map((category) => (
+        {categories.map((category, index) => (
           <div
             className={`category-card ${
               hovered === category.id ? "hovered" : ""
             }`}
-            key={category.category_id}
-            onMouseEnter={() => setHovered(category.id)}
-            onMouseLeave={() => setHovered(null)}
+            key={index}
+            // onMouseEnter={() => setHovered(category.id)}
+            // onMouseLeave={() => setHovered(null)}
             onClick={() =>
               onCategorySelect && onCategorySelect(category.category_id)
             } 

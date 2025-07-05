@@ -132,6 +132,7 @@ export default function RegisterPage({ onClose }) {
       });
       console.log("Đăng ký thành công");
       if (onClose) onClose();
+      navigate("/login");
     } catch (error) {
       setServerError(
         error.response?.data?.message || "Đã xảy ra lỗi khi đăng ký."
@@ -321,7 +322,7 @@ export default function RegisterPage({ onClose }) {
         <p className="mt-4 text-center text-sm">
           Đã có tài khoản?{" "}
           <Link
-            to="./LoginDialog.jsx"
+            to="/login"
             className="text-blue-500 hover:underline"
           >
             Đăng nhập

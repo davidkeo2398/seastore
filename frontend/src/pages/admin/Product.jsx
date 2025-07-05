@@ -222,7 +222,10 @@ export default function ProductsPage() {
   };
 
   const handleEdit = (product) => {
-    setFormData(product);
+    setFormData({
+      ...product,
+    unit: product.unit === "0" || product.unit === 0 ? "" : product.unit, // So sánh cả số 0 và chuỗi "0"
+    });
     setIsEditMode(true);
     setIsDialogOpen(true);
   };
@@ -298,6 +301,8 @@ export default function ProductsPage() {
       setProducts((prev) =>
         prev.map((p) => (p.id === formData.id ? { ...formData } : p))
       );
+      const { data } = await axiosInstance.put(`/admin/products/${formData.id}`, formData);
+      fetchProducts();
       toast.success("Cập nhật sản phẩm thành công!");
     } else {
       try {
@@ -313,7 +318,7 @@ export default function ProductsPage() {
           agency_id: formData.agency_id ? Number(formData.agency_id) : 1,
           warehouse_id: formData.warehouse_id
             ? Number(formData.warehouse_id)
-            : null, 
+            : null,
           unit: formData.unit,
           number_of_inventory: Number(formData.number_of_inventory),
         };
@@ -642,7 +647,12 @@ export default function ProductsPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="font-medium">
-                        {(product.price || 0).toLocaleString("vi-VN")} đ
+                        {Number(product.price).toLocaleString("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })}
                       </TableCell>
                       {/* <TableCell>
                         <Badge

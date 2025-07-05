@@ -9,5 +9,5 @@ router.post("/", adminAuthMiddleware, userAdminController.createUser);
 router.get("/:id", adminAuthMiddleware, userAdminController.getUserById);
 router.put("/:id", adminAuthMiddleware, userAdminController.updateUser);
 router.delete("/:id", adminAuthMiddleware, userAdminController.deleteUser);
-
+router.patch("/:id/status", adminAuthMiddleware, userAdminController.updateUserStatus);
 module.exports = router;
