@@ -26,12 +26,10 @@ module.exports = {
         .status(200)
         .json({ message: "Lấy chi tiết người dùng thành công", data: result });
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          message: "Lấy chi tiết người dùng thất bại",
-          error: error.message,
-        });
+      res.status(500).json({
+        message: "Lấy chi tiết người dùng thất bại",
+        error: error.message,
+      });
     }
   },
   createUser: async (req, res) => {
@@ -53,12 +51,10 @@ module.exports = {
         .status(200)
         .json({ message: "Cập nhật người dùng thành công", data: result });
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          message: "Cập nhật người dùng thất bại",
-          error: error.message,
-        });
+      res.status(500).json({
+        message: "Cập nhật người dùng thất bại",
+        error: error.message,
+      });
     }
   },
   deleteUser: async (req, res) => {
@@ -74,13 +70,23 @@ module.exports = {
   updateUserStatus: async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
-  try {
-    await userAdminService.updateUser(id, {status});
-    res.json({
-      message: "Cập nhật trạng thái người dùng thành công",
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Cập nhật trạng thái người dùng thất bại", error: error.message });
-  }
-}, 
-}
+    try {
+      const user = await userAdminService.getUserById(id);
+      if (!user) {
+        return res.status(404).json({ message: "Không tìm thấy người dùng" });
+      }
+
+      await userAdminService.updateUser(id, { status });
+      res.json({
+        message: `Cập nhật trạng thái người dùng thành công: ${status}`,
+      });
+    } catch (error) {
+      res
+        .status(500)
+        .json({
+          message: "Cập nhật trạng thái người dùng thất bại",
+          error: error.message,
+        });
+    }
+  },
+};

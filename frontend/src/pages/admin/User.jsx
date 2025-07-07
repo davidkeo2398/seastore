@@ -150,9 +150,28 @@ export default function UsersPage() {
     }
   };
 
-  useEffect(() => {+
-    fetchUsers();
+  useEffect(() => {
+    +fetchUsers();
   }, []);
+  const handleBan = async (iduser) => {
+    if (!window.confirm("Bạn có chắc chắn muốn khóa người dùng này không?")) {
+      return;
+    }
+    try {
+      await axiosInstance.patch(`/admin/user/${iduser}/status`, {
+        status: "locked",
+      });
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.iduser === iduser ? { ...user, status: "locked" } : user
+        )
+      );
+      toast.success("Người dùng đã bị khóa!");
+    } catch (error) {
+      toast.error("Khóa người dùng thất bại!");
+      console.error("Ban user failed:", error);
+    }
+  };
 
   const handleDelete = async (iduser) => {
     if (!window.confirm("Bạn có chắc chắn muốn xóa người dùng này không?")) {
@@ -185,7 +204,11 @@ export default function UsersPage() {
     e.preventDefault();
     try {
       await axiosInstance.put(`/admin/user/${editUser.user_id}`, editUser);
-      setUsers((prev) => prev.map((u) => (u.user_id === editUser.user_id ? { ...u, ...editUser } : u)));
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.user_id === editUser.user_id ? { ...u, ...editUser } : u
+        )
+      );
       setIsEditDialogOpen(false);
       setEditUser(null);
       window.location.reload();
@@ -200,8 +223,12 @@ export default function UsersPage() {
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const adminCount = users.filter((user) => user.role?.role_name === 'admin').length;
-  const userCount = users.filter((user) => user.role?.role_name !== 'admin').length;
+  const adminCount = users.filter(
+    (user) => user.role?.role_name === "admin"
+  ).length;
+  const userCount = users.filter(
+    (user) => user.role?.role_name !== "admin"
+  ).length;
   const activeCount = users.length;
 
   return (
@@ -318,7 +345,9 @@ export default function UsersPage() {
                     return (
                       <TableRow
                         key={user.iduser}
-                        className={locked ? "bg-red-50" : ""}
+                        className={`${
+                          locked ? "opacity-50 pointer-events-none" : ""
+                        } ${locked ? "bg-red-50" : ""}`}
                       >
                         <TableCell className="font-medium">
                           {user.user_name}
@@ -336,9 +365,11 @@ export default function UsersPage() {
                                 : "outline"
                             }
                           >
-                            {user.role?.role_name === 'admin' ? "Admin" :
-                              user.role?.role_name === "admin_agency" ? "Agency" :
-                              "User"}
+                            {user.role?.role_name === "admin"
+                              ? "Admin"
+                              : user.role?.role_name === "admin_agency"
+                              ? "Agency"
+                              : "User"}
                           </Badge>
                         </TableCell>
                         {/* <TableCell>
@@ -369,11 +400,11 @@ export default function UsersPage() {
                             <Button
                               variant="destructive"
                               size="sm"
-                              onClick={() => handleDelete(user.iduser)}
-                              title="Xóa người dùng"
+                              onClick={() => handleBan(user.iduser)}
+                              title="Khóa người dùng"
                               disabled={user.role?.role_name === "admin"}
                             >
-                              <Trash className="h-4 w-4 text-black" />
+                              <Ban className="h-4 w-4 text-black" />
                             </Button>
                           </div>
                         </TableCell>
@@ -452,7 +483,11 @@ export default function UsersPage() {
                 </div>
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                >
                   Hủy
                 </Button>
                 <Button type="submit" variant="outline">

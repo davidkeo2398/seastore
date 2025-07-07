@@ -1,10 +1,10 @@
 const { verifyToken } = require("../config/authentication");
 const { User, Role } = require("../Model/Index");
 
-// Export the middleware function directly
 const authMiddleware = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    //kiểm tra token trong header
+    const authHeader = req.headers.authorization; 
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(403).json({
@@ -21,7 +21,7 @@ const authMiddleware = async (req, res, next) => {
         status: "error",
       });
     }
-
+    //kiểm tra hợp lệ token
     const userInfo = verifyToken(token);
     const user = await User.findOne({
       where: { email: userInfo.email },
@@ -41,6 +41,7 @@ const authMiddleware = async (req, res, next) => {
     console.log("here");
   } catch (error) {
     console.error("Authentication error:", error);
+    //khi hết hạn token hoặc token không hợp lệ
     return res.status(401).json({
       message: "Authentication failed",
       error: error.message,
