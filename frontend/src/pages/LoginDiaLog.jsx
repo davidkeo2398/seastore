@@ -19,7 +19,7 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "@/lib/firebase";
 import setAuthToken from "@/ultils/Authentication";
 
-export default function LoginDialog({ onClose, onLoginSuccess }) {
+export default function LoginDialog({ onClose, onLoginSuccess, onShowRegister }) {
   const [errorMessages, setErrorMessages] = useState("");
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -140,9 +140,16 @@ export default function LoginDialog({ onClose, onLoginSuccess }) {
         </div>
         <p className="mt-4 text-center text-sm">
           Chưa có tài khoản?{" "}
-          <Link to="/register" className="text-blue-500 hover:underline">
+          <button
+            type="button"
+            className="text-blue-500 hover:underline"
+            onClick={(e) => {
+              e.preventDefault();
+              onShowRegister(); // Gọi hàm để hiển thị RegisterDialog
+            }}
+          >
             Đăng ký
-          </Link>
+          </button>
         </p>
       </DialogContent>
     </Dialog>

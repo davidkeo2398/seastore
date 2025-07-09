@@ -26,14 +26,12 @@ const Header = () => {
 
   // useEffect(() => {},[showLoginDialog]);
 
-
   // Xử lý đăng nhập thành công
   const handleLoginSuccess = (userData) => {
     console.log("User logged in:", userData);
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
     setShowLoginDialog(false);
-    
   };
 
   // Xử lý đăng ký thành công
@@ -52,6 +50,17 @@ const Header = () => {
 
   const closeMenu = () => setIsMenuOpen(false);
 
+  // Functions to open/close dialogs
+  const openLoginDialog = () => {
+    setShowRegisterDialog(false); // Close register if open
+    setShowLoginDialog(true);
+  };
+
+  const openRegisterDialog = () => {
+    setShowLoginDialog(false); // Close login if open
+    setShowRegisterDialog(true);
+  };
+
   // Hiển thị giao diện
   return (
     <header>
@@ -69,7 +78,7 @@ const Header = () => {
         <Link to="/about" className="nav-link" onClick={closeMenu}>
           Giới thiệu
         </Link>
-        
+
         <Link to="/products" className="nav-link" onClick={closeMenu}>
           Danh mục
         </Link>
@@ -77,7 +86,7 @@ const Header = () => {
           Đơn hàng của tôi
         </Link>
         {isAdmin && isLoggedIn && (
-          <Link to="/admin" className="nav-link" >
+          <Link to="/admin" className="nav-link">
             Trang quản trị
           </Link>
         )}
@@ -128,17 +137,15 @@ const Header = () => {
         <LoginDialog
           onClose={() => setShowLoginDialog(false)}
           onLoginSuccess={handleLoginSuccess}
+          onShowRegister={openRegisterDialog}
         />
       )}
       {showRegisterDialog && (
         <RegisterDialog
           onClose={() => setShowRegisterDialog(false)}
-          onRegisterSuccess={handleRegisterSuccess}
+          // onRegisterSuccess={handleRegisterSuccess}
           // Truyền thêm hàm mở LoginDialog nếu muốn chuyển qua lại giữa 2 dialog
-          onShowLogin={() => {
-            setShowRegisterDialog(false);
-            setShowLoginDialog(true);
-          }}
+          onShowLogin={openLoginDialog}
         />
       )}
     </header>

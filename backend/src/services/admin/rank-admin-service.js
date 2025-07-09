@@ -59,7 +59,7 @@ async function getAllMembers() {
 // Tính toán thông tin rank cho từng thành viên
 function buildMemberRankData(member, allRanks) {
   const memberJson = member.get({ plain: true });
-  const totalSpent = parseFloat(memberJson.total_spent || 0);
+  const totalSpent = parseFloat(memberJson.total_spent || 0); // Tổng chi tiêu của thành viên
   const currentRank = memberJson.agencyRank;
 
   let nextRank = null;

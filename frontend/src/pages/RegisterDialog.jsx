@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-export default function RegisterPage({ onClose }) {
+export default function RegisterPage({ onClose, onShowLogin }) {
   const [errorMessages, setErrorMessages] = useState("");
   const navigate = useNavigate();
   const [open, setOpen] = useState(!!onClose);
@@ -132,9 +132,9 @@ export default function RegisterPage({ onClose }) {
       });
       console.log("Đăng ký thành công");
       if (onClose) onClose();
-      navigate("/login");
+      if (onShowLogin) onShowLogin(); // Chuyển sang dialog đăng nhập
     } catch (error) {
-      setServerError(
+      setErrorMessages(
         error.response?.data?.message || "Đã xảy ra lỗi khi đăng ký."
       );
     }
@@ -321,12 +321,16 @@ export default function RegisterPage({ onClose }) {
         </form>
         <p className="mt-4 text-center text-sm">
           Đã có tài khoản?{" "}
-          <Link
-            to="/login"
+          <button
+            type="button"
             className="text-blue-500 hover:underline"
+            onClick={(e) => {
+              e.preventDefault();
+              onShowLogin(); // Gọi hàm để hiển thị LoginDialog
+            }}
           >
             Đăng nhập
-          </Link>
+          </button>
         </p>
       </DialogContent>
     </Dialog>

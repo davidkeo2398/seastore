@@ -80,6 +80,7 @@ module.exports = {
           })
         )
       );
+      
       if (newOrder.status === "completed") {
         await Promise.all(
           orderItems.map((product) => {
@@ -90,13 +91,14 @@ module.exports = {
             );
           })
         );
-        const ordersTotal = await Order.sum("total", {
+        
+        const ordersTotal = await Order.sum("total", { // đơn hàng đã hoàn thành
           where: { user_id, status: "completed" },
           transaction: t,
         });
 
         // hạng thành viên
-        if (ordersTotal >= 40_000_000) {
+        if (ordersTotal >= 40_000_000) { // so sánh hạng cao nhất
           rankName = "Diamond";
         } else if (ordersTotal >= 30_000_000) {
           rankName = "Platinum";
@@ -112,7 +114,7 @@ module.exports = {
 
         // cập nhật hạng thành viên nếu có
         if (rankName) {
-          const agency = await AgencyRank.findOne({
+          const agency = await AgencyRank.findOne({ // lấy danh sách hạng thành viên
             where: { agency_rank_name: rankName },
             transaction: t,
           });
@@ -120,7 +122,7 @@ module.exports = {
             throw new Error(`Agency rank '${rankName}' not found`);
           }
           await user.then((model) => {
-            model.update({ agency_rank_id: agency.agency_rank_id });
+            model.update({ agency_rank_id: agency.agency_rank_id }); // nếu xác định hạng mới, cập nhật hạng cho người dùng
           });
         }
       }

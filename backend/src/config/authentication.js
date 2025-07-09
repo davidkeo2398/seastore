@@ -15,7 +15,7 @@ const generateToken = (user) => {
     resources: user.resources,
     role_name: role.name
   };
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' });
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '3h' });
 }
 
 const verifyToken = (token) => {

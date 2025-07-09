@@ -383,9 +383,9 @@ export default function ShoppingCart() {
                             {formatPrice(item.old_price)}
                           </span>
                         )}
-                        <span className="text-xs text-gray-500">
+                        {/* <span className="text-xs text-gray-500">
                           /{item.unit}
-                        </span>
+                        </span> */}
                       </div>
 
                       {/* Quantity Controls */}
@@ -680,7 +680,7 @@ export default function ShoppingCart() {
                       Ưu đãi đặc biệt
                     </h3>
                     <ul className="text-sm text-blue-800 space-y-1">
-                      <li>• Miễn phí vận chuyển cho đơn hàng trên 500.000đ</li>
+                      <li>• Miễn phí vận chuyển cho đơn hàng khi mua tại đây</li>
                       <li>• Đổi trả miễn phí trong 7 ngày</li>
                       <li>• Bảo hành chính hãng</li>
                     </ul>
