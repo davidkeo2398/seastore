@@ -3,7 +3,7 @@ const sequelize = require("../config/dbcontext");
 
 module.exports = (sequelize) => {
   class Categories extends Model {
-    otherPublicField;
+    otherPublicField; // công khai trường khác ngoài các trường trong bảng
   }
 
   Categories.init(

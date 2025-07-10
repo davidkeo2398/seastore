@@ -3,7 +3,7 @@ const sequelize = require("../config/dbcontext");
 
 module.exports = (sequelize) => {
   class Product extends Model {
-    otherPublicField;
+    otherPublicField;// lưu giá trị tạm thời tính toán trong quá trình xử lý
   }
 
   Product.init(

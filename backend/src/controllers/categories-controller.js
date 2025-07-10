@@ -1,7 +1,5 @@
 const { categoriesService } = require('../services/index');
 
-
-
 module.exports = {
     getCategories: async (req, res) => {
         try {

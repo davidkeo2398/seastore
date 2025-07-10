@@ -15,7 +15,7 @@
 
 .banner.fade-in {
     opacity: 1;
-    transform: scale(1); /* Scale in */
+    transform: scale(1); /* hiệu ứng mờ dần */
     transition: opacity 0.7s, transform 0.7s;
 }
 .banner-bg {
@@ -36,7 +36,7 @@
 
 .banner.fade-out {
     opacity: 0.8;
-    transform: scale(0.98); /* Scale out */
+    transform: scale(0.98); /* hiệu ứng mất đi */
     transition: opacity 0.7s, transform 0.7s;
 }
 

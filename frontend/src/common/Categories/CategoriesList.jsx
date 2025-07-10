@@ -68,6 +68,7 @@ import axiosInstance from "@/lib/axios";
 export default function CategoriesList({ onCategorySelect, onShowAll }) {
   const [hovered, setHovered] = useState(null);
   const [categories, setCategories] = useState([]);
+  
   const fetchCategories = async () => {
     try {
       const { data } = await axiosInstance.get("/category");
@@ -89,8 +90,9 @@ export default function CategoriesList({ onCategorySelect, onShowAll }) {
     <div className="categories-container">
       <h2 className="categories-title">Tất cả danh mục </h2>
 
-      <div className="categories-grid">
-        {categories.map((category, index) => (
+      <div className="categories-grid">          
+
+        {categories.map((category, index) => ( //click vào danh mục để xem sản phẩm
           <div
             className={`category-card ${
               hovered === category.id ? "hovered" : ""

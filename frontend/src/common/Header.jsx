@@ -10,13 +10,11 @@ import { clearAuthToken, getAuthToken } from "@/ultils/Authentication";
 const Header = () => {
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user")) || {}
-  );
+  ); // lưu user, nếu chưa thì hiển thị rỗng(đăng nhập, đăng ký)
   const navigate = useNavigate();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for hamburger menu
-
-  // const userLoggedIn = useContext(AuthContext);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // hamburger menu
 
   const isLoggedIn = !!user && !!user.user_name; // hoặc kiểm tra token
   const isAdmin = user?.role_id === 1; // Kiểm tra xem người dùng có phải là admin không
@@ -24,7 +22,6 @@ const Header = () => {
   console.log("user:", user);
   console.log("isAdmin:", isAdmin);
 
-  // useEffect(() => {},[showLoginDialog]);
 
   // Xử lý đăng nhập thành công
   const handleLoginSuccess = (userData) => {
@@ -50,7 +47,6 @@ const Header = () => {
 
   const closeMenu = () => setIsMenuOpen(false);
 
-  // Functions to open/close dialogs
   const openLoginDialog = () => {
     setShowRegisterDialog(false); // Close register if open
     setShowLoginDialog(true);
@@ -68,7 +64,7 @@ const Header = () => {
         <img
           src="/images/whale_5729775.png"
           alt="Logo"
-          className="logo-image w-12 h-12"
+          className="w-12 h-12 logo-image"
         />
       </Link>
       <nav className={`nav ${isMenuOpen ? "active" : ""}`}>
@@ -103,14 +99,14 @@ const Header = () => {
           <span>Giỏ hàng</span>
         </Link>
         {getAuthToken() ? (
-          <div className="user-info flex items-center gap-4 w-auto">
+          <div className="flex items-center w-auto gap-4 user-info">
             <span>Xin chào, {user.user_name}!</span>
             <button onClick={handleLogout} className="btn btn-logout">
               Đăng xuất
             </button>
           </div>
         ) : (
-          // NOTE: Gom 2 nút vào một div để dễ ẩn/hiện trên mobile
+          //  Gom 2 nút vào một div để dễ ẩn/hiện trên mobile
           <div className="auth-buttons">
             <button
               onClick={() => setShowLoginDialog(true)}

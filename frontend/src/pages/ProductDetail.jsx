@@ -122,7 +122,7 @@ export default function ProductDetailPage() {
   }, [product]);
 
   if (isLoading) {
-    return <div className="text-center py-8">Đang tải lại sản phẩm...</div>;
+    return <div className="py-8 text-center">Đang tải lại sản phẩm...</div>;
   }
 
   const handleAddToCart = async () => {
@@ -154,28 +154,29 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
+      <div className="container px-4 py-8 mx-auto text-center">
         <div className="max-w-md mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="mb-4 text-2xl font-bold text-gray-900">
             Không tìm thấy sản phẩm
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="mb-6 text-gray-600">
             Sản phẩm bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.
           </p>
           {/* <Link to="/products"> */}
           <Button className="bg-blue-600 hover:bg-blue-700">
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="w-4 h-4 mr-2" />
             Quay lại danh sách sản phẩm
           </Button>
           {/* </Link> */}
+          
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid md:grid-cols-2 gap-8 mb-12">
+    <div className="container px-4 py-8 mx-auto">
+      <div className="grid gap-8 mb-12 md:grid-cols-2">
         <div className="space-y-4">
           <div className="relative">
             <img
@@ -183,10 +184,10 @@ export default function ProductDetailPage() {
               alt={product.product_name}
               width={600}
               height={600}
-              className="w-full h-auto rounded-lg shadow-lg border border-gray-200"
+              className="w-full h-auto border border-gray-200 rounded-lg shadow-lg"
             />
             {product.old_price && (
-              <span className="absolute top-4 left-4 bg-red-500 hover:bg-red-600">
+              <span className="absolute bg-red-500 top-4 left-4 hover:bg-red-600">
                 -{calculateDiscount(product.old_price, product.price)}%
               </span>
             )}
@@ -196,7 +197,7 @@ export default function ProductDetailPage() {
         {/* Product Info */}
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">
               {product.product_name}
             </h1>
           </div>
@@ -215,7 +216,7 @@ export default function ProductDetailPage() {
             </div>
             {/* Quantity and Add to Cart */}
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <span className="font-medium">Số lượng</span>
 
                 <div className="flex items-center border border-gray-300 rounded-md">
@@ -265,16 +266,16 @@ export default function ProductDetailPage() {
                     "Đang thêm..."
                   ) : (
                     <>
-                      <ShoppingCart className="mr-2 h-4 w-4 " />
+                      <ShoppingCart className="w-4 h-4 mr-2 " />
                       <span className="text-black">Thêm vào giỏ hàng</span>
                     </>
                   )}
                 </Button>
                 <Button variant="outline" size="icon">
-                  <Heart className="h-4 w-4" />
+                  <Heart className="w-4 h-4" />
                 </Button>
                 <Button variant="outline" size="icon">
-                  <Share2 className="h-4 w-4" />
+                  <Share2 className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -283,7 +284,7 @@ export default function ProductDetailPage() {
 
           {/* Stock Status */}
           {/* <div className="flex items-center space-x-2">
-            <Package className="h-5 w-5 text-gray-400" />
+            <Package className="w-5 h-5 text-gray-400" />
             <span className="text-sm text-gray-600">
               Tồn kho:{" "}
               <span className="font-medium">
@@ -293,14 +294,14 @@ export default function ProductDetailPage() {
             {product.number_of_inventory > 0 ? (
               <Badge
                 variant="secondary"
-                className="bg-green-50 text-green-700 border-green-200"
+                className="text-green-700 border-green-200 bg-green-50"
               >
                 Còn hàng
               </Badge>
             ) : (
               <Badge
                 variant="secondary"
-                className="bg-red-50 text-red-700 border-red-200"
+                className="text-red-700 border-red-200 bg-red-50"
               >
                 Hết hàng
               </Badge>
@@ -311,21 +312,21 @@ export default function ProductDetailPage() {
 
         {/* Description */}
         <div>
-          <h3 className="text-lg font-semibold mb-2">Mô tả sản phẩm</h3>
-          <p className="text-gray-600 leading-relaxed">
+          <h3 className="mb-2 text-lg font-semibold">Mô tả sản phẩm</h3>
+          <p className="leading-relaxed text-gray-600">
             {product.description || "Không có mô tả cho sản phẩm này."}
           </p>
         </div>
 
         {/* Shipping Info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center space-x-2 mb-2">
-            <Truck className="h-5 w-5 text-blue-600" />
+        <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
+          <div className="flex items-center mb-2 space-x-2">
+            <Truck className="w-5 h-5 text-blue-600" />
             <span className="font-medium text-blue-900">
               Thông tin vận chuyển
             </span>
           </div>
-          <ul className="text-sm text-blue-800 space-y-1">
+          <ul className="space-y-1 text-sm text-blue-800">
             <li>• Miễn phí vận chuyển cho đơn hàng trên 500.000đ</li>
             <li>• Giao hàng trong 2-3 ngày làm việc</li>
             <li>• Hỗ trợ đổi trả trong 7 ngày</li>
@@ -335,26 +336,26 @@ export default function ProductDetailPage() {
 
       {/* Related Products */}
       <div className="mb-12">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+        <h2 className="mb-6 text-2xl font-semibold text-gray-900">
           Sản phẩm liên quan
         </h2>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid gap-6 md:grid-cols-3">
           {relatedProducts.map((relatedProduct) => (
             <Card
               key={relatedProduct.product_id}
-              className="hover:shadow-lg transition-shadow"
+              className="transition-shadow hover:shadow-lg"
             >
               <CardContent className="p-4 space-y-4">
                 <img
                   src={relatedProduct.image}
                   alt={relatedProduct.product_name}
-                  className="w-full h-40 object-cover rounded-lg mb-4"
+                  className="object-cover w-full h-40 mb-4 rounded-lg"
                 />
                 <h3 className="text-lg font-medium text-gray-900">
                   {relatedProduct.product_name}
                 </h3>
                 <div className="flex items-center justify-between">
-                  <span className="text-blue-600 font-bold">
+                  <span className="font-bold text-blue-600">
                     {formatPrice(relatedProduct.price)}
                   </span>
                   {relatedProduct.old_price && (

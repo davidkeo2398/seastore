@@ -22,7 +22,7 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          len: [1, 255], // Ensure the address is not empty and has a reasonable length
+          len: [1, 255], // Đảm bảo địa chỉ không trống và có độ dài hợp lý
         },
       },
       phone_number: {

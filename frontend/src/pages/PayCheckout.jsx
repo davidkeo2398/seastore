@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import "../css/PaymentCheckout.css";
+// import "../css/PaymentCheckout.css";
 import {
   CreditCard,
   Smartphone,
@@ -449,7 +449,7 @@ export default function PayCheckout() {
               </div>
             </div>
             <div className="flex items-center space-x-2 text-sm text-gray-600">
-              {/* <Shield className="h-4 w-4" /> */}
+              {/* <Shield className="w-4 h-4" /> */}
               {/* <span>Thông tin thẻ được mã hóa SSL 256-bit</span> */}
             </div>
           </div>
@@ -489,7 +489,7 @@ export default function PayCheckout() {
                 }
               />
             </div> */}
-            <div className="p-4 bg-blue-50 rounded-lg">
+            <div className="p-4 rounded-lg bg-blue-50">
               <p className="text-sm text-blue-800">
                 Bạn sẽ được chuyển đến ứng dụng ví điện tử để hoàn tất thanh
                 toán
@@ -519,11 +519,11 @@ export default function PayCheckout() {
       //           </SelectContent>
       //         </Select>
       //       </div>
-      //       <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+      //       <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
       //         <div className="flex items-start space-x-2">
       //           <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
       //           <div className="text-sm text-yellow-800">
-      //             <p className="font-medium mb-1">Hướng dẫn chuyển khoản:</p>
+      //             <p className="mb-1 font-medium">Hướng dẫn chuyển khoản:</p>
       //             <ul className="space-y-1">
       //               <li>1. Chọn ngân hàng và tiến hành thanh toán</li>
       //               <li>2. Sử dụng mã QR hoặc thông tin tài khoản</li>
@@ -538,11 +538,11 @@ export default function PayCheckout() {
       case "cod":
         return (
           <div className="space-y-4">
-            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="p-4 border border-green-200 rounded-lg bg-green-50">
               <div className="flex items-start space-x-2">
                 <Truck className="h-5 w-5 text-green-600 mt-0.5" />
                 <div className="text-sm text-green-800">
-                  <p className="font-medium mb-1">Thanh toán khi nhận hàng</p>
+                  <p className="mb-1 font-medium">Thanh toán khi nhận hàng</p>
                   <ul className="space-y-1">
                     <li>• Thanh toán bằng tiền mặt hoặc thẻ khi nhận hàng</li>
                     <li>• Kiểm tra sản phẩm trước khi thanh toán</li>
@@ -563,14 +563,14 @@ export default function PayCheckout() {
   // if (showSuccess) {
   //   return (
   //     <div className="flex flex-col items-center justify-center min-h-[60vh]">
-  //       <div className="bg-green-100 border border-green-300 rounded-lg p-8 text-center shadow-md">
-  //         <h2 className="text-2xl font-bold text-green-700 mb-2">
+  //       <div className="p-8 text-center bg-green-100 border border-green-300 rounded-lg shadow-md">
+  //         <h2 className="mb-2 text-2xl font-bold text-green-700">
   //           Thanh toán thành công!
   //         </h2>
-  //         <p className="text-green-800 mb-4">
+  //         <p className="mb-4 text-green-800">
   //           Cảm ơn bạn đã sử dụng MoMo Test. Đang chuyển hướng...
   //         </p>
-  //         <div className="flex gap-4 justify-center">
+  //         <div className="flex justify-center gap-4">
   //           <Button onClick={() => navigate("/")}>Mua tiếp</Button>
   //           <Button
   //             variant="outline"
@@ -585,7 +585,7 @@ export default function PayCheckout() {
   // }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container px-4 py-8 mx-auto">
       {isShowLoginDialog && (
         <LoginDialog
           onClose={() => setIsShowLoginDialog(false)}
@@ -597,25 +597,25 @@ export default function PayCheckout() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Thanh toán</h1>
-            <p className="text-gray-600 mt-1">Hoàn tất đơn hàng của bạn</p>
+            <p className="mt-1 text-gray-600">Hoàn tất đơn hàng của bạn</p>
           </div>
           <Link to="/cart">
             <Button variant="outline">
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Quay lại giỏ hàng
             </Button>
           </Link>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid gap-8 lg:grid-cols-3">
             {/* Payment Form */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="space-y-6 lg:col-span-2">
               {/* Billing Information */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3">
+                    <span className="flex items-center justify-center w-6 h-6 mr-3 text-sm text-white bg-blue-600 rounded-full">
                       1
                     </span>
                     Thông tin thanh toán
@@ -788,7 +788,7 @@ export default function PayCheckout() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3">
+                    <span className="flex items-center justify-center w-6 h-6 mr-3 text-sm text-white bg-blue-600 rounded-full">
                       2
                     </span>
                     Phương thức thanh toán
@@ -803,11 +803,11 @@ export default function PayCheckout() {
                     {paymentMethods.map((method) => (
                       <div
                         key={method.id}
-                        className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50"
+                        className="flex items-center p-4 space-x-3 border rounded-lg hover:bg-gray-50"
                       >
                         <RadioGroupItem value={method.id} id={method.id} />
-                        <div className="flex items-center space-x-3 flex-1">
-                          <method.icon className="h-6 w-6 text-gray-600" />
+                        <div className="flex items-center flex-1 space-x-3">
+                          <method.icon className="w-6 h-6 text-gray-600" />
                           <div className="flex-1">
                             <div className="flex items-center space-x-2">
                               <Label
@@ -835,12 +835,13 @@ export default function PayCheckout() {
                   <div className="mt-6">{renderPaymentForm()}</div>
                 </CardContent>
               </Card>
+              
 
               {/* Terms and Conditions */}
               <Card>
                 <CardContent className="pt-6">
                   <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
+                    <div className="flex ce-x-2 bgitems-center accent-red-500">
                       <Checkbox
                         id="saveInfo"
                         checked={!!formData.saveInfo}
@@ -897,7 +898,7 @@ export default function PayCheckout() {
                         <img
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
-                          className="w-12 h-12 object-cover rounded border"
+                          className="object-cover w-12 h-12 border rounded"
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">
@@ -945,7 +946,7 @@ export default function PayCheckout() {
 
                   <Separator />
 
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold">Tổng cộng</span>
                     <span className="text-xl font-bold text-blue-600">
                       {formatPrice(getCartTotal() - discount - calRankDiscount)}
@@ -954,7 +955,7 @@ export default function PayCheckout() {
 
                   <Button
                     type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-black"
+                    className="w-full text-black bg-blue-600 hover:bg-blue-700"
                     size="lg"
                     disabled={isProcessing || !formData.agreeTerms}
                   >
@@ -963,7 +964,7 @@ export default function PayCheckout() {
                     ) : (
                       <>
                         <p
-                          className="text-gray-600 mt-1 cursor-pointer hover:underline"
+                          className="mt-1 text-gray-600 cursor-pointer hover:underline"
                           // onClick={() => navigate("/orderTracking")}
                         >
                           Hoàn tất đơn hàng của bạn
@@ -974,7 +975,7 @@ export default function PayCheckout() {
 
                   <div className="text-center">
                     <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
-                      <Shield className="h-4 w-4" />
+                      <Shield className="w-4 h-4" />
                       <span>Thanh toán an toàn và bảo mật</span>
                     </div>
                   </div>

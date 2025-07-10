@@ -5,51 +5,52 @@ const banners = [
   {
     image:
       "https://tepbac.com/upload/advertiment/ge_image/2025/05/tepbac-tai-tro-2025-05_1747042886.png",
-    title: "Big Summer Sale!",
-    desc: "Up to 50% off on selected products. Shop now!",
+    title: "Ưu Đãi Mùa Hè Thủy Sản!",
+    desc: "Giảm giá lên đến 50% cho các sản phẩm thủy sản. Mua ngay!",
   },
   {
     image:
-    "https://binhphuoc.gov.vn/uploads/binhphuoc/news/2022_11/nuoi-trong-thuy-san.png",
-    title: "New Arrivals",
-    desc: "Check out the latest gadgets and accessories.",
+      "https://binhphuoc.gov.vn/uploads/binhphuoc/news/2022_11/nuoi-trong-thuy-san.png",
+    title: "Sản Phẩm Thủy Sản Mới",
+    desc: "Khám phá các sản phẩm thủy sản mới nhất của chúng tôi.",
   },
   {
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6r89XSTtRN_dkAlX8rQWgDYd1-DomyN7dIQ&s",
-    title: "Exclusive Deals",
-    desc: "Special discounts for members only.",
+    title: "Ưu Đãi Đặc Biệt Cho Đại Lý",
+    desc: "Nhận ưu đãi độc quyền dành riêng cho các đại lý thủy sản.",
   },
   {
     image:
       "https://www.phaplyvatruyenthong.vn/uploads/news/size800/news1/9/822-nhan-chuyen-nhuong-dien-tich-dat-nuoi-trong-thuy-san-co-bi-phap-luat-cam-khong.png",
-    title: "Tech Trends 2024",
-    desc: "Discover the hottest tech trends of the year.",
+    title: "Xu Hướng Nuôi Trồng Thủy Sản 2025",
+    desc: "Khám phá các xu hướng nuôi trồng thủy sản nổi bật trong năm nay.",
   },
 ];
 
 export default function Banner() {
-  const [bgIndex, setBgIndex] = useState(0);
-  const [fade, setFade] = useState(true);
+  const [bgIndex, setBgIndex] = useState(0);// banner hiện tại mặc định là 0
+  const [fade, setFade] = useState(true);// mờ, banner hiện tại đang hiển thị
 
-  // Auto slide effect
+  // tg chuyển
   useEffect(() => {
     const interval = setInterval(() => {
       handleNext();
-    }, 5000);
+    }, 3000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line
+    // xóa interval khi component bị unmount
   }, [bgIndex]);
 
-  // Fade effect
+  //auto +
   const handleNext = () => {
     setFade(false);
     setTimeout(() => {
       setBgIndex((prev) => (prev + 1) % banners.length);
       setFade(true);
-    }, 1500);
+    }, 100);
   };
-
+  
+  //mannaual -
   const handlePrev = () => {
     setFade(false);
     setTimeout(() => {
@@ -58,6 +59,7 @@ export default function Banner() {
     }, 500);
   };
 
+  // dấu chấm ở banner
   const handleDotClick = (idx) => {
     if (idx === bgIndex) return;
     setFade(false);
@@ -69,7 +71,7 @@ export default function Banner() {
 
   return (
     <div
-      className={`banner${fade ? " fade-in" : " fade-out"}`}
+      className={`banner${fade ? " fade-in" : " fade-out"}`} // t: mờ dần, f: mất đi
       style={{ backgroundImage: `url('${banners[bgIndex].image}')` }}
     >
       <div className="banner-blur"></div>
