@@ -29,7 +29,7 @@ async function getAllMembers() {
       [
         sequelize.fn(
           "SUM",
-          sequelize.literal(
+          sequelize.literal(// tổng đơn hàng đã hoàn thành
             "CASE WHEN `orders`.`status` = 'completed' THEN `orders`.`total` ELSE 0 END"
           )
         ),
@@ -60,12 +60,14 @@ async function getAllMembers() {
 function buildMemberRankData(member, allRanks) {
   const memberJson = member.get({ plain: true });
   const totalSpent = parseFloat(memberJson.total_spent || 0); // Tổng chi tiêu của thành viên
-  const currentRank = memberJson.agencyRank;
+  const currentRank = memberJson.agencyRank; // hạng hiện tại của thành viên
 
   let nextRank = null;
-  let rankProgress = 0;
+ 
 
-  if (currentRank) {
+  //xác định hạng tiếp theo
+  if (currentRank) { // Nếu thành viên có hạng hiện tại
+    // Tìm hạng tiếp theo trong danh sách hạng nếu hạng hiện tại không phải là hạng cao nhất
     const currentRankIndex = allRanks.findIndex(
       (r) => r.agency_rank_id === currentRank.agency_rank_id
     );
@@ -75,11 +77,14 @@ function buildMemberRankData(member, allRanks) {
   } else {
     nextRank = allRanks[0];
   }
-
+// phần trăm tiến độ đạt hạng
+  let rankProgress = 0;
   if (nextRank) {
-    const minForNextRank = nextRank.min_accumulated_value;
+    const minForNextRank = nextRank.min_accumulated_value; // chi tiêu tối thiểu để đạt hạng tiếp theo
+    // Tính phần trăm tiến độ đạt hạng tiếp theo
     rankProgress = minForNextRank > 0 ? (totalSpent / minForNextRank) * 100 : 100;
   } else {
+    //nếu không có hạng tiếp theo, coi như đã đạt hạng cao nhất
     rankProgress = 100;
   }
 

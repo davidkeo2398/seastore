@@ -114,11 +114,12 @@ export default function ShoppingCart() {
     );
   }, [cartItems]);
 
+   //tông tiền của giỏ hàng
   const getTotal = useCallback(() => {
     const subtotal = getSubtotal();
     return subtotal - rankDiscountAmount - discount;
   }, [getSubtotal, rankDiscountAmount, discount]);
-
+// tổng sô lượng sản phẩm trong giỏ hàng
   const getTotalItems = useCallback(() => {
     return cartItems.reduce(
       (currentTotal, item) => currentTotal + item.quantity,
@@ -275,22 +276,22 @@ export default function ShoppingCart() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container px-4 py-8 mx-auto">
         <div className="max-w-2xl mx-auto text-center">
           <div className="mb-8">
-            <ShoppingBag className="mx-auto h-24 w-24 text-gray-300 mb-4" />
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            <ShoppingBag className="w-24 h-24 mx-auto mb-4 text-gray-300" />
+            <h1 className="mb-4 text-3xl font-bold text-gray-900">
               Giỏ hàng trống
             </h1>
-            <p className="text-gray-600 mb-8">
+            <p className="mb-8 text-gray-600">
               Bạn chưa có sản phẩm nào trong giỏ hàng. Hãy khám phá các sản phẩm
               tuyệt vời của chúng tôi!
             </p>
             <Button
               size="lg"
-              className="bg-blue-600 text-black hover:bg-blue-700"
+              className="text-black bg-blue-600 hover:bg-blue-700"
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Tiếp tục mua sắm
             </Button>
           </div>
@@ -306,26 +307,26 @@ export default function ShoppingCart() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container px-4 py-8 mx-auto">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Giỏ hàng</h1>
-            <p className="text-gray-600 mt-1">
+            <p className="mt-1 text-gray-600">
               {getTotalItems()} sản phẩm trong giỏ hàng
             </p>
           </div>
 
           <Button variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="w-4 h-4 mr-2" />
             Tiếp tục mua sắm
           </Button>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 lg:grid-cols-3">
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="space-y-4 lg:col-span-2">
             {cartItems.map((item, index) => (
               <Card key={index} className="overflow-hidden">
                 <CardContent className="p-6">
@@ -335,18 +336,18 @@ export default function ShoppingCart() {
                       <img
                         src={item.image || "/placeholder.svg"}
                         alt={item.product_name}
-                        className="w-24 h-24 object-cover rounded-lg border border-gray-200"
+                        className="object-cover w-24 h-24 border border-gray-200 rounded-lg"
                       />
                       {item.old_price && (
                         <Badge
                           variant="destructive"
-                          className="absolute -top-2 -right-2 text-xs"
+                          className="absolute text-xs -top-2 -right-2"
                         >
                           -{calculateDiscount(item.old_price, item.price)}%
                         </Badge>
                       )}
                       {item.number_of_inventory === 0 && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">
                           <Badge variant="secondary" className="text-xs">
                             Hết hàng
                           </Badge>
@@ -356,7 +357,7 @@ export default function ShoppingCart() {
 
                     {/* Product Info */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-start justify-between mb-2">
                         <div>
                           <h3 className="font-semibold text-gray-900 truncate">
                             {item.name}
@@ -369,7 +370,7 @@ export default function ShoppingCart() {
                           onClick={() => removeItem(item.product_id)}
                           className="text-red-600 hover:text-red-700 hover:bg-red-50"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
 
@@ -401,9 +402,9 @@ export default function ShoppingCart() {
                               )
                             }
                             disabled={item.quantity <= 1}
-                            className="h-8 w-8 p-0"
+                            className="w-8 h-8 p-0"
                           >
-                            <Minus className="h-3 w-3" />
+                            <Minus className="w-3 h-3" />
                           </Button>
                           <Input
                             type="number"
@@ -416,7 +417,7 @@ export default function ShoppingCart() {
                               )
                             }
                             disabled={item.quantity >= item.number_of_inventory}
-                            className="h-8 w-16 text-center border-0 focus-visible:ring-0"
+                            className="w-16 h-8 text-center border-0 focus-visible:ring-0"
                           />
                           <Button
                             variant="ghost"
@@ -428,9 +429,9 @@ export default function ShoppingCart() {
                               )
                             }
                             disabled={item.quantity > item.number_of_inventory}
-                            className="h-8 w-8 p-0"
+                            className="w-8 h-8 p-0"
                           >
-                            <Plus className="h-3 w-3" />
+                            <Plus className="w-3 h-3" />
                           </Button>
                         </div>
                         <div className="text-right">
@@ -457,10 +458,10 @@ export default function ShoppingCart() {
           {/* Order Summary & Points */}
           <div className="space-y-6">
             {/* Points Preview */}
-            <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200">
+            <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-purple-50">
               <CardHeader>
                 <CardTitle className="flex items-center text-blue-800">
-                  <Star className="h-5 w-5 mr-2" />
+                  <Star className="w-5 h-5 mr-2" />
                   Thông tin thành viên
                 </CardTitle>
               </CardHeader>
@@ -468,17 +469,17 @@ export default function ShoppingCart() {
                 <div className="space-y-3">
                   {userInfo.role?.role_name === "admin_agency" && agency ? (
                     <>
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-600">
                           Hạng thành viên:
                         </span>
-                        <Badge className="bg-blue-500 text-white">
-                          <Trophy className="h-3 w-3 mr-1" />
+                        <Badge className="text-white bg-blue-500">
+                          <Trophy className="w-3 h-3 mr-1" />
                           {agency.agency_rank_name || "0"}
                         </Badge>
                       </div>
 
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-600">
                           Chiết khấu hạng:
                         </span>
@@ -488,19 +489,19 @@ export default function ShoppingCart() {
                       </div>
 
                       {/* Tên đại lý, Địa chỉ, Số điện thoại 
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-600">Tên đại lý:</span>
                         <span className="font-medium">
                           {agency.agency_name} // Uncomment if Agency object is fetched and has this
                         </span>
                       </div>
 
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-600">Địa chỉ:</span>
                         <span className="font-medium">{agency.address}</span>
                       </div>
 
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-600">
                           Số điện thoại:
                         </span>
@@ -515,7 +516,6 @@ export default function ShoppingCart() {
                   )}
 
                   <Separator />
-                  
 
                   <Button
                     variant="outline"
@@ -526,7 +526,7 @@ export default function ShoppingCart() {
                       })
                     }
                   >
-                    <Info className="h-4 w-4 mr-2" />
+                    <Info className="w-4 h-4 mr-2" />
                     Xem chi tiết hạng đại lý
                   </Button>
                 </div>
@@ -537,11 +537,11 @@ export default function ShoppingCart() {
             <div className="lg:col-span-1">
               <Card className="sticky top-4">
                 <CardContent className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">
+                  <h2 className="mb-4 text-xl font-semibold">
                     Tóm tắt đơn hàng
                   </h2>
 
-                  <div className="space-y-3 mb-4">
+                  <div className="mb-4 space-y-3">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Tạm tính</span>
                       <span>{formatPrice(getSubtotal())}</span>
@@ -560,7 +560,7 @@ export default function ShoppingCart() {
                         <span>-{formatPrice(discount)}</span>
                       </div>
                     )}
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center justify-between">
                       <span className="text-gray-600">Phí vận chuyển</span>
                       <span className="text-green-600">Miễn phí</span>
                     </div>
@@ -569,8 +569,14 @@ export default function ShoppingCart() {
                   <Separator className="my-4" />
 
                   {/* Coupon Code Input */}
-                  <div className={`mb-4 ${userInfo.role?.role_name === "admin_agency" ? "opacity-50 pointer-events-none" : ""}`}>
-                    <p className="text-sm font-medium mb-2">Mã giảm giá</p>
+                  <div
+                    className={`mb-4 ${
+                      userInfo.role?.role_name === "admin_agency"
+                        ? "opacity-50 pointer-events-none"
+                        : ""
+                    }`}
+                  >
+                    <p className="mb-2 text-sm font-medium">Mã giảm giá</p>
                     <div className="flex space-x-2 ">
                       <Select
                         value={couponCode}
@@ -578,7 +584,11 @@ export default function ShoppingCart() {
                           setCouponCode(value === "none" ? "" : value);
                           getDiscount(value);
                         }}
-                        disabled={isApplyingCoupon || appliedCoupon !== null || userInfo.role_name === "admin_agency"}
+                        disabled={
+                          isApplyingCoupon ||
+                          appliedCoupon !== null ||
+                          userInfo.role_name === "admin_agency"
+                        }
                       >
                         <SelectTrigger className="w-[300px]">
                           <SelectValue placeholder="Chọn mã giảm giá" />
@@ -615,13 +625,13 @@ export default function ShoppingCart() {
                           }}
                           className="shrink-0"
                         >
-                          <X className="h-4 w-4 mr-1 text-black" /> Hủy
+                          <X className="w-4 h-4 mr-1 text-black" /> Hủy
                         </Button>
                       ) : (
                         <Button
                           onClick={applyCoupon}
                           disabled={isApplyingCoupon || !couponCode.trim() || userInfo.role_name === "admin_agency"}
-                          className="shrink-0 bg-blue-600 hover:bg-blue-700 text-bl"
+                          className="bg-blue-600 shrink-0 hover:bg-blue-700 text-bl"
                         >
                           {isApplyingCoupon ? "..." : "Áp dụng"}
                         </Button>
@@ -630,17 +640,17 @@ export default function ShoppingCart() {
                     </div>
                     {/*
                     {couponError && (
-                      <Alert variant="destructive" className="mt-2 py-2">
-                        <AlertDescription className="text-xs flex items-center">
-                          <X className="h-3 w-3 mr-1" /> {couponError}
+                      <Alert variant="destructive" className="py-2 mt-2">
+                        <AlertDescription className="flex items-center text-xs">
+                          <X className="w-3 h-3 mr-1" /> {couponError}
                         </AlertDescription>
                       </Alert>
                     )}
 
                     {appliedCoupon && (
-                      <Alert className="mt-2 py-2 bg-green-50 border-green-200 text-green-800">
-                        <AlertDescription className="text-xs flex items-center">
-                          <Check className="h-3 w-3 mr-1" /> Đã áp dụng mã "
+                      <Alert className="py-2 mt-2 text-green-800 border-green-200 bg-green-50">
+                        <AlertDescription className="flex items-center text-xs">
+                          <Check className="w-3 h-3 mr-1" /> Đã áp dụng mã "
                           {appliedCoupon}"
                           {couponDiscount > 0 &&
                             ` - Giảm ${formatPrice(couponDiscount)}`}
@@ -650,7 +660,7 @@ export default function ShoppingCart() {
                     */}
                   </div>
 
-                  <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center justify-between mb-6">
                     <span className="text-lg font-semibold">Tổng cộng</span>
                     <span className="text-xl font-bold text-blue-600">
                       {formatPrice(getTotal())}
@@ -658,7 +668,7 @@ export default function ShoppingCart() {
                   </div>
 
                   <Button
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-black"
+                    className="w-full text-black bg-blue-600 hover:bg-blue-700"
                     size="lg"
                     onClick={handleCheckout}
                     disabled={
@@ -670,17 +680,19 @@ export default function ShoppingCart() {
                   </Button>
 
                   {cartItems.some((item) => item.number_of_inventory === 0) && (
-                    <p className="text-sm text-red-600 mt-2 text-center">
+                    <p className="mt-2 text-sm text-center text-red-600">
                       Vui lòng xóa sản phẩm hết hàng để tiếp tục
                     </p>
                   )}
 
-                  <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                    <h3 className="font-medium text-blue-900 mb-2">
+                  <div className="p-4 mt-4 rounded-lg bg-blue-50">
+                    <h3 className="mb-2 font-medium text-blue-900">
                       Ưu đãi đặc biệt
                     </h3>
-                    <ul className="text-sm text-blue-800 space-y-1">
-                      <li>• Miễn phí vận chuyển cho đơn hàng khi mua tại đây</li>
+                    <ul className="space-y-1 text-sm text-blue-800">
+                      <li>
+                        • Miễn phí vận chuyển cho đơn hàng khi mua tại đây
+                      </li>
                       <li>• Đổi trả miễn phí trong 7 ngày</li>
                       <li>• Bảo hành chính hãng</li>
                     </ul>

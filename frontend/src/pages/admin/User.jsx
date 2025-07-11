@@ -232,29 +232,29 @@ export default function UsersPage() {
   const activeCount = users.length;
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
+    <div className="container px-4 py-8 mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Quản lý người dùng</h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground">
             Quản lý tài khoản người dùng trong hệ thống
           </p>
         </div>
         {/* <Button className="gap-2 text-black">
-          <Plus className="h-4 w-4" />
+          <Plus className="w-4 h-4" />
           Thêm người dùng
         </Button> */}
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">
               Tổng người dùng
             </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{users.length}</div>
@@ -263,9 +263,9 @@ export default function UsersPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Quản trị viên</CardTitle>
-            <UserCheck className="h-4 w-4 text-blue-600" />
+            <UserCheck className="w-4 h-4 text-blue-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">{adminCount}</div>
@@ -273,11 +273,11 @@ export default function UsersPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">
               Người dùng thường
             </CardTitle>
-            <UserX className="h-4 w-4 text-orange-600" />
+            <UserX className="w-4 h-4 text-orange-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">
@@ -299,7 +299,7 @@ export default function UsersPage() {
         <CardContent>
           <div className="flex items-center gap-2 mb-6">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Tìm kiếm theo tên, email hoặc username..."
@@ -311,7 +311,7 @@ export default function UsersPage() {
           </div>
 
           {/* Table */}
-          <div className="rounded-md border">
+          <div className="border rounded-md">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -327,9 +327,9 @@ export default function UsersPage() {
               <TableBody>
                 {filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8">
+                    <TableCell colSpan={7} className="py-8 text-center">
                       <div className="flex flex-col items-center gap-2">
-                        <Users className="h-8 w-8 text-muted-foreground" />
+                        <Users className="w-8 h-8 text-muted-foreground" />
                         <p className="text-muted-foreground">
                           {searchTerm
                             ? "Không tìm thấy người dùng phù hợp"
@@ -394,8 +394,9 @@ export default function UsersPage() {
                               size="sm"
                               onClick={() => handleEdit(user)}
                               title="Chỉnh sửa người dùng"
+                              disabled={user.role?.role_name === "admin"}
                             >
-                              <Edit className="h-4 w-4" />
+                              <Edit className="w-4 h-4" />
                             </Button>
                             <Button
                               variant="destructive"
@@ -404,7 +405,7 @@ export default function UsersPage() {
                               title="Khóa người dùng"
                               disabled={user.role?.role_name === "admin"}
                             >
-                              <Ban className="h-4 w-4 text-black" />
+                              <Ban className="w-4 h-4 text-black" />
                             </Button>
                           </div>
                         </TableCell>
@@ -472,7 +473,7 @@ export default function UsersPage() {
                     name="role_id"
                     value={editUser.role_id || ""}
                     onChange={handleEditChange}
-                    className="w-full border rounded px-2 py-1"
+                    className="w-full px-2 py-1 border rounded"
                     required
                   >
                     <option value="">Chọn quyền</option>

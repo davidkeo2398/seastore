@@ -90,8 +90,8 @@ export default function Products() {
   // Filter logic
   const filteredProducts = allProducts.filter((product) => {
     const matchesName = product.product_name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+      .toLowerCase() 
+      .includes(searchTerm.toLowerCase());//chuyen chữ thường và so sánh
     const matchesCategory =
       selectedCategory === "all" || product.category_id === selectedCategory;
     return matchesName && matchesCategory;
@@ -99,7 +99,7 @@ export default function Products() {
   return (
     <div className="products-list">
       {/* Filter section */}
-      <div className="w-full flex flex-col sm:flex-row gap-4 mb-8 items-center justify-center">
+      <div className="flex flex-col items-center justify-center w-full gap-4 mb-8 sm:flex-row">
         <Input
           placeholder="Tìm kiếm theo tên sản phẩm..."
           value={searchTerm}
@@ -121,7 +121,7 @@ export default function Products() {
         </Select>
       </div>
       {/* mobile: 1, tablet: 2, laptop: 3, desktop: 4, large desktop: 5 */}
-      <div className="products-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 gap-6 products-grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {filteredProducts.map((product, index) => (
           <div
             className={`product-card flex flex-col items-center ${
@@ -136,24 +136,24 @@ export default function Products() {
               alt={product.product_name}
             />
             {/*flex-1: Cho phép phần tử này mở rộng để chiếm hết không gian còn lại,xếp các item con theo chiều dọc */}
-            <div className="product-info w-full text-center flex-1 flex flex-col">
-              <h3 className="product-title truncate">{product.product_name}</h3>
-              <p className="product-desc truncate">{product.description}</p>
-              <div className="product-meta flex justify-between items-center mb-3 text-sm">
+            <div className="flex flex-col flex-1 w-full text-center product-info">
+              <h3 className="truncate product-title">{product.product_name}</h3>
+              <p className="truncate product-desc">{product.description}</p>
+              <div className="flex items-center justify-between mb-3 text-sm product-meta">
                 <span className="product-price">
                   {formatCurrency(product.price)}{" "}
                 </span>
                 <span className="product-rate"> ⭐ {product.rate}</span>
               </div>
-              <div className="product-actions flex gap-2 w-full">
+              <div className="flex w-full gap-2 product-actions">
                 <button
-                  className="btn-add-cart flex-1"
+                  className="flex-1 btn-add-cart"
                   onClick={() => handleAddToCart(product)}
                 >
                   Thêm vào giỏ hàng
                 </button>
                 <button
-                  className="btn-detail flex-1"
+                  className="flex-1 btn-detail"
                   onClick={() => navigate(`/product/${product.product_id}`)}
                 >
                   Chi tiết
@@ -164,7 +164,7 @@ export default function Products() {
         ))}
       </div>
       {filteredProducts.length === 0 && (
-        <p className="text-center text-muted-foreground mt-8">
+        <p className="mt-8 text-center text-muted-foreground">
           Không có sản phẩm nào được tìm thấy.
         </p>
       )}

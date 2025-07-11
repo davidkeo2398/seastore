@@ -80,7 +80,8 @@ module.exports = {
           })
         )
       );
-      
+
+      //giảm số lượng tồn kho
       if (newOrder.status === "completed") {
         await Promise.all(
           orderItems.map((product) => {
@@ -92,6 +93,7 @@ module.exports = {
           })
         );
         
+        //tính tổng chi tiêu
         const ordersTotal = await Order.sum("total", { // đơn hàng đã hoàn thành
           where: { user_id, status: "completed" },
           transaction: t,
@@ -116,12 +118,13 @@ module.exports = {
         if (rankName) {
           const agency = await AgencyRank.findOne({ // lấy danh sách hạng thành viên
             where: { agency_rank_name: rankName },
-            transaction: t,
+            transaction: t, //truy vấn trong giao dịch hiện tại
           });
           if (!agency) {
             throw new Error(`Agency rank '${rankName}' not found`);
           }
-          await user.then((model) => {
+          // cập nhật hạng thành viên cho người dùng
+          await user.then((model) => { 
             model.update({ agency_rank_id: agency.agency_rank_id }); // nếu xác định hạng mới, cập nhật hạng cho người dùng
           });
         }

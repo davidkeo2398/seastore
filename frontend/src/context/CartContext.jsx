@@ -10,16 +10,25 @@ export function CartProvider({ children }) {
       const existingItem = prevCart.find(
         (item) => item.product_id === product.product_id
       );
+      let updatedCart;
+
+      //nếu có-> tăng số lượng
       if (existingItem) {
-        return prevCart.map((item) =>
+        updatedCart = prevCart.map((item) =>
           item.product_id === product.product_id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
+      } else {
+        updatedCart = [...prevCart, { ...product, quantity }];
       }
-      localStorage.setItem("cart", JSON.stringify([...prevCart, { ...product, quantity }]));
-      return [...prevCart, { ...product, quantity }];
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      //nếu không có -> thêm mới
+      return updatedCart;
     });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    console.log("Cart updated:", cart);
+    return cart;
   };
 
   const updateQuantity = (product_id, quantity) => {
@@ -35,18 +44,19 @@ export function CartProvider({ children }) {
   };
 
   const removeFromCart = (product_id) => {
-    setCart((prevCart) =>
-    {
+    setCart((prevCart) => {
       const cart = prevCart.filter((item) => item.product_id !== product_id);
-      localStorage.setItem('cart', JSON.stringify(cart));
+      localStorage.setItem("cart", JSON.stringify(cart));
       return cart;
-    }
-    );
+    });
   };
 
   const getCartTotal = () => {
-    const cartLocal = JSON.parse(localStorage.getItem('cart'));
-    return cartLocal?.reduce((total, item) => total + item.price * item.quantity, 0);
+    const cartLocal = JSON.parse(localStorage.getItem("cart"));
+    return cartLocal?.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
   };
 
   return (
