@@ -207,7 +207,7 @@ export default function OrdersPage() {
     const matchesSearch =
       order.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.order_id.toLowerCase().includes(searchTerm.toLowerCase());
+      order.order_code?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       statusFilter === "all" || order.status === statusFilter;

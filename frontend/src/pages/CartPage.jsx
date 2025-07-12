@@ -246,16 +246,16 @@ export default function ShoppingCart() {
       (item) => item.promotion_code === promotion_code
     );
     if (promotion.length > 0) {
-      const percent = promotion[0].promotion_percent / 100;
-      const priceReduce = getCartTotal() * percent;
+      const percent = promotion[0].promotion_percent / 100; //phần trăm giảm giá
+      const priceReduce = getCartTotal() * percent;// số tiền giảm giá
       setDiscount(priceReduce);
       localStorage.setItem("discount", priceReduce);
       localStorage.setItem("promotion_code", promotion_code);
       console.log("price reduce", priceReduce, percent, getCartTotal());
     } else {
       setDiscount(0);
-      localStorage.setItem("discount", 0);
-      localStorage.setItem("promotion_code", "");
+      localStorage.setItem("discount", 0); // nếu không có mã giảm giá thì set discount = 0
+      localStorage.setItem("promotion_code", "");// xóa mã giảm giá
     }
   };
 

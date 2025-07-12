@@ -76,7 +76,7 @@ module.exports = {
             order_id: newOrder.order_id,
             product_id: product.product_id,
             quantity: product.quantity,
-            isPaid: false,
+            isPaid: false, // mặc định là chưa thanh toán
           })
         )
       );
@@ -144,6 +144,14 @@ module.exports = {
       return orders;
     } catch (err) {
       throw new Error("Fail to get orders: ", err);
+    }
+  },
+  
+  countOrder: async () => {
+    try {
+      return Order.count();
+    } catch (err) {
+      return 0
     }
   },
 

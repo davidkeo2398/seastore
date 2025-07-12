@@ -6,17 +6,19 @@ import Banner from "@/common/Banner/Banner";
 import axiosInstance from "@/lib/axios";
 
 export default function Home() {
-  const [allProducts, setAllProducts] = useState([]);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [page, setPage] = useState(1); // Current page
+  const [size, setSize] = useState(10); // Number of products per page
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (page = 1, size = 10, search = "") => {
     try {
-      const { data } = await axiosInstance.get("/product");
-      setAllProducts(data.data);
-      setProducts(data.data); // Lưu tất cả sản phẩm để lọc sau này
+      const { data } = await axiosInstance.get("/product", {
+        params: { page, size, search }, // Pass page, size, and search as query parameters
+      });
+      setProducts(data.data.rows); // Update products with paginated and filtered data
       console.log("Products fetched successfully", data.data);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -26,39 +28,37 @@ export default function Home() {
   const fetchCategories = async () => {
     try {
       const { data } = await axiosInstance.get("/categories");
-      setCategories(data.data); // Lưu danh sách danh mục
+      setCategories(data.data); // Save category list
       console.log("Categories fetched successfully", data.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   };
 
-  useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    const filtered = allProducts.filter((product) => {
-      const matchesName = product.product_name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()); // Lọc theo tên sản phẩm
-        selectedCategory === "all" || // Nếu chọn "Tất cả", không cần lọc
-        product.category_id === Number(selectedCategory); // Lọc theo danh mục
-        return matchesName ;
-      });
-    setProducts(filtered); // Cập nhật danh sách sản phẩm hiển thị
-  }, [allProducts, searchTerm, selectedCategory]);
-
-  // Xử lý khi chọn danh mục
-  const handleCategorySelect = (categoryId) => {
-    console.log("Selected category ID:", categoryId);
-    setSelectedCategory(categoryId); // Cập nhật danh mục được chọn
+  const handleSearchProduct = () => {
+    fetchProducts(page, size, searchTerm); // Fetch products with the current search term
   };
 
-  // Hiển thị tất cả sản phẩm
+  useEffect(() => {
+    fetchProducts(page, size, searchTerm); // Fetch products with pagination and search
+    fetchCategories();
+  }, [page, size, searchTerm]);
+
+  const handleCategorySelect = (categoryId) => {
+    console.log("Selected category ID:", categoryId);
+    setSelectedCategory(categoryId); // Update selected category
+  };
+
   const showAllProducts = () => {
     setSelectedCategory("all");
+  };
+
+  const handleNextPage = () => {
+    setPage((prevPage) => prevPage + 1); // Go to the next page
+  };
+
+  const handlePreviousPage = () => {
+    setPage((prevPage) => Math.max(prevPage - 1, 1)); // Go to the previous page
   };
 
   return (
@@ -66,8 +66,8 @@ export default function Home() {
       <Banner />
 
       <CategoriesList
-        onCategorySelect={handleCategorySelect} // Lọc theo danh mục
-        onShowAll={showAllProducts} // Hiển thị tất cả sản phẩm
+        onCategorySelect={handleCategorySelect} // Filter by category
+        onShowAll={showAllProducts} // Show all products
       />
 
       <div className="search-bar">
@@ -76,12 +76,12 @@ export default function Home() {
             type="text"
             placeholder="Tìm kiếm sản phẩm..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)} // Cập nhật từ khóa tìm kiếm
+            onChange={(e) => setSearchTerm(e.target.value)} // Update search term
             className="search-input"
           />
           <button
             className="search-button"
-            onClick={() => console.log("Tìm kiếm:", searchTerm)}
+            onClick={handleSearchProduct} // Call handleSearchProduct function
           >
             🔍 Tìm kiếm
           </button>
@@ -89,6 +89,14 @@ export default function Home() {
       </div>
 
       <ProductList filteredProducts={products} />
+
+      <div className="pagination">
+        <button onClick={handlePreviousPage} disabled={page === 1}>
+          Trước
+        </button>
+        <span>Trang {page}</span>
+        <button onClick={handleNextPage}>Tiếp theo</button>
+      </div>
     </div>
   );
 }

@@ -9,7 +9,7 @@ module.exports = {
       res.json({ message: "Lấy danh sách hạng thành công", data });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách hạng:", error);
-      res.status(500).json({ error: "Không thể lấy danh sách hạng" });
+      res.status(400).json({ error: "Không thể lấy danh sách hạng" });
     }
   },
   createRank: async (req, res) => {
@@ -17,7 +17,7 @@ module.exports = {
       const data = await rankAdminService.createRank(req.body);
       res.status(201).json({ message: "Tạo hạng thành công", data });
     } catch (err) {
-      res.status(500).json({ message: "Lỗi tạo hạng", error: err.message });
+      res.status(400).json({ message: "Lỗi tạo hạng", error: err.message });
     }
   },
   updateRank: async (req, res) => {
@@ -26,7 +26,7 @@ module.exports = {
       res.json({ message: "Cập nhật hạng thành công", data });
     } catch (err) {
       res
-        .status(500)
+        .status(400)
         .json({ message: "Lỗi cập nhật hạng", error: err.message });
     }
   },
@@ -35,7 +35,7 @@ module.exports = {
       const data = await rankAdminService.deleteRank(req.params.id);
       res.json(data);
     } catch (err) {
-      res.status(500).json({ message: "Lỗi xóa hạng", error: err.message });
+      res.status(400).json({ message: "Lỗi xóa hạng", error: err.message });
     }
   },
   getMembersWithRank: async (req, res) => {
@@ -44,7 +44,7 @@ module.exports = {
       res.json({ message: "Lấy danh sách thành viên thành công", data });
     } catch (err) {
       res
-        .status(500)
+        .status(400)
         .json({ message: "Lỗi lấy danh sách thành viên", error: err.message });
     }
   },

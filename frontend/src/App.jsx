@@ -28,6 +28,7 @@ import OrderTracking from "./pages/OrderTracking";
 import OrderSuccess from "./pages/OrderSuccess";
 import { Navigate, Outlet } from "react-router-dom";
 import Products from "./pages/Products";
+import { Toaster } from "sonner";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -89,6 +90,7 @@ function App() {
           </Route>
         </Routes>
       </main>
+      <Toaster />
     </BrowserRouter>
   );
 }

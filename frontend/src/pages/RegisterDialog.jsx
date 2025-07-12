@@ -68,16 +68,17 @@ export default function RegisterPage({ onClose, onShowLogin }) {
   };
 
   const handleChange = (e) => {
+    e.preventDefault();
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
     setErrors({ ...errors, [name]: validate(name, value) });
     setErrorMessages("");
     // Nếu trường hiện tại là `password`, kiểm tra lại cả `confirmPassword`
     if (name === "password") {
-      newErrors.confirmPassword = validate(
+      errors.confirmPassword = validate(
         "confirmPassword",
-        newForm.confirmPassword,
-        newForm
+        form.confirmPassword,
+        form
       );
     }
   };

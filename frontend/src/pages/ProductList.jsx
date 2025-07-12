@@ -11,6 +11,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 export default function ProductList({filteredProducts}) {
   // const { products } = data;
@@ -59,7 +60,7 @@ export default function ProductList({filteredProducts}) {
 
   const handleAddToCart = (product) => {
     addToCart(product, 1); // Default quantity of 1
-    alert("Đã thêm sản phẩm vào giỏ hàng!");
+    toast("Đã thêm sản phẩm vào giỏ hàng!");
   };
 
   // Hàm định dạng tiền tệ VNĐ

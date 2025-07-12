@@ -19,10 +19,6 @@ const Header = () => {
   const isLoggedIn = !!user && !!user.user_name; // hoặc kiểm tra token
   const isAdmin = user?.role_id === 1; // Kiểm tra xem người dùng có phải là admin không
 
-  console.log("user:", user);
-  console.log("isAdmin:", isAdmin);
-
-
   // Xử lý đăng nhập thành công
   const handleLoginSuccess = (userData) => {
     console.log("User logged in:", userData);
@@ -78,9 +74,13 @@ const Header = () => {
         <Link to="/products" className="nav-link" onClick={closeMenu}>
           Danh mục
         </Link>
-        <Link to="/orderTracking" className="nav-link" onClick={closeMenu}>
+        {
+          isLoggedIn && (
+            <Link to="/orderTracking" className="nav-link" onClick={closeMenu}>
           Đơn hàng của tôi
         </Link>
+        )}
+      
         {isAdmin && isLoggedIn && (
           <Link to="/admin" className="nav-link">
             Trang quản trị
@@ -94,10 +94,13 @@ const Header = () => {
       </nav>
       {/* Cart and user info/buttons */}
       <div className="user-actions">
-        <Link to="/cart" className="cart">
-          <FaShoppingCart className="cart-icon" />
-          <span>Giỏ hàng</span>
-        </Link>
+        <div className="flex items-center w-auto gap-4 user-info">
+          <Link to="/cart" className="cart">
+            <FaShoppingCart className="cart-icon" />
+            <span>Giỏ hàng</span>
+          </Link>
+        </div>
+        
         {getAuthToken() ? (
           <div className="flex items-center w-auto gap-4 user-info">
             <span>Xin chào, {user.user_name}!</span>

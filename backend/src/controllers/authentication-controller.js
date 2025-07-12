@@ -14,7 +14,7 @@ module.exports = {
             });
         }
         catch (error) {
-            return res.status(400).json({
+            return res.status(401).json({
                 message: "Đăng nhập không thành công",
                 data: [],
                 error: error.message

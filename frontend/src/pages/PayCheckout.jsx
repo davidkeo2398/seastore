@@ -251,12 +251,13 @@ export default function PayCheckout() {
       " " +
       pad(now.getHours()) +
       ":" +
-      pad(now.getMinutes()) +
+      pad(now.getMinutes()) +                                                          
       ":" +
       pad(now.getSeconds())
     );
   };
 
+//gom tất cả thông tin người dùng và đơn hàng của payload của order
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isProcessing) return; // Ngăn chặn gửi nhiều lần

@@ -1,4 +1,5 @@
 const { Product } = require("../Model/Index");
+const { Op } = require('sequelize');
 
 module.exports = {
   createProduct: async (productData) => {
@@ -49,14 +50,59 @@ module.exports = {
       throw new Error(error.message || "Không thể tạo sản phẩm");
     }
   },
-  getProducts: async () => {
+  getProducts: async (search, page = 1, limit = 30) => {
+    console.log("Get products with params:", { search, page, limit });
     try {
-      const products = Product.findAll();
-      return products;
+      const where = {};
+      if (search && search.trim() !== "") {
+        // where.product_name = {
+        //   [Op.like]: `%${search}%`,
+        // };
+        Object.assign(where, {
+          [Op.or]: [
+            { product_name: { [Op.like]: `%${search}%` } },
+            { description: { [Op.like]: `%${search}%` } },
+          ],
+        });
+      }
+      console.log("Search condition:", where);
+      const offset =  (page - 1) * limit
+      const {count, rows} = await Product.findAndCountAll({
+        where,
+        limit,
+        offset
+      });
+      console.log("Count:", count);
+      console.log(rows)
+      return {
+        rows: rows.map((product) => ({
+          product_id: product.product_id,
+          product_name: product.product_name,
+          price: product.price,
+          description: product.description,
+          old_price: product.old_price,
+          image: product.image,
+          category_id: product.category_id,
+          agency_id: product.agency_id,
+          warehouse_id: product.warehouse_id,
+          unit: product.unit,
+          number_of_inventory: product.number_of_inventory,
+        })),
+        totalPages: Math.ceil(count / limit),
+        totalElements: count,
+      };
     } catch (err) {
       throw new Error("Get products failure: ", err);
     }
   },
+  countProduct: async () => {
+    try {
+      return Product.count();
+    } catch (err) {
+      return 0
+    }
+  },
+
   getProductById: async (product_id) => {
     try {
       const product = Product.findOne({ where: { product_id: product_id } });

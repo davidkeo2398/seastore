@@ -20,7 +20,16 @@ module.exports = {
   },
   getProducts: async (req, res) => {
     try {
-      const result = await productService.getProducts();
+      const page = parseInt(req.query.page) || 1; // Default to page 1
+      console.log(page);
+      const size = parseInt(req.query.size) || 30; // Default to 30
+      console.log(size);
+      console.log(req.query.search);
+      const result = await productService.getProducts(
+        req.query.search,
+        page,
+        size
+      );
 
       return res.status(200).json({
         message: "Get products sucessfully",

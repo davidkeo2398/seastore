@@ -31,6 +31,7 @@ const signup = async (req, res, db) => {
   }
 };
 
+
 const login = async (req, res, db) => {
   const { email, password } = req.body;
 

@@ -1,5 +1,6 @@
 const { User, Role } = require("../../Model/Index");
 const bcrypt = require("bcryptjs");
+const { countOrder } = require("../order-service");
 
 module.exports = {
   getUsers: async () => {
@@ -19,6 +20,13 @@ module.exports = {
     } catch (error) {
       console.error("Lỗi khi lấy chi tiết người dùng:", error);
       throw new Error("Không thể lấy chi tiết người dùng");
+    }
+  },
+  countUser: async () => {
+    try {
+      return User.count();
+    } catch (err) {
+      return 0
     }
   },
   getUserById: async (userId) => {
