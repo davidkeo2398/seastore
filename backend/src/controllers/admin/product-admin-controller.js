@@ -9,7 +9,7 @@ module.exports = {
         .status(200)
         .json({ message: "Lấy danh sách sản phẩm thành công", data: result });
     } catch (error) {
-      res.status(500).json({
+      res.status(400).json({
         message: "Lấy danh sách sản phẩm thất bại",
         error: error.message,
       });
@@ -26,7 +26,7 @@ module.exports = {
         .status(200)
         .json({ message: "Lấy chi tiết sản phẩm thành công", data: result });
     } catch (error) {
-      res.status(500).json({
+      res.status(400).json({
         message: "Lấy chi tiết sản phẩm thất bại",
         error: error.message,
       });
@@ -70,7 +70,7 @@ module.exports = {
         .json({ message: "Tạo sản phẩm thành công", data: result });
     } catch (error) {
       res
-        .status(500)
+        .status(400)
         .json({ message: "Tạo sản phẩm thất bại", error: error.message });
     }
   },
@@ -84,7 +84,7 @@ module.exports = {
       res.status(200).json({ message: "Cập nhật sản phẩm thành công" });
     } catch (error) {
       res
-        .status(500)
+        .status(400)
         .json({ message: "Cập nhật sản phẩm thất bại", error: error.message });
     }
   },
@@ -93,7 +93,7 @@ module.exports = {
       const result = await productAdminService.deleteProduct(req.params.id);
       res.status(200).json(result);
     } catch (error) {
-      res.status(500).json({ message: "Xoá sản phẩm thất bại" });
+      res.status(400).json({ message: "Xoá sản phẩm thất bại" });
     }
   },
 };

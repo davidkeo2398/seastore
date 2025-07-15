@@ -78,7 +78,7 @@ function buildMemberRankData(member, allRanks) {
     nextRank = allRanks[0];
   }
 // phần trăm tiến độ đạt hạng
-  let rankProgress = 0;
+  let rankProgress = 100;
   if (nextRank) {
     const minForNextRank = nextRank.min_accumulated_value; // chi tiêu tối thiểu để đạt hạng tiếp theo
     // Tính phần trăm tiến độ đạt hạng tiếp theo

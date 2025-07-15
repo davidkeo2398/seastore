@@ -48,6 +48,14 @@ header .cart:hover {
 
 header .user-actions {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+header .auth-buttons {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 16px;
   margin-left: auto;
@@ -57,6 +65,8 @@ header .user-actions .btn {
   padding: 8px 12px; /* Tương tự px-3 py-1 */
   border-radius: 4px; /* Tương tự rounded-md */
   font-size: 1rem;
+    min-width: 100px;
+
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
@@ -111,7 +121,7 @@ header .user-actions .btn-logout:hover {
   /* Ẩn các nút đăng nhập/đăng ký */
   .auth-buttons {
     display: none;
-    gap: 30px; /* Khoảng cách giữa các nút */
+    gap: 50px; /* Khoảng cách giữa các nút */
   }
 
   /* Cấu hình cho menu dọc khi mở */

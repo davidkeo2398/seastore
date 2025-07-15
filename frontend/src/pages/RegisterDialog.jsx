@@ -66,6 +66,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
         return "";
     }
   };
+  // cập nhật trạng thái của form và lỗi khi người dùng nhập dữ liệu
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -74,10 +75,10 @@ export default function RegisterPage({ onClose, onShowLogin }) {
     setErrorMessages("");
     // Nếu trường hiện tại là `password`, kiểm tra lại cả `confirmPassword`
     if (name === "password") {
-      newErrors.confirmPassword = validate(
+      errors.confirmPassword = validate(
         "confirmPassword",
-        newForm.confirmPassword,
-        newForm
+        form.confirmPassword,
+        form
       );
     }
   };
@@ -95,7 +96,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
 
   // Hàm xử lý khi nhấn nút Đăng ký
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Ngăn chặn hành vi mặc định của form
     const newErrors = {};
     let formIsValid = true;
 
@@ -119,6 +120,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
     if (!formIsValid) {
       return;
     }
+    // Gửi dữ liệu đăng ký đến backend
 
     try {
       await axiosInstance.post("auth/register", {
@@ -201,7 +203,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.firstName && (
-              <p className="text-red-500 text-sm">{errors.firstName}</p>
+              <p className="text-sm text-red-500">{errors.firstName}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -216,7 +218,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.lastName && (
-              <p className="text-red-500 text-sm">{errors.lastName}</p>
+              <p className="text-sm text-red-500">{errors.lastName}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -231,7 +233,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.username && (
-              <p className="text-red-500 text-sm">{errors.username}</p>
+              <p className="text-sm text-red-500">{errors.username}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -246,7 +248,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email}</p>
+              <p className="text-sm text-red-500">{errors.email}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -261,7 +263,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.password && (
-              <p className="text-red-500 text-sm">{errors.password}</p>
+              <p className="text-sm text-red-500">{errors.password}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -276,7 +278,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.confirmPassword && (
-              <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+              <p className="text-sm text-red-500">{errors.confirmPassword}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -291,7 +293,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone}</p>
+              <p className="text-sm text-red-500">{errors.phone}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -306,20 +308,20 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.address && (
-              <p className="text-red-500 text-sm">{errors.address}</p>
+              <p className="text-sm text-red-500">{errors.address}</p>
             )}
           </div>
           {errorMessages && (
-            <p className="text-red-500 text-sm">{errorMessages}</p>
+            <p className="text-sm text-red-500">{errorMessages}</p>
           )}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-black py-2 rounded"
+            className="w-full py-2 text-black bg-blue-500 rounded"
           >
             Đăng ký
           </button>
         </form>
-        <p className="mt-4 text-center text-sm">
+        <p className="mt-4 text-sm text-center">
           Đã có tài khoản?{" "}
           <button
             type="button"
