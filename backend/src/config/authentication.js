@@ -18,7 +18,9 @@ const generateToken = (user) => {
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '3h' });
 }
 
+//xác thực token
 const verifyToken = (token) => {
+  // Kiểm tra token có tồn tại không
   if (!token) {
     throw new Error('Token is required');
   }
@@ -26,9 +28,11 @@ const verifyToken = (token) => {
     const result = jwt.verify(token, process.env.JWT_SECRET);
     return result;
   } catch (error) {
+    //hết hạn token 
     if (error.name === 'TokenExpiredError') {
       throw new Error('Token expired');
     }
+    // token không hợp lệ
     throw new Error('Invalid token');
   }
 };

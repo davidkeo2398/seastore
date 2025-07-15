@@ -35,7 +35,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
   // Regex để kiểm tra tên (chỉ chữ cái và khoảng trắng)
   const regexName = /^[\p{L}\s]+$/u;
   // Regex để kiểm tra email
-  const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  const regexEmail = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
   // Regex để kiểm tra số điện thoại (10 chữ số)
   const regexPhone = /^\d{10}$/;
 
@@ -66,7 +66,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
         return "";
     }
   };
-
+  // cập nhật trạng thái của form và lỗi khi người dùng nhập dữ liệu
   const handleChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -96,7 +96,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
 
   // Hàm xử lý khi nhấn nút Đăng ký
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Ngăn chặn hành vi mặc định của form
     const newErrors = {};
     let formIsValid = true;
 
@@ -109,11 +109,6 @@ export default function RegisterPage({ onClose, onShowLogin }) {
       }
     });
 
-    // if (password !== confirmPassword) {
-    //   setErrorMessages("Mật khẩu và xác nhận mật khẩu không khớp.");
-    //   return;
-    // }
-
     setErrors(newErrors);
 
     // Nếu form không hợp lệ, dừng lại
@@ -121,6 +116,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
       return;
     }
 
+    // Gửi dữ liệu đăng ký đến backend
     try {
       await axiosInstance.post("auth/register", {
         user_name: form.username,
@@ -140,44 +136,6 @@ export default function RegisterPage({ onClose, onShowLogin }) {
       );
     }
   };
-
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   const form = event.target;
-  //   // const name = form.name.value;
-  //   const user_name = form.username.value;
-  //   const email = form.email.value;
-  //   const password = form.password.value;
-  //   const confirmPassword = form.confirmPassword.value;
-  //   const first_name = form.firstName?.value;
-  //   const last_name = form.lastName?.value;
-  //   const phone = form.phone.value || "";
-  //   const address = form.address.value || "";
-
-  //   if (password !== confirmPassword) {
-  //     setErrorMessages("Mật khẩu và xác nhận mật khẩu không khớp.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axiosInstance.post("auth/register", {
-  //       user_name,
-  //       first_name,
-  //       last_name,
-  //       email,
-  //       password,
-  //       phone,
-  //       address,
-  //     });
-  //     console.log("Đăng ký thành công", response);
-  //     setErrorMessages("");
-  //     onClose();
-  //   } catch (error) {
-  //     setErrorMessages(
-  //       error.response?.data?.message || "Đã xảy ra lỗi khi đăng ký."
-  //     );
-  //   }
-  // };
 
   return (
     <Dialog
@@ -202,7 +160,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.firstName && (
-              <p className="text-red-500 text-sm">{errors.firstName}</p>
+              <p className="text-sm text-red-500">{errors.firstName}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -217,7 +175,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.lastName && (
-              <p className="text-red-500 text-sm">{errors.lastName}</p>
+              <p className="text-sm text-red-500">{errors.lastName}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -232,7 +190,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.username && (
-              <p className="text-red-500 text-sm">{errors.username}</p>
+              <p className="text-sm text-red-500">{errors.username}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -247,7 +205,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email}</p>
+              <p className="text-sm text-red-500">{errors.email}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -262,7 +220,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.password && (
-              <p className="text-red-500 text-sm">{errors.password}</p>
+              <p className="text-sm text-red-500">{errors.password}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -277,7 +235,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.confirmPassword && (
-              <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+              <p className="text-sm text-red-500">{errors.confirmPassword}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -292,7 +250,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone}</p>
+              <p className="text-sm text-red-500">{errors.phone}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -307,20 +265,20 @@ export default function RegisterPage({ onClose, onShowLogin }) {
               required
             />
             {errors.address && (
-              <p className="text-red-500 text-sm">{errors.address}</p>
+              <p className="text-sm text-red-500">{errors.address}</p>
             )}
           </div>
           {errorMessages && (
-            <p className="text-red-500 text-sm">{errorMessages}</p>
+            <p className="text-sm text-red-500">{errorMessages}</p>
           )}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-black py-2 rounded"
+            className="w-full py-2 text-black bg-blue-500 rounded"
           >
             Đăng ký
           </button>
         </form>
-        <p className="mt-4 text-center text-sm">
+        <p className="mt-4 text-sm text-center">
           Đã có tài khoản?{" "}
           <button
             type="button"

@@ -46,8 +46,6 @@ function App() {
     fetchStats();
   }, []);
 
- 
-
   return (
     <BrowserRouter>
       <header className="flex justify-end p-4">
@@ -62,8 +60,8 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="about" element={<AboutPage />} />
-            <Route path="login" element={<LoginDialog />} />  //dang nhap
-            <Route path="register" element={<RegisterPage />} />  //dang ky
+            <Route path="login" element={<LoginDialog />} /> //dang nhap
+            <Route path="register" element={<RegisterPage />} /> //dang ky
             <Route path="products" element={<Products />} />
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="cart" element={<CartPage />} />

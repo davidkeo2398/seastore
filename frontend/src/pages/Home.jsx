@@ -12,7 +12,8 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [page, setPage] = useState(1); // Current page
   const [size, setSize] = useState(10); // Number of products per page
-
+  
+  // page: trang hiện tại; size: số lượng sản phẩm trên mỗi trang; search: từ khóa tìm kiếm
   const fetchProducts = async (page = 1, size = 10, search = "") => {
     try {
       const { data } = await axiosInstance.get("/product", {
@@ -27,7 +28,7 @@ export default function Home() {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await axiosInstance.get("/categories");
+      const { data } = await axiosInstance.get("/category");
       setCategories(data.data); // Save category list
       console.log("Categories fetched successfully", data.data);
     } catch (error) {
@@ -35,8 +36,9 @@ export default function Home() {
     }
   };
 
+  //tìm kiwm sản phẩm
   const handleSearchProduct = () => {
-    fetchProducts(page, size, searchTerm); // Fetch products with the current search term
+    fetchProducts(page, size, searchTerm);
   };
 
   useEffect(() => {
@@ -79,10 +81,7 @@ export default function Home() {
             onChange={(e) => setSearchTerm(e.target.value)} // Update search term
             className="search-input"
           />
-          <button
-            className="search-button"
-            onClick={handleSearchProduct} // Call handleSearchProduct function
-          >
+          <button className="search-button" onClick={handleSearchProduct}>
             🔍 Tìm kiếm
           </button>
         </div>

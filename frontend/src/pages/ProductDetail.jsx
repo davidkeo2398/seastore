@@ -95,7 +95,7 @@ export default function ProductDetailPage() {
       try {
         const { data } = await axiosInstance.get(`/product`);
         console.log("debug related:", data.data);
-        const related = data.data.filter(
+        const related = data.data.rows.filter(
           (p) =>
             p.category_id === product.category_id && p.id !== product.product_id
         );

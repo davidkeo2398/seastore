@@ -1,5 +1,5 @@
 const { Product } = require("../Model/Index");
-const { Op } = require('sequelize');
+const { Op } = require("sequelize");
 
 module.exports = {
   createProduct: async (productData) => {
@@ -55,9 +55,6 @@ module.exports = {
     try {
       const where = {};
       if (search && search.trim() !== "") {
-        // where.product_name = {
-        //   [Op.like]: `%${search}%`,
-        // };
         Object.assign(where, {
           [Op.or]: [
             { product_name: { [Op.like]: `%${search}%` } },
@@ -66,14 +63,18 @@ module.exports = {
         });
       }
       console.log("Search condition:", where);
-      const offset =  (page - 1) * limit
-      const {count, rows} = await Product.findAndCountAll({
+      const offset = (page - 1) * limit; // tính toán trang hiện tại
+      console.log("Offset:", offset);
+      console.log("Limit:", limit);
+      const { count, rows } = await Product.findAndCountAll({
         where,
         limit,
-        offset
+        offset,
       });
       console.log("Count:", count);
-      console.log(rows)
+
+      console.log("Rows:", rows);
+      console.log("page:", page);
       return {
         rows: rows.map((product) => ({
           product_id: product.product_id,
@@ -99,7 +100,7 @@ module.exports = {
     try {
       return Product.count();
     } catch (err) {
-      return 0
+      return 0;
     }
   },
 
@@ -119,5 +120,4 @@ module.exports = {
       throw new Error("Get products by category fail: ", err);
     }
   },
-  
-}
+};

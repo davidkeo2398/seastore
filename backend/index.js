@@ -60,50 +60,6 @@ app.use('/api', router);
 //admin
 app.use('/api/admin', adminRouter);
 
-// app.use('/api', momoRoute);
-
-// Login route
-// app.post('/login', (req, res) => {
-//   authentication.login(req, res, db)
-//     .then(data => {
-//       if (data.token) {
-//         return res.json({ redirect: data.user.isAdmin ? '/admin' : '/home', token: data.token, user: data.user });
-//       } else {
-//         return res.status(401).json({ message: data.message });
-//       }
-//     })
-//     .catch(err => {
-//       return res.status(500).json({ message: 'Đã xảy ra lỗi!' });
-//     });
-// });
-
-// app.get('/login', async (req, res) => {
-//   try {
-//     const users = await User.findAll();
-//     res.json({
-//       message: 'Thành công',
-//       data: users
-//     });
-//   } catch (error) {
-//     console.error('Error:', error);
-//     res.status(500).json({
-//       message: 'Lỗi khi truy vấn dữ liệu',
-//       error: error.message
-//     });
-//   }
-// })
-
-// // Signup route
-// app.post('/signup', (req, res) => {
-//   authentication.signup(req, res, db);
-// });
-
-// // Logout route
-// app.post('/logout', (req, res) => {
-//   // Client-side will handle token removal
-//   res.json({ message: 'Đăng xuất thành công.' });
-// });
-
 app.get('/login',(req, res) => {
   res.json({"message": "hello"});
 });

@@ -41,12 +41,17 @@ export default function Products() {
       }
     } catch (error) {
       console.error("Error fetching products:", error);
+      setAllProducts([]); // Đảm bảo allProducts luôn là một mảng
+      setProducts([]); // Đảm bảo products luôn là một mảng
     }
   };
 
   const fetchCategories = async () => {
     try {
       const { data } = await axiosInstance.get("/category");
+      console.log("log", data.data);
+      console.log("rd");
+      console.log("Categories fetched successfully", data.data);
       setCategories(data.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -69,33 +74,21 @@ export default function Products() {
       minimumFractionDigits: 0, // Không hiển thị số lẻ sau dấu phẩy (vd: 1.000.000₫ thay vì 1.000.000,00₫)
     }).format(amount);
   };
-  
-  // const [products, setProducts] = useState([]);
-  // useEffect(() => {
-  //   fetchProducts();
-  // }, []);
 
-  // const fetchProducts = async () => {
-  //   try {
-  //     const { data } = await axiosInstance.get("/product");
-  //     setProducts(data.data);
-  //     console.log("Products fetched successfully", data.data);
-  //     if (data.error) {
-  //       console.error("Error fetching products:", data.error);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching products:", error);
-  //   }
-  // };
   // Filter logic
-  const filteredProducts = allProducts.filter((product) => {
-    const matchesName = product.product_name
-      .toLowerCase() 
-      .includes(searchTerm.toLowerCase());//chuyen chữ thường và so sánh
-    const matchesCategory =
-      selectedCategory === "all" || product.category_id === selectedCategory;
-    return matchesName && matchesCategory;
-  });
+  console.log("In ra allProducts", allProducts);
+  const filteredProducts = Array.isArray(allProducts.rows)
+    ? allProducts.rows.filter((product) => {
+        const matchesName = product.product_name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()); //chuyen chữ thường và so sánh
+        const matchesCategory =
+          selectedCategory === "all" ||
+          product.category_id === selectedCategory;
+        return matchesName && matchesCategory;
+      })
+    : [];
+
   return (
     <div className="products-list">
       {/* Filter section */}

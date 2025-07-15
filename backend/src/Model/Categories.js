@@ -44,6 +44,4 @@ module.exports = (sequelize) => {
   };
   return Categories;
 }; 
-// Category - Product
-// Categories.hasMany(Product, { foreignKey: "category_id", as: "products" });
-// Product.belongsTo(Categories, { foreignKey: "category_id", as: "category" });
+
