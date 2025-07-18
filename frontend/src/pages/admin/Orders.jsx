@@ -48,91 +48,8 @@ import {
 } from "lucide-react";
 import axiosInstance from "@/lib/axios";
 
-//hạn sử dụng sản phẩm, khi đặt hành thì ưu tiên xử lý hàng sắp hết date
-// Mock data for demonstration
-// const mockOrders = [
-//   {
-//     order_id: "ORD001",
-//     order_date: "2024-03-01",
-//     name: "Nguyễn Văn An",
-//     email: "nguyenvanan@example.com",
-//     address: "123 Đường Lê Lợi, Quận 1",
-//     city: "TP.HCM",
-//     country: "Việt Nam",
-//     zipCode: "70000",
-//     total: 2999000,
-//     iduser: "USER001",
-//     status: "completed",
-//     payment_status: "paid",
-//     shipping_method: "express",
-//     items_count: 3,
-//   },
-//   {
-//     order_id: "ORD002",
-//     order_date: "2024-03-02",
-//     name: "Trần Thị Bình",
-//     email: "tranthibinh@example.com",
-//     address: "456 Đường Nguyễn Huệ, Quận 3",
-//     city: "TP.HCM",
-//     country: "Việt Nam",
-//     zipCode: "70000",
-//     total: 1599000,
-//     iduser: "USER002",
-//     status: "processing",
-//     payment_status: "paid",
-//     shipping_method: "standard",
-//     items_count: 2,
-//   },
-//   {
-//     order_id: "ORD003",
-//     order_date: "2024-03-03",
-//     name: "Lê Văn Cường",
-//     email: "levancuong@example.com",
-//     address: "789 Đường Võ Văn Tần, Quận 5",
-//     city: "TP.HCM",
-//     country: "Việt Nam",
-//     zipCode: "70000",
-//     total: 4599000,
-//     iduser: "USER003",
-//     status: "pending",
-//     payment_status: "pending",
-//     shipping_method: "express",
-//     items_count: 1,
-//   },
-//   {
-//     order_id: "ORD004",
-//     order_date: "2024-03-04",
-//     name: "Phạm Thị Dung",
-//     email: "phamthidung@example.com",
-//     address: "321 Đường Điện Biên Phủ, Quận 10",
-//     city: "TP.HCM",
-//     country: "Việt Nam",
-//     zipCode: "70000",
-//     total: 649000,
-//     iduser: "USER004",
-//     status: "shipped",
-//     payment_status: "paid",
-//     shipping_method: "standard",
-//     items_count: 4,
-//   },
-//   {
-//     order_id: "ORD005",
-//     order_date: "2024-03-05",
-//     name: "Hoàng Văn Em",
-//     email: "hoangvanem@example.com",
-//     address: "654 Đường Cách Mạng Tháng 8, Quận Tân Bình",
-//     city: "TP.HCM",
-//     country: "Việt Nam",
-//     zipCode: "70000",
-//     total: 1699000,
-//     iduser: "USER005",
-//     status: "cancelled",
-//     payment_status: "refunded",
-//     shipping_method: "express",
-//     items_count: 2,
-//   },
-// ];
 
+// ham tính tổng doanh thu
 function calculateTotalRevenue(orders) {
   return orders
     .filter((order) => order.status === "completed")
@@ -226,50 +143,19 @@ export default function OrdersPage() {
     (order) => order.status === "completed"
   ).length;
 
-  // const getStatusBadge = (status) => {
-  //   switch (status) {
-  //     case "pending":
-  //       return (
-  //         <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
-  //           Chờ xử lý
-  //         </Badge>
-  //       );
-  //     // case "processing":
-  //     //   return (
-  //     //     <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">
-  //     //       Đang xử lý
-  //     //     </Badge>
-  //     //   );
-  //     // case "shipped":
-  //     //   return (
-  //     //     <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">
-  //     //       Đã gửi
-  //     //     </Badge>
-  //     //   );
-  //     case "completed":
-  //       return (
-  //         <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
-  //           Hoàn thành
-  //         </Badge>
-  //       );
-  //     case "cancelled":
-  //       return <Badge variant="destructive">Đã hủy</Badge>;
-  //     default:
-  //       return <Badge variant="outline">{status}</Badge>;
-  //   }
-  // };
+
 
   const getStatusBadge = (status) => {
     switch (status) {
       case "processing":
         return (
-          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+          <Badge className="text-yellow-800 bg-yellow-100 hover:bg-yellow-200">
             Đang xử lý
           </Badge>
         );
       case "completed":
         return (
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+          <Badge className="text-green-800 bg-green-100 hover:bg-green-200">
             Hoàn thành
           </Badge>
         );
@@ -282,13 +168,13 @@ export default function OrdersPage() {
     switch (status) {
       case "completed":
         return (
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+          <Badge className="text-green-800 bg-green-100 hover:bg-green-200">
             Đã thanh toán
           </Badge>
         );
       case "pending":
         return (
-          <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200">
+          <Badge className="text-orange-800 bg-orange-100 hover:bg-orange-200">
             Chờ thanh toán
           </Badge>
         );
@@ -296,7 +182,7 @@ export default function OrdersPage() {
         return <Badge variant="destructive">Thất bại</Badge>;
       case "cancelled":
         return (
-          <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-200">
+          <Badge className="text-gray-800 bg-gray-100 hover:bg-gray-200">
             Đã hoàn tiền
           </Badge>
         );
@@ -328,7 +214,7 @@ export default function OrdersPage() {
   console.log("topBuyer", topBuyer);
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
+    <div className="container px-4 py-8 mx-auto space-y-6">
       {/* Top Buyer */}
       {topBuyer && (
         <Card className="mb-4 border-2 border-yellow-400">
@@ -353,11 +239,11 @@ export default function OrdersPage() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Tổng đơn hàng</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+            <ShoppingCart className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalOrders}</div>
@@ -365,9 +251,9 @@ export default function OrdersPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Doanh thu</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-600" />
+            <DollarSign className="w-4 h-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
@@ -378,9 +264,9 @@ export default function OrdersPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Chờ xử lý</CardTitle>
-            <Clock className="h-4 w-4 text-orange-600" />
+            <Clock className="w-4 h-4 text-orange-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">
@@ -390,9 +276,9 @@ export default function OrdersPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Hoàn thành</CardTitle>
-            <Package className="h-4 w-4 text-blue-600" />
+            <Package className="w-4 h-4 text-blue-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
@@ -412,9 +298,9 @@ export default function OrdersPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex flex-col gap-4 mb-6 sm:flex-row">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Tìm kiếm theo tên, email hoặc mã đơn..."
@@ -448,7 +334,7 @@ export default function OrdersPage() {
           </div>
 
           {/* Table */}
-          <div className="rounded-md border">
+          <div className="border rounded-md">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -465,9 +351,9 @@ export default function OrdersPage() {
               <TableBody>
                 {filteredOrders.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8">
+                    <TableCell colSpan={8} className="py-8 text-center">
                       <div className="flex flex-col items-center gap-2">
-                        <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+                        <ShoppingCart className="w-8 h-8 text-muted-foreground" />
                         <p className="text-muted-foreground">
                           {searchTerm ||
                           statusFilter !== "all" ||
@@ -482,13 +368,13 @@ export default function OrdersPage() {
                   filteredOrders.map((order) => (
                     <TableRow key={order.order_id}>
                       <TableCell>
-                        <code className="bg-muted px-2 py-1 rounded text-sm">
+                        <code className="px-2 py-1 text-sm rounded bg-muted">
                           {order.order_code}
                         </code>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3 text-muted-foreground" />
+                          <Calendar className="w-3 h-3 text-muted-foreground" />
                           {new Date(order.order_date).toLocaleDateString(
                             "vi-VN"
                           )}
@@ -506,7 +392,7 @@ export default function OrdersPage() {
                       </TableCell>
                       <TableCell className="max-w-[200px]">
                         <div className="flex items-start gap-1">
-                          <MapPin className="h-3 w-3 text-muted-foreground mt-1 flex-shrink-0" />
+                          <MapPin className="flex-shrink-0 w-3 h-3 mt-1 text-muted-foreground" />
                           <div className="text-sm">
                             <div
                               className="truncate"
@@ -555,10 +441,10 @@ export default function OrdersPage() {
                             onClick={() => handleViewDetails(order)}
                             title="Xem chi tiết"
                           >
-                            <Eye className="h-4 w-4" />
+                            <Eye className="w-4 h-4" />
                           </Button>
                           {/* <Button variant="outline" size="sm" title="Chỉnh sửa">
-                            <Edit className="h-4 w-4" />
+                            <Edit className="w-4 h-4" />
                           </Button> */}
                           {/* <Button
                             variant="destructive"
@@ -566,7 +452,7 @@ export default function OrdersPage() {
                             onClick={() => handleDelete(order.order_id)}
                             title="Xóa đơn hàng"
                           >
-                            <Trash2 className="h-4 w-4 text-black" />
+                            <Trash2 className="w-4 h-4 text-black" />
                           </Button> */}
                         </div>
                       </TableCell>
@@ -595,7 +481,7 @@ export default function OrdersPage() {
                   <h4 className="font-medium">Thông tin khách hàng</h4>
                   <div className="space-y-1 text-sm">
                     <div className="flex items-center gap-2">
-                      <User className="h-3 w-3" />
+                      <User className="w-3 h-3" />
                       {selectedOrder.user_name || "N/A"}
                     </div>
                     <div>
@@ -624,7 +510,7 @@ export default function OrdersPage() {
               </div>
               <div className="space-y-2">
                 <h4 className="font-medium">Địa chỉ giao hàng</h4>
-                <div className="text-sm space-y-1">
+                <div className="space-y-1 text-sm">
                   <div>{selectedOrder.address_agency}</div>
                   <div>
                     {/* {selectedOrder.city || "N/A"},{" "} */}

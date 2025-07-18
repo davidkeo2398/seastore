@@ -31,46 +31,9 @@ import axiosInstance from "@/lib/axios";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import LoginDialog from "./LoginDiaLog";
-
-// Mock order data
-// const orderSummary = {
-//   items: [
-//     {
-//       id: "1",
-//       name: "Premium Wireless Headphones",
-//       quantity: 2,
-//       price: 2500000,
-//       image: "/placeholder.svg?height=60&width=60",
-//     },
-//     {
-//       id: "2",
-//       name: "Bluetooth Speaker Pro",
-//       quantity: 1,
-//       price: 1800000,
-//       image: "/placeholder.svg?height=60&width=60",
-//     },
-//   ],
-//   subtotal: 6800000,
-//   shipping: 0,
-//   discount: 500000,
-//   total: 6300000,
-// };
+import { TermsModal, PrivacyModal } from "./Modal";
 
 const paymentMethods = [
-  // {
-  //   id: "credit-card",
-  //   name: "Thẻ tín dụng/Ghi nợ",
-  //   description: "Visa, Mastercard, JCB",
-  //   icon: CreditCard,
-  //   popular: true,
-  // },
-  // {
-  //   id: "e-wallet",
-  //   name: "Ví điện tử",
-  //   description: " ZaloPay",
-  //   icon: Smartphone,
-  //   popular: true,
-  // },
   {
     id: "VNPay",
     name: "Ví điện tử",
@@ -145,6 +108,8 @@ export default function PayCheckout() {
   const [showSuccess, setShowSuccess] = useState(false);
   const timeoutRef = useRef(null);
   const [isShowLoginDialog, setIsShowLoginDialog] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
   useEffect(() => {
     setDiscount(localStorage.getItem("discount"));
@@ -393,7 +358,6 @@ export default function PayCheckout() {
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
     setShowLoginDialog(false);
-    
   };
 
   const renderPaymentForm = () => {
@@ -700,86 +664,6 @@ export default function PayCheckout() {
                         </p>
                       )}
                     </div>
-                    {/* <div>
-                      <Label htmlFor="city">Tỉnh/Thành phố *</Label>
-                      <Select
-                        value={formData.city}
-                        onValueChange={(value) =>
-                          handleInputChange("city", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn tỉnh/thành" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="hanoi">Hà Nội</SelectItem>
-                          <SelectItem value="hcm">TP. Hồ Chí Minh</SelectItem>
-                          <SelectItem value="danang">Đà Nẵng</SelectItem>
-                          <SelectItem value="haiphong">Gia Lai</SelectItem>
-                          <SelectItem value="cantho">Cần Thơ</SelectItem>
-                          <SelectItem value="hue">Huế</SelectItem>
-                          <SelectItem value="nhatrang">Nha Trang</SelectItem>
-                          <SelectItem value="dalat">Đà Lạt</SelectItem>
-                          <SelectItem value="vungtau">Vũng Tàu</SelectItem>
-                          <SelectItem value="binhduong">Bình Dương</SelectItem>
-                          <SelectItem value="dongnai">Đồng Nai</SelectItem>
-                          <SelectItem value="quangninh">Quảng Ninh</SelectItem>
-                          <SelectItem value="nghean">Nghệ An</SelectItem>
-                          <SelectItem value="binhdinh">Bình Định</SelectItem>
-                          <SelectItem value="phuyen">Phú Yên</SelectItem>
-                          <SelectItem value="kiengiang">Kiên Giang</SelectItem>
-                          <SelectItem value="angiang">An Giang</SelectItem>
-                          <SelectItem value="lamdong">Lâm Đồng</SelectItem>
-                          <SelectItem value="thanhhoa">Thanh Hóa</SelectItem>
-                          <SelectItem value="thaibinh">Thái Bình</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div> */}
-                    {/* <div>
-                      <Label htmlFor="district">Quận/Huyện *</Label>
-                      <Select
-                        value={formData.district}
-                        onValueChange={(value) =>
-                          handleInputChange("district", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn quận/huyện" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="district1">Quận 1</SelectItem>
-                          <SelectItem value="district2">Quận 2</SelectItem>
-                          <SelectItem value="district3">Quận 3</SelectItem>
-                          <SelectItem value="district4">Quận 4</SelectItem>
-                          <SelectItem value="district5">Quận 5</SelectItem>
-                          <SelectItem value="district6">Quận 6</SelectItem>
-                          <SelectItem value="district7">Quận 7</SelectItem>
-                          <SelectItem value="district8">Quận 8</SelectItem>
-                          <SelectItem value="district9">Quận 9</SelectItem>
-                          <SelectItem value="district10">Quận 10</SelectItem>
-                          <SelectItem value="district11">Quận 11</SelectItem>
-                          <SelectItem value="district12">Quận 12</SelectItem>
-                          <SelectItem value="binhthanh">
-                            Quận Bình Thạnh
-                          </SelectItem>
-                          <SelectItem value="govap">Quận Gò Vấp</SelectItem>
-                          <SelectItem value="phunhuan">
-                            Quận Phú Nhuận
-                          </SelectItem>
-                          <SelectItem value="tanbinh">Quận Tân Bình</SelectItem>
-                          <SelectItem value="tanphu">Quận Tân Phú</SelectItem>
-                          <SelectItem value="thuduc">TP. Thủ Đức</SelectItem>
-                          <SelectItem value="binhtan">Quận Bình Tân</SelectItem>
-                          <SelectItem value="hocmon">Huyện Hóc Môn</SelectItem>
-                          <SelectItem value="binhchanh">
-                            Huyện Bình Chánh
-                          </SelectItem>
-                          <SelectItem value="nhabe">Huyện Nhà Bè</SelectItem>
-                          <SelectItem value="cuchi">Huyện Củ Chi</SelectItem>
-                          <SelectItem value="canjo">Huyện Cần Giờ</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div> */}
                   </div>
                 </CardContent>
               </Card>
@@ -835,7 +719,6 @@ export default function PayCheckout() {
                   <div className="mt-6">{renderPaymentForm()}</div>
                 </CardContent>
               </Card>
-              
 
               {/* Terms and Conditions */}
               <Card>
@@ -870,13 +753,19 @@ export default function PayCheckout() {
                       </Checkbox>
                       <Label htmlFor="agreeTerms" className="text-sm">
                         Tôi đồng ý với{" "}
-                        <a href="#" className="text-blue-600 hover:underline">
+                        <span
+                          className="text-blue-600 cursor-pointer hover:underline"
+                          onClick={() => setIsTermsModalOpen(true)} // Mở modal Điều khoản
+                        >
                           Điều khoản và Điều kiện
-                        </a>{" "}
+                        </span>{" "}
                         và{" "}
-                        <a href="#" className="text-blue-600 hover:underline">
+                        <span
+                          className="text-blue-600 cursor-pointer hover:underline"
+                          onClick={() => setIsPrivacyModalOpen(true)} // Mở modal Chính sách Bảo mật
+                        >
                           Chính sách Bảo mật
-                        </a>
+                        </span>
                       </Label>
                     </div>
                   </div>
@@ -985,6 +874,16 @@ export default function PayCheckout() {
           </div>
         </form>
       </div>
+
+      {/* Modals */}
+      <TermsModal
+        isOpen={isTermsModalOpen}
+        onClose={() => setIsTermsModalOpen(false)}
+      />
+      <PrivacyModal
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
+      />
     </div>
   );
 }

@@ -229,8 +229,9 @@ export default function ShoppingCart() {
             <Button
               size="lg"
               className="text-black bg-blue-600 hover:bg-blue-700"
+              onClick={() => navigate("/")}
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4 mr-2" /> 
               Tiếp tục mua sắm
             </Button>
           </div>
@@ -301,9 +302,9 @@ export default function ShoppingCart() {
                       <div className="flex items-start justify-between mb-2">
                         <div>
                           <h3 className="font-semibold text-gray-900 truncate">
-                            {item.name}
+                            {item.product_name}
                           </h3>
-                          <p className="text-sm text-gray-600">{item.brand}</p>
+                          {/* <p className="text-sm text-gray-600">{item.brand}</p> */}
                         </div>
                         {/* Remove Button */}
                         <Button

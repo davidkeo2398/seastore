@@ -9,10 +9,9 @@ import {
   TrendingDown,
   Warehouse,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-
-export default function DashboardStats({ stats }) 
-{
+export default function DashboardStats({ stats }) {
   if (!stats) return <div>Đang tải số liệu...</div>;
   const statsConfig = [
     {
@@ -25,6 +24,7 @@ export default function DashboardStats({ stats })
       lightColor: "bg-blue-50",
       textColor: "text-blue-500",
       borderColor: "border-blue-200",
+      link: "/admin/products", // Đường dẫn đến trang quản lý sản phẩm
     },
     {
       title: "Tổng đơn hàng",
@@ -35,6 +35,7 @@ export default function DashboardStats({ stats })
       lightColor: "bg-blue-50",
       textColor: "text-blue-700",
       borderColor: "border-blue-200",
+      link: "/admin/orders", // Đường dẫn đến trang quản lý đơn hàng
     },
     {
       title: "Tổng người dùng",
@@ -45,7 +46,19 @@ export default function DashboardStats({ stats })
       lightColor: "bg-blue-50",
       textColor: "text-blue-800",
       borderColor: "border-blue-200",
+      link: "/admin/users", // Đường dẫn đến trang quản lý người dùng
     },
+    // {
+    //   title: "Tổng danh mục",
+    //   value: stats.totalCategories || 0,
+    //   change: stats.categoriesChange,
+    //   icon: TrendingUp,
+    //   color: "bg-blue-600",
+    //   lightColor: "bg-blue-50",
+    //   textColor: "text-blue-600",
+    //   borderColor: "border-blue-200",
+    //   link: "/admin/categories", // Đường dẫn đến trang quản lý danh mục
+    // },
   ];
 
   return (
@@ -66,16 +79,23 @@ function StatCard({
   lightColor,
   textColor,
   borderColor,
+  link, // Thêm thuộc tính link
 }) {
-  const isPositive = change && change > 0;
-  const isNegative = change && change < 0;
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (link) {
+      navigate(link); // Điều hướng đến đường dẫn được chỉ định
+    }
+  };
 
   return (
     //relative: định vị vị trí tương đối cho Card
     //overflow-hidden: ẩn phần nội dung tràn ra ngoài Card
     //transition-all duration-300: Thêm hiệu ứng chuyển đổi mượt mà trong 300ms khi hover.
     <Card
-      className={`relative bg-white overflow-hidden border-2 ${borderColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}
+      className={`relative bg-white overflow-hidden border-2 ${borderColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+      onClick={handleClick} // Thêm sự kiện onClick
     >
       <div
         className={`absolute top-0 right-0 w-32 h-32 ${lightColor} rounded-full -translate-y-16 translate-x-16 opacity-30`}
@@ -89,7 +109,7 @@ function StatCard({
           <Icon className={`h-6 w-6 ${textColor}`} />
         </div>
       </CardHeader>
-{/*  phần giá trị của Card */}
+      {/*  phần giá trị của Card */}
       <CardContent className="space-y-3">
         <div className="flex items-baseline justify-between">
           <div className="text-3xl font-bold text-gray-900">

@@ -28,6 +28,8 @@ import OrderTracking from "./pages/OrderTracking";
 import OrderSuccess from "./pages/OrderSuccess";
 import { Navigate, Outlet } from "react-router-dom";
 import Products from "./pages/Products";
+import { Cat } from "lucide-react";
+// import CategoriesPage from "./pages/admin/Category";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -86,6 +88,7 @@ function App() {
             <Route path="warehouse" element={<WarehousePage />} />
             <Route path="orders" element={<OrdersPage />} />
             <Route path="adminrank" element={<AdminAngencyRank />} />
+            {/* <Route path="categories" element={<CategoriesPage />} /> */}
           </Route>
         </Routes>
       </main>

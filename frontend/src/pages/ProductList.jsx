@@ -32,8 +32,8 @@ export default function ProductList({ filteredProducts }) {
     setTimeout(() => setIsVisible(true), 100);
   }, []);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // Số sản phẩm hiển thị trên mỗi trang
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const itemsPerPage = 10; // Số sản phẩm hiển thị trên mỗi trang
 
   const fetchProducts = async () => {
     try {
@@ -75,18 +75,18 @@ export default function ProductList({ filteredProducts }) {
     }
   };
 
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-  console.log("Paginated products:", paginatedProducts); // Kiểm tra dữ liệu
+  // const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  // const paginatedProducts = filteredProducts.slice(
+  //   (currentPage - 1) * itemsPerPage,
+  //   currentPage * itemsPerPage
+  // );
+  // console.log("Paginated products:", paginatedProducts); // Kiểm tra dữ liệu
 
-  const totalProducts = products.length;
-  const totalValue = products.reduce(
-    (sum, product) => sum + (product.price || 0) * (product.soluong || 0),
-    0
-  );
+  // const totalProducts = products.length;
+  // const totalValue = products.reduce(
+  //   (sum, product) => sum + (product.price || 0) * (product.soluong || 0),
+  //   0
+  // );
 
   // Hàm định dạng tiền tệ VNĐ
   const formatCurrency = (amount) => {
@@ -149,15 +149,17 @@ export default function ProductList({ filteredProducts }) {
       </div>
       {/* mobile: 1, tablet: 2, laptop: 3, desktop: 4, large desktop: 5 */}
       <div className="grid grid-cols-1 gap-6 products-grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {console.log("Paginated products:", paginatedProducts)}
-        {paginatedProducts.length === 0 ? (
+        {/* {console.log("Paginated products:", paginatedProducts)}
+        {paginatedProducts.length === 0 ? ( */}
+        {filteredProducts.length === 0 ? (
           <div>
             <p className="mt-8 text-center text-muted-foreground">
               Không có sản phẩm nào được tìm thấy.
             </p>
           </div>
         ) : (
-          paginatedProducts.map((product, index) => (
+          filteredProducts.map((product, index) => (
+          // paginatedProducts.map((product, index) => (
             <div
               className={`product-card flex flex-col items-center ${
                 isVisible ? "animate-in" : ""
@@ -202,7 +204,7 @@ export default function ProductList({ filteredProducts }) {
         )}
       </div>
 
-      <div className="flex justify-center mt-8 space-x-4">
+      {/* <div className="flex justify-center mt-8 space-x-4">
         <button
           className="btn-pagination"
           disabled={currentPage === 1}
@@ -220,7 +222,7 @@ export default function ProductList({ filteredProducts }) {
         >
           Sau
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

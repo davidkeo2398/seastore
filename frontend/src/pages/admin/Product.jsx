@@ -38,67 +38,9 @@ import {
   ShoppingCart,
   DollarSign,
   Archive,
+  List,
 } from "lucide-react";
 import axiosInstance from "@/lib/axios";
-
-//Mock data for demonstration
-// const mockProducts = [
-//   {
-//     id: "1",
-//     name: "iPhone 15 Pro Max",
-//     price: 29990000,
-//     description: "Điện thoại thông minh cao cấp với chip A17 Pro",
-//     category: "Điện thoại",
-//     image: "/placeholder.svg?height=100&width=100",
-//     type: "Electronics",
-//     soluong: 25,
-//     createdAt: "2024-01-15",
-//   },
-//   {
-//     id: "2",
-//     name: "Samsung Galaxy S24 Ultra",
-//     price: 26990000,
-//     description: "Flagship Android với S Pen tích hợp",
-//     category: "Điện thoại",
-//     image: "/placeholder.svg?height=100&width=100",
-//     type: "Electronics",
-//     soluong: 18,
-//     createdAt: "2024-01-20",
-//   },
-//   {
-//     id: "3",
-//     name: "MacBook Pro M3",
-//     price: 45990000,
-//     description: "Laptop chuyên nghiệp với chip M3 mạnh mẽ",
-//     category: "Laptop",
-//     image: "/placeholder.svg?height=100&width=100",
-//     type: "Electronics",
-//     soluong: 12,
-//     createdAt: "2024-02-01",
-//   },
-//   {
-//     id: "4",
-//     name: "AirPods Pro 2",
-//     price: 6490000,
-//     description: "Tai nghe không dây với chống ồn chủ động",
-//     category: "Phụ kiện",
-//     image: "/placeholder.svg?height=100&width=100",
-//     type: "Electronics",
-//     soluong: 45,
-//     createdAt: "2024-02-05",
-//   },
-//   {
-//     id: "5",
-//     name: "iPad Air M2",
-//     price: 16990000,
-//     description: "Máy tính bảng đa năng cho công việc và giải trí",
-//     category: "Tablet",
-//     image: "/placeholder.svg?height=100&width=100",
-//     type: "Electronics",
-//     soluong: 8,
-//     createdAt: "2024-02-10",
-//   },
-// ]
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -134,8 +76,8 @@ export default function ProductsPage() {
   const [agencies, setAgencies] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
 
-  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
-  const itemsPerPage = 7; // Số sản phẩm trên mỗi trang
+  // const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  // const itemsPerPage = 7; // Số sản phẩm trên mỗi trang
 
   const fetchProducts = async () => {
     try {
@@ -180,15 +122,6 @@ export default function ProductsPage() {
     }
   };
 
-  // const fetchWarehouses = async () => {
-  //   try {
-  //     const res = await axiosInstance.get("/warehouse");
-  //     if (res.data && res.data.data) setWarehouses(res.data.data);
-  //   } catch (error) {
-  //     toast.error("Không thể tải danh sách kho.");
-  //   }
-  // };
-
   useEffect(() => {
     fetchProducts();
     fetchCategories();
@@ -208,11 +141,11 @@ export default function ProductsPage() {
     }
   };
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
+  // const handlePageChange = (newPage) => {
+  //   if (newPage >= 1 && newPage <= totalPages) {
+  //     setCurrentPage(newPage);
+  //   }
+  // };
 
   const resetForm = () => {
     setFormData({
@@ -268,12 +201,10 @@ export default function ProductsPage() {
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
       (product.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (product.category || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ;
-      // (product.description || "")
-      //   .toLowerCase()
-      //   .includes(searchTerm.toLowerCase());
+      (product.category || "").toLowerCase().includes(searchTerm.toLowerCase());
+    // (product.description || "")
+    //   .toLowerCase()
+    //   .includes(searchTerm.toLowerCase());
 
     const matchesCategory =
       categoryFilter === "all" ||
@@ -282,18 +213,19 @@ export default function ProductsPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage); // Tổng số trang
-  const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  ); // Sản phẩm hiển thị trên trang hiện tại
+  // const totalPages = Math.ceil(filteredProducts.length / itemsPerPage); // Tổng số trang
+  // const paginatedProducts = filteredProducts.slice(
+  //   (currentPage - 1) * itemsPerPage,
+  //   currentPage * itemsPerPage
+  // ); // Sản phẩm hiển thị trên trang hiện tại
 
   const totalProducts = products.length;
   const totalValue = products.reduce(
     (sum, product) => sum + (product.price || 0) * (product.soluong || 0),
     0
   );
-  const lowStockProducts = products.filter( // Lọc sản phẩm tồn kho dưới 10
+  const lowStockProducts = products.filter(
+    // Lọc sản phẩm tồn kho dưới 10
     (product) => product.soluong < 10
   ).length;
   const categories = [...new Set(products.map((product) => product.category))];
@@ -361,7 +293,7 @@ export default function ProductsPage() {
         <div>
           <h1 className="text-3xl font-bold">Quản lý sản phẩm</h1>
           <p className="mt-1 text-muted-foreground">
-            Quản lý kho hàng và thông tin sản phẩm
+            Quản lý thông tin sản phẩm
           </p>
         </div>
         <Dialog
@@ -418,33 +350,7 @@ export default function ProductsPage() {
                     ))}
                   </select>
                 </div>
-                {/* <div className="space-y-2">
-                  <Label htmlFor="agency_id">Đại lý</Label>
-                  <select
-                    id="agency_id"
-                    name="agency_id"
-                    value={formData.agency_id}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-2 py-1 border rounded"
-                  >
-                    <option value="">Chọn đại lý</option>
-                    {agencies.map((a) => (
-                      <option key={a.agency_id} value={a.agency_id}>
-                        {a.agency_name}
-                      </option>
-                    ))}
-                  </select>
-                </div> */}
-                {/* <div className="space-y-2">
-                  <Label htmlFor="warehouse_id">Kho</Label>
-                  <select id="warehouse_id" name="warehouse_id" value={formData.warehouse_id} onChange={handleInputChange} required className="w-full px-2 py-1 border rounded">
-                    <option value="">Chọn kho</option>
-                    {warehouses.map((w) => (
-                      <option key={w.warehouse_id} value={w.warehouse_id}>{w.warehouse_name}</option>
-                    ))}
-                  </select>
-                </div> */}
+
                 <div className="space-y-2">
                   <Label htmlFor="unit">Đơn vị tính</Label>
                   <Input
@@ -540,38 +446,11 @@ export default function ProductsPage() {
             <p className="text-xs text-muted-foreground">Sản phẩm trong kho</p>
           </CardContent>
         </Card>
-        {/* <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Giá trị kho</CardTitle>
-            <DollarSign className="w-4 h-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {totalValue.toLocaleString("vi-VN")} đ
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Tổng giá trị hàng tồn
-            </p>
-          </CardContent>
-        </Card> */}
-        {/* <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Sắp hết hàng</CardTitle>
-            <Archive className="w-4 h-4 text-orange-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
-              {lowStockProducts}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Sản phẩm {"< 10"} cái
-            </p>
-          </CardContent>
-        </Card> */}
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Danh mục</CardTitle>
-            <ShoppingCart className="w-4 h-4 text-blue-600" />
+            <List className="w-4 h-4 text-blue-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
@@ -586,9 +465,7 @@ export default function ProductsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Danh sách sản phẩm</CardTitle>
-          <CardDescription>
-            Tìm kiếm và quản lý sản phẩm trong kho
-          </CardDescription>
+          <CardDescription>Tìm kiếm sản phẩm ...</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4 mb-6 sm:flex-row">
@@ -631,7 +508,8 @@ export default function ProductsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedProducts.length === 0 ? (
+                {/* {paginatedProducts.length === 0 ? ( */}
+                {filteredProducts.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="py-8 text-center">
                       <div className="flex flex-col items-center gap-2">
@@ -645,7 +523,9 @@ export default function ProductsPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedProducts.map((product) => (
+                  /* ) : (
+                  paginatedProducts.map((product) => ( */
+                  filteredProducts.map((product) => (
                     <TableRow key={product.product_id}>
                       <TableCell>
                         <img
@@ -656,6 +536,12 @@ export default function ProductsPage() {
                       </TableCell>
                       <TableCell className="font-medium">
                         {product.product_name}
+                        {/* <div className="text-sm text-muted-foreground">
+                          {category.find(
+                            (item) => item.category_id === product.category_id
+                          )?.category_name || "N/A"}{" "}
+                          // danh mục sản phẩm
+                        </div> */}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">
@@ -714,7 +600,7 @@ export default function ProductsPage() {
                 )}
               </TableBody>
             </Table>
-            <div className="flex justify-end mt-4 space-x-2">
+            {/* <div className="flex justify-end mt-4 space-x-2">
               <Button
                 variant="outline"
                 disabled={currentPage === 1}
@@ -732,7 +618,7 @@ export default function ProductsPage() {
               >
                 Next
               </Button>
-            </div>
+            </div> */}
           </div>
         </CardContent>
       </Card>
