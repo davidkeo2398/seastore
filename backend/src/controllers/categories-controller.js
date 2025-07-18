@@ -4,7 +4,6 @@ module.exports = {
     getCategories: async (req, res) => {
         try {
             const result = await categoriesService.getCategories();
-
             return res.status(200).json({
                 message: "Get categories sucessully",
                 data: result

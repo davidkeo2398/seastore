@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/select";
 
 export default function Products() {
-  // const { products } = data;
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
   const { addToCart } = useCart();

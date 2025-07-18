@@ -8,17 +8,11 @@ import axiosInstance from "@/lib/axios";
 export default function AgencyRankPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { agencyRankId } = location.state || {};
+  const { agencyRankId } = location.state || {}; // Lấy agencyRankId từ state nếu có nếu k hiện lỗi
 
-  const [agencyRankDetails, setAgencyRankDetails] = useState(null);
+  const [agencyRankDetails, setAgencyRankDetails] = useState(null); //lưu chi tiết hạng đại lý
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // const agencyDetails = {
-  //   name: "Lesch, Hane and Kunde",
-  //   rank: "Premium",
-  //   benefits: ["10% commission", "Priority support", "Exclusive products"],
-  // };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -37,7 +31,9 @@ export default function AgencyRankPage() {
             `/agency-rank/${agencyRankId}`
           );
           if (response.data && response.data.data) {
-            setAgencyRankDetails(response.data.data);
+            // kiểm tra dữ liệu trả về
+            setAgencyRankDetails(response.data.data); //lưu chi tiết hạng đại lý
+            console.log("Agency Rank Details:", response.data.data);
           } else {
             setError("Không tìm thấy chi tiết hạng đại lý.");
           }
@@ -51,12 +47,12 @@ export default function AgencyRankPage() {
       fetchAgencyRankDetails();
     } else {
       setLoading(false);
-      setError("Không có ID hạng đại lý để hiển thị.");
+      setError("Không có thông tin hạng đại lý.");
     }
   }, [agencyRankId]);
 
   return (
-    <div className="container mx-auto px-4 py-8 ">
+    <div className="container px-4 py-8 mx-auto ">
       <Card>
         <CardHeader>
           <CardTitle>Chi tiết hạng đại lý</CardTitle>
@@ -69,10 +65,6 @@ export default function AgencyRankPage() {
               <div className="text-red-600">Lỗi: {error}</div>
             ) : agencyRankDetails ? (
               <>
-                {/* <p>
-                  <strong>Id hạng:</strong> {agencyRankDetails.agency_rank_id}
-                </p> */}
-
                 <p>
                   <strong>Tên hạng:</strong>{" "}
                   {agencyRankDetails.agency_rank_name}
@@ -82,7 +74,6 @@ export default function AgencyRankPage() {
                   <strong>Giá trị tối thiểu của hạng hiện tại:</strong>{" "}
                   {formatCurrency(agencyRankDetails.min_accumulated_value)}
                 </p>
-
 
                 <p>
                   <strong>Chiết khấu được giảm:</strong>{" "}
@@ -95,7 +86,7 @@ export default function AgencyRankPage() {
                 )}
               </>
             ) : (
-              <div>Không tìm thấy thông tin hạng đại lý.</div>
+              <div>Không tìm thấy thông tin hạng đại lý. Bạn có thể thử lại sau hoặc liên hệ với bộ phận hỗ trợ.</div>
             )}
 
             <Button
@@ -103,7 +94,7 @@ export default function AgencyRankPage() {
               className="mt-4"
               onClick={() => navigate("/cart")}
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Quay lại giỏ hàng
             </Button>
           </>

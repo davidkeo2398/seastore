@@ -1,7 +1,31 @@
-const { productAdminService } = require("../../services");
+// const { productAdminService } = require("../../services");
+const productAdminService = require("../../services/admin/product-admin-service");
 
 
 module.exports = {
+  // getProducts : async (req, res) => {
+  //   try {
+  //     const page = parseInt(req.query.page) || 1;
+  //     const limit = parseInt(req.query.limit) || 10;
+
+  //     // const result = await productAdminService.getProductsPaginated(page, limit);
+  //     const result = await productAdminService.getProductsPaginated(page, limit);
+  //     if (!result || result.data.length === 0) {
+  //       return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+  //     }
+
+  //     res.status(200).json({
+  //       message: "Lấy danh sách sản phẩm thành công",
+  //       data: result,
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({
+  //       message: "Lỗi khi lấy danh sách sản phẩm",
+  //       error: error.message,
+  //     });
+  //   }
+  // },
   getProducts: async (req, res) => {
     try {
       const result = await productAdminService.getProducts();

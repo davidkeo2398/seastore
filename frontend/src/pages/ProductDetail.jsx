@@ -15,49 +15,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import ProductList from "./ProductList";
 import { useCart } from "@/context/CartContext";
 import axiosInstance from "@/lib/axios";
+import { Link } from "react-router-dom";
 
-// const mockProduct = {
-//   id: "1",
-//   name: "Premium Wireless Headphones",
-//   brand: { name: "TechSound" },
-//   price: 2500000,
-//   old_price: 3000000,
-//   unit: "chiếc",
-//   `number_of_inventory`: 15,
-//   description:
-//     "Tai nghe không dây cao cấp với chất lượng âm thanh vượt trội, pin 30 giờ và công nghệ chống ồn chủ động. Thiết kế ergonomic mang lại sự thoải mái tối đa cho người sử dụng.",
-//   image:
-//     "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
-// };
-
-// const mockRelatedProducts = [
-//   {
-//     product_id: "2",
-//     name: "Bluetooth Speaker Pro",
-//     price: 1800000,
-//     old_price: 2200000,
-//     unit: "chiếc",
-//     image:
-//       "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
-//   },
-//   {
-//     product_id: "3",
-//     name: "Gaming Mouse RGB",
-//     price: 850000,
-//     unit: "chiếc",
-//     image:
-//       "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
-//   },
-//   {
-//     product_id: "4",
-//     name: "Mechanical Keyboard",
-//     price: 1500000,
-//     old_price: 1800000,
-//     unit: "chiếc",
-//     image:
-//       "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-unselect-gallery-1-202309?wid=5120&hei=2880&fmt=jpeg&qlt=80&.v=1692923778669",
-//   },
-// ];
 export default function ProductDetailPage() {
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -71,7 +30,6 @@ export default function ProductDetailPage() {
 
   const { id } = useParams();
   const { addToCart } = useCart();
-
   const fetchProductDetails = async () => {
     try {
       setIsLoading(true);
@@ -88,9 +46,10 @@ export default function ProductDetailPage() {
       setIsLoading(false);
     }
   };
+  
+  // Lấy sản phẩm liên quan
   const fetchRelatedProducts = async () => {
     setIsLoading(false);
-
     if (product) {
       try {
         const { data } = await axiosInstance.get(`/product`);
@@ -98,7 +57,7 @@ export default function ProductDetailPage() {
         const related = data.data.filter(
           (p) =>
             p.category_id === product.category_id && p.id !== product.product_id
-        );
+        );// lấy cùng danh mục, khác sp hiện tại
         console.log("debug related filter:", related);
         setRelatedProducts(related);
       } catch (error) {
@@ -106,8 +65,9 @@ export default function ProductDetailPage() {
       }
     }
   };
+  console.log("debug relatedProducts:", relatedProducts);
 
-  // Khi productId thay đổi, fetch chi tiết sản phẩm
+  // Khi productId chỉ chạy khi thay đổi, fetch chi tiết sản phẩm
   useEffect(() => {
     if (productId) {
       fetchProductDetails();
@@ -168,7 +128,6 @@ export default function ProductDetailPage() {
             Quay lại danh sách sản phẩm
           </Button>
           {/* </Link> */}
-          
         </div>
       </div>
     );
@@ -282,32 +241,7 @@ export default function ProductDetailPage() {
             {/* <p className="text-sm text-gray-600">Đơn vị: {product.unit}</p> */}
           </div>
 
-          {/* Stock Status */}
-          {/* <div className="flex items-center space-x-2">
-            <Package className="w-5 h-5 text-gray-400" />
-            <span className="text-sm text-gray-600">
-              Tồn kho:{" "}
-              <span className="font-medium">
-                {product.number_of_inventory} {product.unit}
-              </span>
-            </span>
-            {product.number_of_inventory > 0 ? (
-              <Badge
-                variant="secondary"
-                className="text-green-700 border-green-200 bg-green-50"
-              >
-                Còn hàng
-              </Badge>
-            ) : (
-              <Badge
-                variant="secondary"
-                className="text-red-700 border-red-200 bg-red-50"
-              >
-                Hết hàng
-              </Badge>
-            )}
-            
-          </div> */}
+          
         </div>
 
         {/* Description */}
@@ -346,15 +280,25 @@ export default function ProductDetailPage() {
               className="transition-shadow hover:shadow-lg"
             >
               <CardContent className="p-4 space-y-4">
-                <img
-                  src={relatedProduct.image}
-                  alt={relatedProduct.product_name}
-                  className="object-cover w-full h-40 mb-4 rounded-lg"
-                />
-                <h3 className="text-lg font-medium text-gray-900">
+                {/* Hình ảnh sản phẩm */}
+                <Link
+                  to={`/product/${relatedProduct.product_id}`}
+                  className="block"
+                >
+                  <img
+                    src={relatedProduct.image}
+                    alt={relatedProduct.product_name}
+                    className="object-cover w-full h-40 mb-4 rounded-lg"
+                  />
+                </Link>
+
+                {/* Tên sản phẩm */}
+                <h3 className="text-lg font-medium text-gray-900 truncate">
                   {relatedProduct.product_name}
                 </h3>
-                <div className="flex items-center justify-between">
+
+                {/* Giá sản phẩm */}
+                <div className="flex items-center justify-between mt-2">
                   <span className="font-bold text-blue-600">
                     {formatPrice(relatedProduct.price)}
                   </span>
@@ -363,6 +307,25 @@ export default function ProductDetailPage() {
                       {formatPrice(relatedProduct.old_price)}
                     </span>
                   )}
+                </div>
+
+                {/* Nút hành động */}
+                <div className="flex gap-2 mt-4">
+                  {/* Nút Xem chi tiết */}
+                  <Link
+                    to={`/product/${relatedProduct.product_id}`}
+                    className="flex-1 py-2 text-center text-black rounded-md shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800"
+                  >
+                    Xem chi tiết
+                  </Link>
+
+                  {/* Nút Thêm vào giỏ hàng
+                  <button
+                    className="flex-1 py-2 text-center text-white rounded-md shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800"
+                    onClick={() => addToCart(relatedProduct, 1)}
+                  >
+                    Thêm vào giỏ hàng
+                  </button> */}
                 </div>
               </CardContent>
             </Card>

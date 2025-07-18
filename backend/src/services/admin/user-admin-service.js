@@ -1,10 +1,52 @@
 const { User, Role } = require("../../Model/Index");
 const bcrypt = require("bcryptjs");
+//const BaseService = require("../base-service")(User);
 
 module.exports = {
-  getUsers: async () => {
+  // getUsers: async (page, limit) => {
+  //   // try {
+  //   //   const users = await User.findAll({
+  //   //     include: [
+  //   //       {
+  //   //         model: Role,
+  //   //         as: "role",
+  //   //         attributes: ["role_name"],
+  //   //       },
+  //   //     ],
+  //   //     attributes: { exclude: ["password"] },
+  //   //     order: [["createdAt", "DESC"]],
+  //   //   });
+  //   //   return users;
+  //   // } catch (error) {
+  //   //   console.error("Lỗi khi lấy chi tiết người dùng:", error);
+  //   //   throw new Error("Không thể lấy chi tiết người dùng");
+  //   // }
+
+  //   try {
+  //       const baseService = new BaseService(User);
+  //       return await baseService.paginate({
+  //           page,
+  //           limit,
+  //           include: [
+  //           {
+  //               model: Role,
+  //               as: "role",
+  //               attributes: ["role_name"],
+  //           },
+  //           ],
+  //           attributes: { exclude: ["password"] },
+  //       });
+  //   } catch (error) {
+  //     console.error("Lỗi khi lấy chi tiết người dùng:", error);
+  //     throw new Error("Không thể lấy chi tiết người dùng");
+  //   }
+  // },
+
+  getUsers: async (page, limit) => {
     try {
-      const users = await User.findAll({
+      return await BaseService.paginate({
+        page,
+        limit,
         include: [
           {
             model: Role,
@@ -13,73 +55,84 @@ module.exports = {
           },
         ],
         attributes: { exclude: ["password"] },
-        order: [["createdAt", "DESC"]],
       });
-      return users;
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách người dùng:", error);
+      throw new Error("Không thể lấy danh sách người dùng");
+    }
+  },
+
+  countUser: async () => {
+    try {
+      return User.count();
+    } catch (err) {
+      console.error("Lỗi khi đếm người dùng:", err);
+      return 0;
+    }
+  },
+  getUserById: async (userId) => {
+    try {
+      const user = await User.findByPk(userId, {
+        attributes: { exclude: ["password"] },
+        include: [
+          {
+            model: Role,
+            as: "role",
+            attributes: ["role_name"],
+          },
+        ],
+      });
+      return user;
     } catch (error) {
       console.error("Lỗi khi lấy chi tiết người dùng:", error);
       throw new Error("Không thể lấy chi tiết người dùng");
     }
   },
-  getUserById: async (userId) => {
+  createUser: async (userData) => {
     try {
-        const user = await User.findByPk(userId, {
-            attributes: { exclude: ['password'] },
-             include: [{
-                model: Role,
-                as: 'role',
-                attributes: ['role_name']
-            }],
-        });
-        return user;
+      const { password, ...otherData } = userData;
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = await User.create({
+        ...otherData,
+        password: hashedPassword,
+      });
+      const { password: _, ...userWithoutPassword } = newUser.get({
+        plain: true,
+      });
+      return userWithoutPassword;
     } catch (error) {
-        console.error('Lỗi khi lấy chi tiết người dùng:', error);
-        throw new Error('Không thể lấy chi tiết người dùng');
+      console.error("Lỗi khi tạo người dùng:", error);
+      throw new Error("Không thể tạo người dùng");
     }
   },
-  createUser: async (userData) => {
-        try {
-            const { password, ...otherData } = userData;
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const newUser = await User.create({
-                ...otherData,
-                password: hashedPassword
-            });
-            const { password: _, ...userWithoutPassword } = newUser.get({ plain: true });
-            return userWithoutPassword;
-        } catch (error) {
-            console.error('Lỗi khi tạo người dùng:', error);
-            throw new Error('Không thể tạo người dùng');
-        }
-    },
-     updateUser: async (userId, updateData) => {
-        try {
-            const user = await User.findByPk(userId);
-            if (!user) {
-                throw new Error('Không tìm thấy người dùng');
-            }
-            if (updateData.password) {
-                updateData.password = await bcrypt.hash(updateData.password, 10);
-            }
-            await user.update(updateData);
-            const { password, ...userWithoutPassword } = user.get({ plain: true });
-            return userWithoutPassword;
-        } catch (error) {
-            console.error('Lỗi khi cập nhật người dùng:', error);
-            throw new Error('Không thể cập nhật người dùng');
-        }
-    },
-    deleteUser: async (userId) => {
-        try {
-            const user = await User.findByPk(userId);
-            if (!user) {
-                throw new Error('Không tìm thấy người dùng');
-            }
-            await user.destroy();
-            return { message: "Xóa người dùng thành công" };
-        } catch (error) {
-            console.error('Lỗi khi xóa người dùng:', error);
-            throw new Error('Không thể xóa người dùng');
-        }
+  updateUser: async (userId, updateData) => {
+    try {
+      const user = await User.findByPk(userId);
+      if (!user) {
+        throw new Error("Không tìm thấy người dùng");
+      }
+      if (updateData.password) {
+        updateData.password = await bcrypt.hash(updateData.password, 10);
+      }
+      await user.update(updateData);
+      const { password, ...userWithoutPassword } = user.get({ plain: true });
+      return userWithoutPassword;
+    } catch (error) {
+      console.error("Lỗi khi cập nhật người dùng:", error);
+      throw new Error("Không thể cập nhật người dùng");
     }
+  },
+  deleteUser: async (userId) => {
+    try {
+      const user = await User.findByPk(userId);
+      if (!user) {
+        throw new Error("Không tìm thấy người dùng");
+      }
+      await user.destroy();
+      return { message: "Xóa người dùng thành công" };
+    } catch (error) {
+      console.error("Lỗi khi xóa người dùng:", error);
+      throw new Error("Không thể xóa người dùng");
+    }
+  },
 };

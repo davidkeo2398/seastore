@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import "../css/home.css";
 import ProductList from "@/pages/ProductList";
 import CategoriesList from "@/common/Categories/CategoriesList";
@@ -11,6 +11,10 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  // const [sortOrder, setSortOrder] = useState("asc"); // Thứ tự sắp xếp: asc hoặc desc
+  // const [priceRange, setPriceRange] = useState({ min: 0, max: Infinity }); // Khoảng giá
+  // console.log("Price range:", priceRange);
 
   const fetchProducts = async () => {
     try {
@@ -39,16 +43,25 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    console.log("All products:", allProducts);
+    console.log("Selected category:", selectedCategory);
+
     const filtered = allProducts.filter((product) => {
       const matchesName = product.product_name
         .toLowerCase()
-        .includes(searchTerm.toLowerCase()); // Lọc theo tên sản phẩm
-        selectedCategory === "all" || // Nếu chọn "Tất cả", không cần lọc
-        product.category_id === Number(selectedCategory); // Lọc theo danh mục
-        return matchesName ;
-      });
-    setProducts(filtered); // Cập nhật danh sách sản phẩm hiển thị
-  }, [allProducts, searchTerm, selectedCategory]);
+        .includes(searchTerm.toLowerCase());
+      const matchesCategory =
+        selectedCategory === "all" ||
+        product.category_id === Number(selectedCategory);
+      // const matchesPrice =
+      //   product.price >= priceRange.min && product.price <= priceRange.max;
+      return matchesName && matchesCategory;
+    });
+    // .sort((a, b) =>
+    //   sortOrder === "asc" ? a.price - b.price : b.price - a.price
+
+    setProducts(filtered);
+  }, [allProducts, searchTerm, selectedCategory]); // thay đổi cácc biến sẽ kích hoạt useEffect
 
   // Xử lý khi chọn danh mục
   const handleCategorySelect = (categoryId) => {
@@ -59,7 +72,16 @@ export default function Home() {
   // Hiển thị tất cả sản phẩm
   const showAllProducts = () => {
     setSelectedCategory("all");
+    console.log("Showing all products", allProducts);
   };
+
+  // // Xử lý khi thay đổi khoảng giá
+  // const handlePriceChange = (type, value) => {
+  //   setPriceRange((prev) => ({
+  //     ...prev,
+  //     [type]: Number(value) || 0,
+  //   }));
+  // };
 
   return (
     <div className="home-container">
@@ -87,6 +109,20 @@ export default function Home() {
           </button>
         </div>
       </div>
+
+      {/* <div className="filter-panel">
+        <div className="filter-item">
+          <label>Sắp xếp:</label>
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="sort-select"
+          >
+            <option value="asc">Giá: Thấp đến Cao</option>
+            <option value="desc">Giá: Cao đến Thấp</option>
+          </select>
+        </div>
+      </div> */}
 
       <ProductList filteredProducts={products} />
     </div>

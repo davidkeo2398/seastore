@@ -1,3 +1,10 @@
-/* input[type="checkbox"]:checked {
-  accent-color: #2563eb ; /* blue-600 */
-} */
+.checkbox-custom[data-state="checked"] {
+  background-color: #2563eb !important;
+  color: white !important;
+}
+
+.checkbox-custom[data-state="checked"] svg {
+  display: block !important;
+  color: white !important;
+}
+

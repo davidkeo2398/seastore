@@ -19,6 +19,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { X } from "lucide-react";
+import { TermsModal, PrivacyModal } from "./Modal";
 import {
   Select,
   SelectContent,
@@ -32,45 +34,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import LoginDialog from "./LoginDiaLog";
 
-// Mock order data
-// const orderSummary = {
-//   items: [
-//     {
-//       id: "1",
-//       name: "Premium Wireless Headphones",
-//       quantity: 2,
-//       price: 2500000,
-//       image: "/placeholder.svg?height=60&width=60",
-//     },
-//     {
-//       id: "2",
-//       name: "Bluetooth Speaker Pro",
-//       quantity: 1,
-//       price: 1800000,
-//       image: "/placeholder.svg?height=60&width=60",
-//     },
-//   ],
-//   subtotal: 6800000,
-//   shipping: 0,
-//   discount: 500000,
-//   total: 6300000,
-// };
-
 const paymentMethods = [
-  // {
-  //   id: "credit-card",
-  //   name: "Thẻ tín dụng/Ghi nợ",
-  //   description: "Visa, Mastercard, JCB",
-  //   icon: CreditCard,
-  //   popular: true,
-  // },
-  // {
-  //   id: "e-wallet",
-  //   name: "Ví điện tử",
-  //   description: " ZaloPay",
-  //   icon: Smartphone,
-  //   popular: true,
-  // },
   {
     id: "VNPay",
     name: "Ví điện tử",
@@ -78,13 +42,7 @@ const paymentMethods = [
     icon: Smartphone,
     popular: true,
   },
-  // {
-  //   id: "bank-transfer",
-  //   name: "Chuyển khoản ngân hàng",
-  //   description: "Internet Banking, QR Code",
-  //   icon: Building2,
-  //   popular: false,
-  // },
+
   {
     id: "cash",
     name: "Thanh toán khi nhận hàng",
@@ -101,6 +59,8 @@ export default function PayCheckout() {
   const [selectedPayment, setSelectedPayment] = useState("cash");
   const [isProcessing, setIsProcessing] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [formData, setFormData] = useState({
     // Billing info
     fullName: "",
@@ -175,7 +135,7 @@ export default function PayCheckout() {
 
   const checkInvalid = async (fieldName, value) => {
     const regexFullName = /^[\p{L}\s]+$/u;
-    const regexEmail = /\b@\w+\.{1}com\.{1}w+/;
+    const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const regexPhone = /^0\d{9,10}$/;
     const regexAddress = /^[a-zA-ZÀ-ỹ0-9\s,./\-]+$/;
     switch (fieldName) {
@@ -204,14 +164,6 @@ export default function PayCheckout() {
         break;
     }
   };
-
-  // const handleCreateOrder = async () => {
-  //   const response = await axiosInstance.post("/order", payload);
-  //   if (response.status === 200) {
-  //     const createdOrder = response.data.data;
-  //     navigate("/orderTracking", { state: { order: createdOrder } });
-  //   }
-  // };
 
   const fetchPaycheck = async () => {
     try {
@@ -270,20 +222,6 @@ export default function PayCheckout() {
       alert("Vui lòng đồng ý với điều khoản và điều kiện");
       return;
     }
-
-    // Nếu chọn ví điện tử và loại là momo thì giả lập thanh toán thành công
-    // if (selectedPayment === "e-wallet" && formData.eWalletType === "momo") {
-    //   if (!formData.eWalletPhone || formData.eWalletPhone.length < 10) {
-    //     alert("Vui lòng nhập số điện thoại ví MoMo hợp lệ");
-    //     return;
-    //   }
-    //   setShowSuccess(true);
-    //   timeoutRef.current = setTimeout(() => {
-    //     navigate("/orderSuccess");
-    //   }, 2000);
-    //   return;
-    // }
-    // navigate("/orderSuccess");
 
     console.log("form data", formData);
     console.log("userInfo", userInfo);
@@ -359,41 +297,12 @@ export default function PayCheckout() {
     setIsProcessing(false);
   };
 
-  //   if (userInfo.role && userInfo.role.role_name === "admin_agency" || userInfo.role?.role_name === "user") {
-  //     const payload = {
-  //       user_email: userInfo.user.email,
-  //       address_agency: formData.address_user,
-  //       agency_name: formData.full_name,
-  //       phone_agency: formData.phone_user,
-  //       total: getCartTotal(),
-  //       // - discount - calRankDiscount,
-  //       promotion_id: null,
-  //       order_date: getCurrentDateTime(),
-  //       payment_method: "cash",
-  //       products: products,
-  //       promotion_code: localStorage.getItem('promotion_code')
-  //     };
-  //     console.log("payload", payload);
-  //     // setIsProcessing(true);
-  //     const result = await axiosInstance.post("/order", payload, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     console.log("create order for other roles", result);
-  //     removeFromCart();
-  //     navigate('/orderTracking');
-  //     // alert("Thanh toán thành công!");
-  //     // setIsProcessing(false);
-  //   }
-  // };
   // Xử lý đăng nhập thành công
   const handleLoginSuccess = (userData) => {
     console.log("User logged in:", userData);
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
     setShowLoginDialog(false);
-    
   };
 
   const renderPaymentForm = () => {
@@ -402,56 +311,11 @@ export default function PayCheckout() {
         return (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                {/* <Label htmlFor="cardNumber">Số thẻ</Label> */}
-                {/* <Input
-                  id="cardNumber"
-                  placeholder="1234 5678 9012 3456"
-                  value={formData.cardNumber}
-                  onChange={(e) =>
-                    handleInputChange("cardNumber", e.target.value)
-                  }
-                  maxLength={19}
-                /> */}
-              </div>
-              <div>
-                {/* <Label htmlFor="expiryDate">Ngày hết hạn</Label>
-                <Input
-                  id="expiryDate"
-                  placeholder="MM/YY"
-                  value={formData.expiryDate}
-                  onChange={(e) =>
-                    handleInputChange("expiryDate", e.target.value)
-                  }
-                  maxLength={5}
-                /> */}
-              </div>
-              <div>
-                {/* <Label htmlFor="cvv">CVV</Label>
-                <Input
-                  id="cvv"
-                  placeholder="123"
-                  value={formData.cvv}
-                  onChange={(e) => handleInputChange("cvv", e.target.value)}
-                  maxLength={4}
-                /> */}
-              </div>
-              <div className="col-span-2">
-                {/* <Label htmlFor="cardName">Tên trên thẻ</Label>
-                <Input
-                  id="cardName"
-                  placeholder="NGUYEN VAN A"
-                  value={formData.cardName}
-                  onChange={(e) =>
-                    handleInputChange("cardName", e.target.value)
-                  }
-                /> */}
-              </div>
+              <div className="col-span-2"></div>
+              <div></div>
+              <div></div>
             </div>
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              {/* <Shield className="w-4 h-4" /> */}
-              {/* <span>Thông tin thẻ được mã hóa SSL 256-bit</span> */}
-            </div>
+            <div className="flex items-center space-x-2 text-sm text-gray-600"></div>
           </div>
         );
 
@@ -466,9 +330,6 @@ export default function PayCheckout() {
                   handleInputChange("eWalletType", value)
                 }
               >
-                {/* <SelectTrigger>
-                  <SelectValue placeholder="Chọn ví điện tử" />
-                </SelectTrigger> */}
                 <SelectContent>
                   {/* <SelectItem value="momo">MoMo</SelectItem> */}
                   {/* <SelectItem value="zalopay">ZaloPay</SelectItem>
@@ -478,17 +339,7 @@ export default function PayCheckout() {
                 </SelectContent>
               </Select>
             </div>
-            {/* <div>
-              <Label htmlFor="eWalletPhone">Số điện thoại</Label>
-              <Input
-                id="eWalletPhone"
-                placeholder="0123456789"
-                value={formData.eWalletPhone}
-                onChange={(e) =>
-                  handleInputChange("eWalletPhone", e.target.value)
-                }
-              />
-            </div> */}
+
             <div className="p-4 rounded-lg bg-blue-50">
               <p className="text-sm text-blue-800">
                 Bạn sẽ được chuyển đến ứng dụng ví điện tử để hoàn tất thanh
@@ -497,43 +348,6 @@ export default function PayCheckout() {
             </div>
           </div>
         );
-
-      // case "bank-transfer":
-      //   return (
-      //     <div className="space-y-4">
-      //       <div>
-      //         <Label htmlFor="bankCode">Chọn ngân hàng</Label>
-      //         <Select
-      //           value={formData.bankCode}
-      //           onValueChange={(value) => handleInputChange("bankCode", value)}
-      //         >
-      //           <SelectTrigger>
-      //             <SelectValue placeholder="Chọn ngân hàng" />
-      //           </SelectTrigger>
-      //           <SelectContent>
-      //             <SelectItem value="vcb">Vietcombank</SelectItem>
-      //             <SelectItem value="tcb">Techcombank</SelectItem>
-      //             <SelectItem value="mb">MB Bank</SelectItem>
-      //             <SelectItem value="acb">ACB</SelectItem>
-      //             <SelectItem value="vib">VIB</SelectItem>
-      //           </SelectContent>
-      //         </Select>
-      //       </div>
-      //       <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
-      //         <div className="flex items-start space-x-2">
-      //           <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-      //           <div className="text-sm text-yellow-800">
-      //             <p className="mb-1 font-medium">Hướng dẫn chuyển khoản:</p>
-      //             <ul className="space-y-1">
-      //               <li>1. Chọn ngân hàng và tiến hành thanh toán</li>
-      //               <li>2. Sử dụng mã QR hoặc thông tin tài khoản</li>
-      //               <li>3. Đơn hàng sẽ được xử lý sau khi nhận được tiền</li>
-      //             </ul>
-      //           </div>
-      //         </div>
-      //       </div>
-      //     </div>
-      //   );
 
       case "cod":
         return (
@@ -558,31 +372,6 @@ export default function PayCheckout() {
         return null;
     }
   };
-
-  // Hiển thị thông báo thành công khi thanh toán MoMo
-  // if (showSuccess) {
-  //   return (
-  //     <div className="flex flex-col items-center justify-center min-h-[60vh]">
-  //       <div className="p-8 text-center bg-green-100 border border-green-300 rounded-lg shadow-md">
-  //         <h2 className="mb-2 text-2xl font-bold text-green-700">
-  //           Thanh toán thành công!
-  //         </h2>
-  //         <p className="mb-4 text-green-800">
-  //           Cảm ơn bạn đã sử dụng MoMo Test. Đang chuyển hướng...
-  //         </p>
-  //         <div className="flex justify-center gap-4">
-  //           <Button onClick={() => navigate("/")}>Mua tiếp</Button>
-  //           <Button
-  //             variant="outline"
-  //             onClick={() => navigate("/orderTracking")}
-  //           >
-  //             Xem đơn đã mua
-  //           </Button>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="container px-4 py-8 mx-auto">
@@ -700,86 +489,6 @@ export default function PayCheckout() {
                         </p>
                       )}
                     </div>
-                    {/* <div>
-                      <Label htmlFor="city">Tỉnh/Thành phố *</Label>
-                      <Select
-                        value={formData.city}
-                        onValueChange={(value) =>
-                          handleInputChange("city", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn tỉnh/thành" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="hanoi">Hà Nội</SelectItem>
-                          <SelectItem value="hcm">TP. Hồ Chí Minh</SelectItem>
-                          <SelectItem value="danang">Đà Nẵng</SelectItem>
-                          <SelectItem value="haiphong">Gia Lai</SelectItem>
-                          <SelectItem value="cantho">Cần Thơ</SelectItem>
-                          <SelectItem value="hue">Huế</SelectItem>
-                          <SelectItem value="nhatrang">Nha Trang</SelectItem>
-                          <SelectItem value="dalat">Đà Lạt</SelectItem>
-                          <SelectItem value="vungtau">Vũng Tàu</SelectItem>
-                          <SelectItem value="binhduong">Bình Dương</SelectItem>
-                          <SelectItem value="dongnai">Đồng Nai</SelectItem>
-                          <SelectItem value="quangninh">Quảng Ninh</SelectItem>
-                          <SelectItem value="nghean">Nghệ An</SelectItem>
-                          <SelectItem value="binhdinh">Bình Định</SelectItem>
-                          <SelectItem value="phuyen">Phú Yên</SelectItem>
-                          <SelectItem value="kiengiang">Kiên Giang</SelectItem>
-                          <SelectItem value="angiang">An Giang</SelectItem>
-                          <SelectItem value="lamdong">Lâm Đồng</SelectItem>
-                          <SelectItem value="thanhhoa">Thanh Hóa</SelectItem>
-                          <SelectItem value="thaibinh">Thái Bình</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div> */}
-                    {/* <div>
-                      <Label htmlFor="district">Quận/Huyện *</Label>
-                      <Select
-                        value={formData.district}
-                        onValueChange={(value) =>
-                          handleInputChange("district", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn quận/huyện" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="district1">Quận 1</SelectItem>
-                          <SelectItem value="district2">Quận 2</SelectItem>
-                          <SelectItem value="district3">Quận 3</SelectItem>
-                          <SelectItem value="district4">Quận 4</SelectItem>
-                          <SelectItem value="district5">Quận 5</SelectItem>
-                          <SelectItem value="district6">Quận 6</SelectItem>
-                          <SelectItem value="district7">Quận 7</SelectItem>
-                          <SelectItem value="district8">Quận 8</SelectItem>
-                          <SelectItem value="district9">Quận 9</SelectItem>
-                          <SelectItem value="district10">Quận 10</SelectItem>
-                          <SelectItem value="district11">Quận 11</SelectItem>
-                          <SelectItem value="district12">Quận 12</SelectItem>
-                          <SelectItem value="binhthanh">
-                            Quận Bình Thạnh
-                          </SelectItem>
-                          <SelectItem value="govap">Quận Gò Vấp</SelectItem>
-                          <SelectItem value="phunhuan">
-                            Quận Phú Nhuận
-                          </SelectItem>
-                          <SelectItem value="tanbinh">Quận Tân Bình</SelectItem>
-                          <SelectItem value="tanphu">Quận Tân Phú</SelectItem>
-                          <SelectItem value="thuduc">TP. Thủ Đức</SelectItem>
-                          <SelectItem value="binhtan">Quận Bình Tân</SelectItem>
-                          <SelectItem value="hocmon">Huyện Hóc Môn</SelectItem>
-                          <SelectItem value="binhchanh">
-                            Huyện Bình Chánh
-                          </SelectItem>
-                          <SelectItem value="nhabe">Huyện Nhà Bè</SelectItem>
-                          <SelectItem value="cuchi">Huyện Củ Chi</SelectItem>
-                          <SelectItem value="canjo">Huyện Cần Giờ</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div> */}
                   </div>
                 </CardContent>
               </Card>
@@ -835,7 +544,6 @@ export default function PayCheckout() {
                   <div className="mt-6">{renderPaymentForm()}</div>
                 </CardContent>
               </Card>
-              
 
               {/* Terms and Conditions */}
               <Card>
@@ -848,8 +556,9 @@ export default function PayCheckout() {
                         onCheckedChange={(checked) =>
                           handleInputChange("saveInfo", checked)
                         }
+                        className="data-[state=checked]:bg-blue-600 border-gray-300"
                       />
-                      <Label htmlFor="saveInfo" className="text-sm">
+                      <Label htmlFor="saveInfo" className="ml-2 text-sm">
                         Lưu thông tin để thanh toán nhanh hơn lần sau
                       </Label>
                     </div>
@@ -860,23 +569,31 @@ export default function PayCheckout() {
                         onCheckedChange={(checked) =>
                           handleInputChange("agreeTerms", checked)
                         }
-                        className={
-                          formData.agreeTerms
-                            ? "bg-white border-black text-black" // text-white để tick nổi bật trên nền đen
-                            : "border-gray-300"
-                        }
-                      >
-                        <Checkbox.Indicator className="text-black" />
-                      </Checkbox>
+                        className="checkbox-custom"
+                      />
                       <Label htmlFor="agreeTerms" className="text-sm">
                         Tôi đồng ý với{" "}
-                        <a href="#" className="text-blue-600 hover:underline">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowTermsModal(true);
+                          }}
+                          className="text-blue-600 hover:underline"
+                        >
                           Điều khoản và Điều kiện
-                        </a>{" "}
+                        </button>{" "}
                         và{" "}
-                        <a href="#" className="text-blue-600 hover:underline">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowPrivacyModal(true);
+                          }}
+                          className="text-blue-600 hover:underline"
+                        >
                           Chính sách Bảo mật
-                        </a>
+                        </button>
                       </Label>
                     </div>
                   </div>
@@ -985,6 +702,15 @@ export default function PayCheckout() {
           </div>
         </form>
       </div>
+
+      <TermsModal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+      />
+      <PrivacyModal
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+      />
     </div>
   );
 }

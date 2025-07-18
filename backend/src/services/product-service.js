@@ -57,6 +57,13 @@ module.exports = {
       throw new Error("Get products failure: ", err);
     }
   },
+  countProduct: async () => {
+    try {
+      return Product.count();
+    } catch (err) {
+      return 0
+    }
+  },
   getProductById: async (product_id) => {
     try {
       const product = Product.findOne({ where: { product_id: product_id } });

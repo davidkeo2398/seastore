@@ -1,108 +1,119 @@
+/* Container chứa danh sách các danh mục */
 .categories-list {
-  margin-top: 16px;
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 16px;
-  padding: 16px;
-  justify-items: center;
-  justify-content: center;
-  background-color: #e6f0fa; /* xanh nước biển nhạt */
-  border-radius: 10px;
+  margin-top: 16px; /* Khoảng cách phía trên */
+  display: grid; /* Sử dụng lưới để bố trí các phần tử */
+  grid-template-columns: repeat(10, 1fr); /* 10 cột có kích thước bằng nhau */
+  gap: 16px; /* Khoảng cách giữa các phần tử */
+  padding: 16px; /* Khoảng cách bên trong container */
+  justify-items: center; /* Căn giữa các phần tử theo chiều ngang */
+  justify-content: center; /* Căn giữa toàn bộ lưới */
+  background-color: #e6f0fa; /* Màu nền xanh nước biển nhạt */
+  border-radius: 10px; /* Bo tròn các góc */
 }
 
+/* Nút bấm cho từng danh mục */
 .category-btn {
-  width: 90%;
-  margin: 12px auto 0 auto;
-  background: #1e40af; /* xanh nước biển đậm */
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 0;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s, transform 0.2s;
-  display: block;
+  width: 90%; /* Chiều rộng chiếm 90% container */
+  margin: 12px auto 0 auto; /* Căn giữa theo chiều ngang và cách trên 12px */
+  background: #1e40af; /* Màu nền xanh nước biển đậm */
+  color: #fff; /* Màu chữ trắng */
+  border: none; /* Không có viền */
+  border-radius: 6px; /* Bo tròn các góc */
+  padding: 8px 0; /* Khoảng cách trên dưới */
+  font-size: 1rem; /* Kích thước chữ */
+  font-weight: 500; /* Độ đậm chữ */
+  cursor: pointer; /* Con trỏ chuột dạng tay khi hover */
+  transition: background 0.2s, color 0.2s, transform 0.2s; /* Hiệu ứng chuyển đổi */
+  display: block; /* Hiển thị dạng khối */
 }
 
+/* Hiệu ứng khi hover vào nút */
 .category-btn:hover {
-  background: #fff;
-  color: #1e40af;
-  border: 2px solid #1e40af;
-  transform: scale(1.05);
+  background: #fff; /* Đổi màu nền thành trắng */
+  color: #1e40af; /* Đổi màu chữ thành xanh nước biển đậm */
+  border: 2px solid #1e40af; /* Thêm viền xanh nước biển đậm */
+  transform: scale(1.05); /* Phóng to nhẹ */
 }
 
+/* Container chứa toàn bộ danh mục */
 .categories-container {
-  width: 100%;
-  margin: 24px auto;
-  padding: 24px;
-  background-color: #fff; /* trắng */
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  width: 100%; /* Chiều rộng 100% */
+  margin: 24px auto; /* Căn giữa theo chiều ngang và cách trên dưới 24px */
+  padding: 24px; /* Khoảng cách bên trong container */
+  background-color: #fff; /* Màu nền trắng */
+  border-radius: 12px; /* Bo tròn các góc */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ */
 }
 
+/* Tiêu đề của phần danh mục */
 .categories-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #1e40af; /* xanh nước biển đậm */
-  text-align: center;
-  margin-bottom: 24px;
+  font-size: 1.8rem; /* Kích thước chữ lớn */
+  font-weight: bold; /* Chữ đậm */
+  color: #1e40af; /* Màu chữ xanh nước biển đậm */
+  text-align: center; /* Căn giữa chữ */
+  margin-bottom: 24px; /* Khoảng cách dưới */
 }
 
+/* Lưới hiển thị các card danh mục */
 .categories-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* lưới tự động điều chỉnh số cột */
-  gap: 20px;
-  justify-items: center;
+  display: grid; /* Sử dụng lưới */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Tự động điều chỉnh số cột */
+  gap: 20px; /* Khoảng cách giữa các phần tử */
+  justify-items: center; /* Căn giữa các phần tử theo chiều ngang */
 }
 
+/* Card hiển thị từng danh mục */
 .category-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  width: 200px;
-  min-width: 140px;
-  max-width: 120px;
-  height: auto;
-  margin: 0 auto;
-  padding: 0;
-  transition: transform 0.3s;
+  display: flex; /* Sử dụng flexbox */
+  flex-direction: column; /* Sắp xếp theo cột */
+  align-items: center; /* Căn giữa theo chiều ngang */
+  justify-content: flex-start; /* Căn trên theo chiều dọc */
+  background: transparent; /* Nền trong suốt */
+  border: none; /* Không có viền */
+  box-shadow: none; /* Không có đổ bóng */
+  width: 200px; /* Chiều rộng cố định */
+  min-width: 140px; /* Chiều rộng tối thiểu */
+  max-width: 120px; /* Chiều rộng tối đa */
+  height: auto; /* Chiều cao tự động */
+  margin: 0 auto; /* Căn giữa theo chiều ngang */
+  padding: 0; /* Không có khoảng cách bên trong */
+  transition: transform 0.3s; /* Hiệu ứng chuyển đổi khi hover */
 }
 
+/* Hiệu ứng khi hover vào card */
 .category-card.hovered {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.18);
-  border-color: #1e40af;
+  transform: translateY(-5px); /* Dịch chuyển lên trên 5px */
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.18); /* Đổ bóng khi hover */
+  border-color: #1e40af; /* Đổi màu viền */
 }
 
+/* Hình ảnh trong card danh mục */
 .category-image {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border-bottom: 2px solid #1e40af;
-  background: #e6f0fa;
-  border-radius: 100px;
+  width: 100%; /* Chiều rộng 100% */
+  height: 100px; /* Chiều cao cố định */
+  object-fit: cover; /* Cắt ảnh vừa khung */
+  border-bottom: 2px solid #1e40af; /* Viền dưới màu xanh nước biển đậm */
+  background: #e6f0fa; /* Nền xanh nước biển nhạt */
+  border-radius: 100px; /* Bo tròn hình ảnh */
 }
 
+/* Tên danh mục */
 .category-name {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #1e40af; /* xanh nước biển đậm */
-  text-align: center;
-  padding: 12px;
+  font-size: 1.2rem; /* Kích thước chữ */
+  font-weight: 600; /* Độ đậm chữ */
+  color: #1e40af; /* Màu chữ xanh nước biển đậm */
+  text-align: center; /* Căn giữa chữ */
+  padding: 12px; /* Khoảng cách bên trong */
 }
-/* Khi hover, border card và border ảnh cùng màu */
+
+/* Khi hover, viền card và viền ảnh cùng màu */
 .category-card.hovered,
 .category-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.18);
-  border-color: #1e40af;
+  transform: translateY(-5px); /* Dịch chuyển lên trên 5px */
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.18); /* Đổ bóng */
+  border-color: #1e40af; /* Đổi màu viền */
 }
 .category-card.hovered .category-image,
 .category-card:hover .category-image {
-  border-color: #1e40af;
+  border-color: #1e40af; /* Đổi màu viền ảnh */
 }

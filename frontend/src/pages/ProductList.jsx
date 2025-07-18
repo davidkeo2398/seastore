@@ -11,13 +11,13 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-
-export default function ProductList({filteredProducts}) {
+// chi tiết sản phẩm
+//prop filteredProducts: Danh sách sản phẩm đã lọc từ Products.jsx
+export default function ProductList({ filteredProducts }) {
   // const { products } = data;
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false); // Trạng thái hiển thị của sản phẩm
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  // isVisible: Trạng thái hiển thị của sản phẩm.
   const [products, setProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -27,19 +27,19 @@ export default function ProductList({filteredProducts}) {
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-    setTimeout(() => setIsVisible(true), 100);
+    setTimeout(() => setIsVisible(true), 100); // Đặt thời gian trễ để kích hoạt hiệu ứng hiển thị
   }, []);
 
   const fetchProducts = async () => {
     try {
-      // const { data } = await axiosInstance.get("/product");
-      // setProducts(data.data);
-      // setAllProducts(data.data);
-      // console.log("Products fetched successfully", data.data);
-      // if (data.error) {
-      //   console.error("Error fetching products:", data.error);
-      // }
-      setProducts(filteredProducts);
+      const { data } = await axiosInstance.get("/product");
+      setProducts(data.data); // cập nhật danh sách sản phẩm
+      setAllProducts(data.data); // Lưu tất cả sản phẩm để lọc sau này
+      console.log("Products fetched successfully", data.data);
+      if (data.error) {
+        console.error("Error fetching products:", data.error);
+      }
+      // setProducts(filteredProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -53,12 +53,13 @@ export default function ProductList({filteredProducts}) {
       console.error("Error fetching categories:", error);
     }
   };
+
   const handleCategorySelect = (categoryId) => {
     setSelectedCategory(categoryId);
   };
 
   const handleAddToCart = (product) => {
-    addToCart(product, 1); // Default quantity of 1
+    addToCart(product, 1);
     alert("Đã thêm sản phẩm vào giỏ hàng!");
   };
 
@@ -70,7 +71,7 @@ export default function ProductList({filteredProducts}) {
       minimumFractionDigits: 0, // Không hiển thị số lẻ sau dấu phẩy (vd: 1.000.000₫ thay vì 1.000.000,00₫)
     }).format(amount);
   };
-  
+
   // const [products, setProducts] = useState([]);
   // useEffect(() => {
   //   fetchProducts();
@@ -123,6 +124,7 @@ export default function ProductList({filteredProducts}) {
       </div>
       {/* mobile: 1, tablet: 2, laptop: 3, desktop: 4, large desktop: 5 */}
       <div className="grid grid-cols-1 gap-6 products-grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        {/* // từng sản phẩm được lọc */}
         {filteredProducts.map((product, index) => (
           <div
             className={`product-card flex flex-col items-center ${

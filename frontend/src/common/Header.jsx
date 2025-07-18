@@ -22,7 +22,6 @@ const Header = () => {
   console.log("user:", user);
   console.log("isAdmin:", isAdmin);
 
-
   // Xử lý đăng nhập thành công
   const handleLoginSuccess = (userData) => {
     console.log("User logged in:", userData);
@@ -78,11 +77,13 @@ const Header = () => {
         <Link to="/products" className="nav-link" onClick={closeMenu}>
           Danh mục
         </Link>
+        
         {isLoggedIn && (
           <Link to="/orderTracking" className="nav-link" onClick={closeMenu}>
             Đơn hàng của tôi
           </Link>
         )}
+
         {isAdmin && isLoggedIn && (
           <Link to="/admin" className="nav-link">
             Trang quản trị

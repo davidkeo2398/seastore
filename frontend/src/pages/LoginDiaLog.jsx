@@ -42,14 +42,13 @@ export default function LoginDialog({ onClose, onLoginSuccess, onShowRegister })
         password,
       });
       console.log("Login response:", data.data.user);
-
+// token trả về từ server
       if (data.data.accessToken) {
         // document.cookie = `token=${data.data.accessToken}; max-age=14400; path=/`;
-        setAuthToken(data.data.accessToken);
-        setUser({ user: data.data.user });
+        setAuthToken(data.data.accessToken); // lueu token vào sessionStorage
+        setUser({ user: data.data.user }); // lưu thông tin người dùng vào context
         onClose();
         onLoginSuccess(data.data.user);
-        // navigate(data.data.user.isAdmin ? '/admin' : '/home');
         location.reload();
       } else {
         setErrorMessages(data.message);
@@ -61,7 +60,7 @@ export default function LoginDialog({ onClose, onLoginSuccess, onShowRegister })
     }
   };
   const handleGgLogin = () => {
-    signInWithPopup(auth, provider)
+    signInWithPopup(auth, provider) // sử dụng Firebase để đăng nhập bằng Google
       .then((result) => {
         console.log("Google login successful:", result);
         const user = result.user;
@@ -95,7 +94,7 @@ export default function LoginDialog({ onClose, onLoginSuccess, onShowRegister })
         <DialogHeader>
           <DialogTitle>Đăng nhập</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -117,14 +116,14 @@ export default function LoginDialog({ onClose, onLoginSuccess, onShowRegister })
             />
           </div>
           {errorMessages && (
-            <p className="text-red-500 text-sm">{errorMessages}</p>
+            <p className="text-sm text-red-500">{errorMessages}</p>
           )}
-          <Button type="submit" className="w-full bg-slate-400 text-black">
+          <Button type="submit" className="w-full text-black bg-slate-400">
             Đăng nhập
           </Button>
         </form>
         <div className="mt-4">
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-sm text-center text-gray-500">
             Hoặc đăng nhập bằng
           </p>
           <div className="flex justify-center mt-2">
@@ -138,7 +137,7 @@ export default function LoginDialog({ onClose, onLoginSuccess, onShowRegister })
             </button>
           </div>
         </div>
-        <p className="mt-4 text-center text-sm">
+        <p className="mt-4 text-sm text-center">
           Chưa có tài khoản?{" "}
           <button
             type="button"

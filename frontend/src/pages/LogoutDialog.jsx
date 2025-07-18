@@ -7,23 +7,7 @@ export const AuthContext = createContext();
 export const AuthProvider = () => {
   const [user, setUser] = useState(null);
 
-  // useEffect(() => {
-  //   // Check for token in cookies on mount
-  //   const token = document.cookie
-  //     .split('; ')
-  //     .find(row => row.startsWith('token='))
-  //     ?.split('=')[1];
-
-  //   if (token) {
-  //     try {
-  //       const decoded = jwtDecode(token);
-  //       setUser({ iduser: decoded.iduser, isAdmin: decoded.isAdmin });
-  //     } catch (error) {
-  //       console.error('Invalid token', error);
-  //       setUser(null);
-  //     }
-  //   }
-  // };
+  
 
   const logout = () => {
     // Remove token from cookies

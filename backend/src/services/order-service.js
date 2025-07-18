@@ -146,6 +146,13 @@ module.exports = {
       throw new Error("Fail to get orders: ", err);
     }
   },
+  countOrder: async () => {
+    try {
+      return Order.count();
+    } catch (err) {
+      return 0
+    }
+  },
 
   getOrderById: async (orderId) => {
     try {

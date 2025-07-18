@@ -1,7 +1,4 @@
 const { agencyService } = require('../services/index');
-
-
-
 module.exports = {
     getAgencies: async (req, res) => {
         try {

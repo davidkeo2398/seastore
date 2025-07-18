@@ -2,6 +2,7 @@ const { where } = require("sequelize");
 const { userAdminService } = require("../../services");
 const { use } = require("react");
 
+
 module.exports = {
   getUsers: async (req, res) => {
     try {
@@ -11,11 +12,12 @@ module.exports = {
         .json({ message: "Lấy danh sách người dùng thành công", data: result });
     } catch (error) {
       res.status(500).json({
-        message: "++",
+        message: "Lấy danh sách người dùng thất bại",
         error: error.message,
       });
     }
   },
+
   getUserById: async (req, res) => {
     try {
       const result = await userAdminService.getUserById(req.params.id);
