@@ -134,6 +134,9 @@ export default function ProductsPage() {
   const [agencies, setAgencies] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
 
+  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  const itemsPerPage = 7; // Số sản phẩm trên mỗi trang
+
   const fetchProducts = async () => {
     try {
       const response = await axiosInstance.get("/admin/products");
@@ -205,6 +208,12 @@ export default function ProductsPage() {
     }
   };
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       product_name: "",
@@ -224,7 +233,7 @@ export default function ProductsPage() {
   const handleEdit = (product) => {
     setFormData({
       ...product,
-    unit: product.unit === "0" || product.unit === 0 ? "" : product.unit, // So sánh cả số 0 và chuỗi "0"
+      unit: product.unit === "0" || product.unit === 0 ? "" : product.unit, // So sánh cả số 0 và chuỗi "0"
     });
     setIsEditMode(true);
     setIsDialogOpen(true);
@@ -261,10 +270,10 @@ export default function ProductsPage() {
       (product.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (product.category || "")
         .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      (product.description || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+        .includes(searchTerm.toLowerCase()) ;
+      // (product.description || "")
+      //   .toLowerCase()
+      //   .includes(searchTerm.toLowerCase());
 
     const matchesCategory =
       categoryFilter === "all" ||
@@ -273,12 +282,18 @@ export default function ProductsPage() {
     return matchesSearch && matchesCategory;
   });
 
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage); // Tổng số trang
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  ); // Sản phẩm hiển thị trên trang hiện tại
+
   const totalProducts = products.length;
   const totalValue = products.reduce(
     (sum, product) => sum + (product.price || 0) * (product.soluong || 0),
     0
   );
-  const lowStockProducts = products.filter(
+  const lowStockProducts = products.filter( // Lọc sản phẩm tồn kho dưới 10
     (product) => product.soluong < 10
   ).length;
   const categories = [...new Set(products.map((product) => product.category))];
@@ -301,7 +316,10 @@ export default function ProductsPage() {
       setProducts((prev) =>
         prev.map((p) => (p.id === formData.id ? { ...formData } : p))
       );
-      const { data } = await axiosInstance.put(`/admin/products/${formData.id}`, formData);
+      const { data } = await axiosInstance.put(
+        `/admin/products/${formData.id}`,
+        formData
+      );
       fetchProducts();
       toast.success("Cập nhật sản phẩm thành công!");
     } else {
@@ -337,12 +355,12 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
+    <div className="container px-4 py-8 mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Quản lý sản phẩm</h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground">
             Quản lý kho hàng và thông tin sản phẩm
           </p>
         </div>
@@ -355,7 +373,7 @@ export default function ProductsPage() {
         >
           <DialogTrigger asChild>
             <Button className="gap-2 text-black">
-              <Plus variant="outline" className="h-4 w-4 text-black" />
+              <Plus variant="outline" className="w-4 h-4 text-black" />
               Thêm sản phẩm
             </Button>
           </DialogTrigger>
@@ -390,7 +408,7 @@ export default function ProductsPage() {
                     value={formData.category_id}
                     onChange={handleInputChange}
                     required
-                    className="w-full border rounded px-2 py-1"
+                    className="w-full px-2 py-1 border rounded"
                   >
                     <option value="">Chọn danh mục</option>
                     {category.map((cat) => (
@@ -408,7 +426,7 @@ export default function ProductsPage() {
                     value={formData.agency_id}
                     onChange={handleInputChange}
                     required
-                    className="w-full border rounded px-2 py-1"
+                    className="w-full px-2 py-1 border rounded"
                   >
                     <option value="">Chọn đại lý</option>
                     {agencies.map((a) => (
@@ -420,7 +438,7 @@ export default function ProductsPage() {
                 </div> */}
                 {/* <div className="space-y-2">
                   <Label htmlFor="warehouse_id">Kho</Label>
-                  <select id="warehouse_id" name="warehouse_id" value={formData.warehouse_id} onChange={handleInputChange} required className="w-full border rounded px-2 py-1">
+                  <select id="warehouse_id" name="warehouse_id" value={formData.warehouse_id} onChange={handleInputChange} required className="w-full px-2 py-1 border rounded">
                     <option value="">Chọn kho</option>
                     {warehouses.map((w) => (
                       <option key={w.warehouse_id} value={w.warehouse_id}>{w.warehouse_name}</option>
@@ -437,7 +455,7 @@ export default function ProductsPage() {
                     list="unit-list"
                     required
                     placeholder="Chọn hoặc nhập đơn vị"
-                    className="w-full border rounded px-2 py-1"
+                    className="w-full px-2 py-1 border rounded"
                   />
                   <datalist id="unit-list">
                     {units.map((u) => (
@@ -511,11 +529,11 @@ export default function ProductsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Tổng sản phẩm</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
+            <Package className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalProducts}</div>
@@ -523,9 +541,9 @@ export default function ProductsPage() {
           </CardContent>
         </Card>
         {/* <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Giá trị kho</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-600" />
+            <DollarSign className="w-4 h-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
@@ -537,9 +555,9 @@ export default function ProductsPage() {
           </CardContent>
         </Card> */}
         {/* <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Sắp hết hàng</CardTitle>
-            <Archive className="h-4 w-4 text-orange-600" />
+            <Archive className="w-4 h-4 text-orange-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">
@@ -551,9 +569,9 @@ export default function ProductsPage() {
           </CardContent>
         </Card> */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Danh mục</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-blue-600" />
+            <ShoppingCart className="w-4 h-4 text-blue-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
@@ -573,9 +591,9 @@ export default function ProductsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex flex-col gap-4 mb-6 sm:flex-row">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Tìm kiếm sản phẩm..."
@@ -599,7 +617,7 @@ export default function ProductsPage() {
           </div>
 
           {/* Table */}
-          <div className="rounded-md border">
+          <div className="border rounded-md">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -613,11 +631,11 @@ export default function ProductsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts.length === 0 ? (
+                {paginatedProducts.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8">
+                    <TableCell colSpan={7} className="py-8 text-center">
                       <div className="flex flex-col items-center gap-2">
-                        <Package className="h-8 w-8 text-muted-foreground" />
+                        <Package className="w-8 h-8 text-muted-foreground" />
                         <p className="text-muted-foreground">
                           {searchTerm || categoryFilter !== "all"
                             ? "Không tìm thấy sản phẩm phù hợp"
@@ -627,13 +645,13 @@ export default function ProductsPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredProducts.map((product) => (
+                  paginatedProducts.map((product) => (
                     <TableRow key={product.product_id}>
                       <TableCell>
                         <img
                           src={product.image || "/placeholder.svg"}
                           alt={product.product_name}
-                          className="w-16 h-16 object-cover rounded-md border"
+                          className="object-cover w-16 h-16 border rounded-md"
                         />
                       </TableCell>
                       <TableCell className="font-medium">
@@ -679,7 +697,7 @@ export default function ProductsPage() {
                             onClick={() => handleEdit(product)}
                             title="Chỉnh sửa sản phẩm"
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="w-4 h-4" />
                           </Button>
                           <Button
                             variant="destructive"
@@ -687,7 +705,7 @@ export default function ProductsPage() {
                             onClick={() => handleDelete(product.id)}
                             title="Xóa sản phẩm"
                           >
-                            <Trash2 className="h-4 w-4 text-black" />
+                            <Trash2 className="w-4 h-4 text-black" />
                           </Button>
                         </div>
                       </TableCell>
@@ -696,6 +714,25 @@ export default function ProductsPage() {
                 )}
               </TableBody>
             </Table>
+            <div className="flex justify-end mt-4 space-x-2">
+              <Button
+                variant="outline"
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                Pre
+              </Button>
+              <span className="px-4 py-2 border rounded">
+                Trang {currentPage} / {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                Next
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

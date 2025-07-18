@@ -12,7 +12,9 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-export default function ProductList({filteredProducts}) {
+export default function ProductList({ filteredProducts }) {
+  console.log("Filtered products:", filteredProducts); 
+
   // const { products } = data;
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
@@ -30,6 +32,9 @@ export default function ProductList({filteredProducts}) {
     setTimeout(() => setIsVisible(true), 100);
   }, []);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Số sản phẩm hiển thị trên mỗi trang
+
   const fetchProducts = async () => {
     try {
       // const { data } = await axiosInstance.get("/product");
@@ -40,6 +45,8 @@ export default function ProductList({filteredProducts}) {
       //   console.error("Error fetching products:", data.error);
       // }
       setProducts(filteredProducts);
+
+      console.log("data:", filteredProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -62,6 +69,25 @@ export default function ProductList({filteredProducts}) {
     alert("Đã thêm sản phẩm vào giỏ hàng!");
   };
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  console.log("Paginated products:", paginatedProducts); // Kiểm tra dữ liệu
+
+  const totalProducts = products.length;
+  const totalValue = products.reduce(
+    (sum, product) => sum + (product.price || 0) * (product.soluong || 0),
+    0
+  );
+
   // Hàm định dạng tiền tệ VNĐ
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -70,7 +96,7 @@ export default function ProductList({filteredProducts}) {
       minimumFractionDigits: 0, // Không hiển thị số lẻ sau dấu phẩy (vd: 1.000.000₫ thay vì 1.000.000,00₫)
     }).format(amount);
   };
-  
+
   // const [products, setProducts] = useState([]);
   // useEffect(() => {
   //   fetchProducts();
@@ -123,52 +149,78 @@ export default function ProductList({filteredProducts}) {
       </div>
       {/* mobile: 1, tablet: 2, laptop: 3, desktop: 4, large desktop: 5 */}
       <div className="grid grid-cols-1 gap-6 products-grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {filteredProducts.map((product, index) => (
-          <div
-            className={`product-card flex flex-col items-center ${
-              isVisible ? "animate-in" : ""
-            }`}
-            key={index}
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            <img
-              className="product-image"
-              src={product.image}
-              alt={product.product_name}
-            />
-            {/*flex-1: Cho phép phần tử này mở rộng để chiếm hết không gian còn lại,xếp các item con theo chiều dọc */}
-            <div className="flex flex-col flex-1 w-full text-center product-info">
-              <h3 className="truncate product-title">{product.product_name}</h3>
-              <p className="truncate product-desc">{product.description}</p>
-              <div className="flex items-center justify-between mb-3 text-sm product-meta">
-                <span className="product-price">
-                  {formatCurrency(product.price)}{" "}
-                </span>
-                <span className="product-rate"> ⭐ {product.rate}</span>
-              </div>
-              <div className="flex w-full gap-2 product-actions">
-                <button
-                  className="flex-1 btn-add-cart"
-                  onClick={() => handleAddToCart(product)}
-                >
-                  Thêm vào giỏ hàng
-                </button>
-                <button
-                  className="flex-1 btn-detail"
-                  onClick={() => navigate(`/product/${product.product_id}`)}
-                >
-                  Chi tiết
-                </button>
+        {console.log("Paginated products:", paginatedProducts)}
+        {paginatedProducts.length === 0 ? (
+          <div>
+            <p className="mt-8 text-center text-muted-foreground">
+              Không có sản phẩm nào được tìm thấy.
+            </p>
+          </div>
+        ) : (
+          paginatedProducts.map((product, index) => (
+            <div
+              className={`product-card flex flex-col items-center ${
+                isVisible ? "animate-in" : ""
+              }`}
+              key={index}
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <img
+                className="product-image"
+                src={product.image}
+                alt={product.product_name}
+              />
+              {/*flex-1: Cho phép phần tử này mở rộng để chiếm hết không gian còn lại,xếp các item con theo chiều dọc */}
+              <div className="flex flex-col flex-1 w-full text-center product-info">
+                <h3 className="truncate product-title">
+                  {product.product_name}
+                </h3>
+                <p className="truncate product-desc">{product.description}</p>
+                <div className="flex items-center justify-between mb-3 text-sm product-meta">
+                  <span className="product-price">
+                    {formatCurrency(product.price)}{" "}
+                  </span>
+                  <span className="product-rate"> ⭐ {product.rate}</span>
+                </div>
+                <div className="flex w-full gap-2 product-actions">
+                  <button
+                    className="flex-1 btn-add-cart"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    Thêm vào giỏ hàng
+                  </button>
+                  <button
+                    className="flex-1 btn-detail"
+                    onClick={() => navigate(`/product/${product.product_id}`)}
+                  >
+                    Chi tiết
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
-      {filteredProducts.length === 0 && (
-        <p className="mt-8 text-center text-muted-foreground">
-          Không có sản phẩm nào được tìm thấy.
-        </p>
-      )}
+
+      <div className="flex justify-center mt-8 space-x-4">
+        <button
+          className="btn-pagination"
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
+          Pre
+        </button>
+        <span className="px-4 py-2 border rounded">
+          Trang {currentPage} / {totalPages}
+        </span>
+        <button
+          className="btn-pagination"
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
