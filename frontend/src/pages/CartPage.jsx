@@ -29,58 +29,6 @@ import {
 import axiosInstance from "@/lib/axios";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-// Mock cart data
-// const initialCartItems = [
-//   {
-//     id: "1",
-//     name: "Premium Wireless Headphones",
-//     brand: "TechSound",
-//     price: 2500000,
-//     oldPrice: 3000000,
-//     quantity: 2,
-//     image: "/placeholder.svg?height=100&width=100",
-//     unit: "chiếc",
-//     inStock: true,
-//   },
-//   {
-//     id: "2",
-//     name: "Bluetooth Speaker Pro",
-//     brand: "AudioMax",
-//     price: 1800000,
-//     oldPrice: 2200000,
-//     quantity: 1,
-//     image: "/placeholder.svg?height=100&width=100",
-//     unit: "chiếc",
-//     inStock: true,
-//   },
-//   {
-//     id: "3",
-//     name: "Gaming Mouse RGB",
-//     brand: "GameTech",
-//     price: 850000,
-//     quantity: 3,
-//     image: "/placeholder.svg?height=100&width=100",
-//     unit: "chiếc",
-//     inStock: false,
-//   },
-// ];
-// Mock user data with total spent and rank details
-// const user = {
-//   currentRank: "Silver",
-//   totalSpent: 6000000, // Example: 6,000,000 VND spent
-//   totalScore: 1000,
-// };
-
-// // Membership rank thresholds and discounts
-// const rankThresholds = [
-//   { rank: "Silver", threshold: 5000000, discount: 5 }, // 5% discount
-//   { rank: "Gold", threshold: 10000000, discount: 10 }, // 10% discount
-// ];
-
-// useEffect(() => {
-//   console.log("Cart updated:", cart);
-//   setCartItems(cart);
-// }, [cart]);
 
 export default function ShoppingCart() {
   const [cartItems, setCartItems] = useState([]);
@@ -105,7 +53,7 @@ export default function ShoppingCart() {
   const [userInfo, setUserInfo] = useState({});
   const [agency, setAgency] = useState(null);
   const [rankDiscountPercent, setRankDiscountPercent] = useState(0);
-  const [rankDiscountAmount, setRankDiscountAmount] = useState(0);
+  const [rankDiscountAmount, setRankDiscountAmount] = useState(0); // tien giảm giá từ rank
 
   const getSubtotal = useCallback(() => {
     return cartItems.reduce(
@@ -114,12 +62,13 @@ export default function ShoppingCart() {
     );
   }, [cartItems]);
 
-   //tông tiền của giỏ hàng
+  //tông tiền của giỏ hàng
   const getTotal = useCallback(() => {
-    const subtotal = getSubtotal();
+    const subtotal = getSubtotal(); //  trước giảm giá
     return subtotal - rankDiscountAmount - discount;
   }, [getSubtotal, rankDiscountAmount, discount]);
-// tổng sô lượng sản phẩm trong giỏ hàng
+
+  // tổng sô lượng sản phẩm trong giỏ hàng
   const getTotalItems = useCallback(() => {
     return cartItems.reduce(
       (currentTotal, item) => currentTotal + item.quantity,
@@ -134,7 +83,7 @@ export default function ShoppingCart() {
         const userData = userRes.data?.data;
         setUserInfo(userData);
 
-        // Debugging logs
+        // Debug
         console.log("User Data after fetch:", userData);
         console.log("User Role Name:", userData?.role?.role_name);
         console.log("User Agency Rank ID:", userData?.user?.agency_rank_id);
@@ -143,13 +92,16 @@ export default function ShoppingCart() {
           userData?.role?.role_name === "admin_agency" &&
           userData?.user?.agency_rank_id
         ) {
+          // lấy thông tin agency rank nếu người dùng là admin_agency
           const agencyRankRes = await axiosInstance.get(
             `/agency-rank/${userData.user.agency_rank_id}`
           );
           setAgency(agencyRankRes.data.data);
           const percent = agencyRankRes.data.data.discount_percent || 0;
           setRankDiscountPercent(percent);
-        } else {
+        }
+        // k phải agency
+        else {
           setAgency(null);
           setRankDiscountPercent(0);
         }
@@ -161,16 +113,17 @@ export default function ShoppingCart() {
       }
     };
     fetchUserAndAgency();
-  }, []);
+  }, []); // chỉ chạy 1 lần khi component mount
 
   useEffect(() => {
     console.log("Cart updated:", cart);
-    setCartItems(JSON.parse(localStorage.getItem("cart")) || []);
+    setCartItems(JSON.parse(localStorage.getItem("cart")) || []); // cap nhat ds sp trong gio
     fetchPromotion();
   }, [cart]);
 
   useEffect(() => {
     const subtotal = getSubtotal();
+    // tien chiet khau: tong tiền * phần trăm giảm giá rank
     const calRankDiscount = subtotal * (rankDiscountPercent / 100);
     localStorage.setItem("calRankDiscount", calRankDiscount);
     setRankDiscountAmount(calRankDiscount);
@@ -189,31 +142,12 @@ export default function ShoppingCart() {
     }).format(price);
   };
 
+  // tính phần trăm màu đỏ so với giá cũ
   const calculateDiscount = (old_price, newPrice) => {
     return Math.round(((old_price - newPrice) / old_price) * 100);
   };
 
-  // Calculate points to earn (1 point per 10,000 VND, +50% for Gold rank)
-  // const getPointsToEarn = useCallback(() => {
-  //   const basePoints = Math.floor(getSubtotal() / 10000);
-  //   return userInfo.user?.currentRank === "Gold"
-  //     ? Math.floor(basePoints * 1.5)
-  //     : basePoints;
-  // }, [getSubtotal, userInfo.user?.currentRank]);
-
-  // Calculate current rank discount and amount needed for next rank
-  // const getRankDetails = () => {
-  //   // rankThresholds và user mock data không còn được sử dụng, nên sẽ bị loại bỏ.
-  //   // Nếu bạn muốn hiển thị thông tin này, cần lấy dữ liệu rankThresholds từ backend
-  //   // và cập nhật userInfo với totalSpent và currentRank thực tế từ DB.
-  //   return {
-  //     currentDiscount: 0,
-  //     nextRank: null,
-  //     amountToNextRank: 0,
-  //   };
-  // };
-  // const rankDetails = getRankDetails(); // Vẫn giữ để tránh lỗi nếu có chỗ nào khác dùng
-
+  // số lượng sản phẩm trong giỏ hàng
   const handleUpdateQuantity = (id, newQuantity) => {
     console.log("update quantity", id, newQuantity);
     if (newQuantity < 1) return;
@@ -242,11 +176,13 @@ export default function ShoppingCart() {
   };
 
   const getDiscount = (promotion_code) => {
+    // tìm trong ds khuyến mãi
     const promotion = promotions.filter(
       (item) => item.promotion_code === promotion_code
     );
     if (promotion.length > 0) {
       const percent = promotion[0].promotion_percent / 100;
+      // số tiền giảm giá = tổng tiền giỏ hàng * phần trăm khuyến mãi
       const priceReduce = getCartTotal() * percent;
       setDiscount(priceReduce);
       localStorage.setItem("discount", priceReduce);
@@ -259,15 +195,18 @@ export default function ShoppingCart() {
     }
   };
 
+  // k được áp dụng mã giảm giá và chiết khấu đồng thời
   const handleCheckout = async () => {
     setIsLoading(true);
-    // Simulate API call
-    if (discount + calculateDiscount > getSubtotal()) {
+    // Kiểm tra nếu cả mã giảm giá và chiết khấu hạng đại lý 
+    if (discount > 0 && rankDiscountAmount > 0) {
       alert(
-        "Không thể áp dụng mã giảm giá và chiết khấu đồng thời! Mời chọn lại mã giảm giá"
+        "Bạn không thể áp dụng cả mã giảm giá và chiết khấu hạng đại lý đồng thời. Vui lòng chọn một trong hai."
       );
+      setIsLoading(false);
+      return;
     } else {
-      localStorage.setItem("finalOrderTotal", getTotal());
+      localStorage.setItem("finalOrderTotal", getTotal()); // lưu tổng tiền cuối cùng
       alert("Đang chuyển đến trang thanh toán...");
       navigate("/PayCheckout");
       setIsLoading(false);
@@ -313,6 +252,7 @@ export default function ShoppingCart() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Giỏ hàng</h1>
+            {/* số lượng trong giỏ hàng */}
             <p className="mt-1 text-gray-600">
               {getTotalItems()} sản phẩm trong giỏ hàng
             </p>
@@ -338,6 +278,7 @@ export default function ShoppingCart() {
                         alt={item.product_name}
                         className="object-cover w-24 h-24 border border-gray-200 rounded-lg"
                       />
+                      {/* nếu có giá cũ thì hiển thị badge giảm giá */}
                       {item.old_price && (
                         <Badge
                           variant="destructive"
@@ -355,7 +296,7 @@ export default function ShoppingCart() {
                       )}
                     </div>
 
-                    {/* Product Info */}
+                    {/* thông tin sản phẩm */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-2">
                         <div>
@@ -364,6 +305,7 @@ export default function ShoppingCart() {
                           </h3>
                           <p className="text-sm text-gray-600">{item.brand}</p>
                         </div>
+                        {/* Remove Button */}
                         <Button
                           variant="ghost"
                           size="sm"
@@ -379,6 +321,7 @@ export default function ShoppingCart() {
                         <span className="font-bold text-blue-600">
                           {formatPrice(item.price)}
                         </span>
+                        {/* nếu giá cũ gạch ngang */}
                         {item.old_price && (
                           <span className="text-sm text-gray-500 line-through">
                             {formatPrice(item.old_price)}
@@ -389,7 +332,7 @@ export default function ShoppingCart() {
                         </span> */}
                       </div>
 
-                      {/* Quantity Controls */}
+                      {/* giam số lượng */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center border border-gray-300 rounded-md">
                           <Button
@@ -406,6 +349,7 @@ export default function ShoppingCart() {
                           >
                             <Minus className="w-3 h-3" />
                           </Button>
+                          {/* // Số lượng sản phẩm */}
                           <Input
                             type="number"
                             min="1"
@@ -419,6 +363,8 @@ export default function ShoppingCart() {
                             disabled={item.quantity >= item.number_of_inventory}
                             className="w-16 h-8 text-center border-0 focus-visible:ring-0"
                           />
+
+                          {/* nút tăng */}
                           <Button
                             variant="ghost"
                             size="sm"
@@ -584,6 +530,7 @@ export default function ShoppingCart() {
                           setCouponCode(value === "none" ? "" : value);
                           getDiscount(value);
                         }}
+                        // ẩn SelectTrigger nếu là admin_agency
                         disabled={
                           isApplyingCoupon ||
                           appliedCoupon !== null ||
@@ -594,7 +541,6 @@ export default function ShoppingCart() {
                           <SelectValue placeholder="Chọn mã giảm giá" />
                         </SelectTrigger>
                         <SelectContent className="w-[300px] max-h-[200px] overflow-y-auto">
-                          {/* "None" option with value "none" */}
                           <SelectItem value="none">Không chọn</SelectItem>
 
                           {promotions.map((promotion, index) => (

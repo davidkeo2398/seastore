@@ -138,6 +138,13 @@ module.exports = {
       throw new Error("Failed to create order");
     }
   },
+    countOrder: async () => {
+    try {
+      return Order.count();
+    } catch (err) {
+      return 0
+    }
+  },
   getOrders: async () => {
     try {
       const orders = Order.findAll();

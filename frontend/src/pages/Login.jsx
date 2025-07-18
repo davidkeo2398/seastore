@@ -12,9 +12,10 @@ export default function Login ({ onClose }) {
     const email = form.email.value;
     const password = form.password.value;
     try {
+      // gửi yêu cầu đăng nhập
       const { data } = await axiosInstance.post("/login", { password, email });
       if (data.token) {
-        setAuthToken(data.token);
+        setAuthToken(data.token);// lưu token vào sessionStorage
         if (data.user.isAdmin) {
           window.location.href = '/admin';
         } else {
@@ -30,15 +31,15 @@ export default function Login ({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded shadow-lg w-full max-w-md relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="relative w-full max-w-md p-6 bg-white rounded shadow-lg">
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500 hover:text-black"
+          className="absolute text-gray-500 top-2 right-2 hover:text-black"
         >
           ✕
         </button>
-        <h2 className="text-lg font-bold mb-2">Đăng nhập vào tài khoản của bạn</h2>
+        <h2 className="mb-2 text-lg font-bold">Đăng nhập vào tài khoản của bạn</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="email" className="block text-sm font-medium">Email</label>
@@ -48,7 +49,7 @@ export default function Login ({ onClose }) {
               type="email"
               placeholder="Email của bạn"
               required
-              className="w-full border rounded px-3 py-2"
+              className="w-full px-3 py-2 border rounded"
             />
           </div>
           <div className="space-y-2">
@@ -59,7 +60,7 @@ export default function Login ({ onClose }) {
               type="password"
               placeholder="Mật khẩu"
               required
-              className="w-full border rounded px-3 py-2"
+              className="w-full px-3 py-2 border rounded"
             />
           </div>
           <p className="text-red-500">{errorMessages}</p>

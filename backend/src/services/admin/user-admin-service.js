@@ -21,6 +21,14 @@ module.exports = {
       throw new Error("Không thể lấy chi tiết người dùng");
     }
   },
+  countUser: async () => {
+    try {
+      return User.count();
+    } catch (err) {
+      console.error("Lỗi khi đếm người dùng:", err);
+      return 0;
+    }
+  },
   getUserById: async (userId) => {
     try {
         const user = await User.findByPk(userId, {
