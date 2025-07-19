@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
 
-const CartContext = createContext();
-
-export function CartProvider({ children }) {
+const CartContext = createContext(); // tạo context cho giỏ hàng
+// quản lý giỏ hàng 
+export function CartProvider({ children }) { // tạo provider cho giỏ hàng
   const [cart, setCart] = useState([]);
 
   const addToCart = (product, quantity) => {

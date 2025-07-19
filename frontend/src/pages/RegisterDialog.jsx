@@ -35,7 +35,7 @@ export default function RegisterPage({ onClose, onShowLogin }) {
   // Regex để kiểm tra tên (chỉ chữ cái và khoảng trắng)
   const regexName = /^[\p{L}\s]+$/u;
   // Regex để kiểm tra email
-  const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  const regexEmail = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
   // Regex để kiểm tra số điện thoại (10 chữ số)
   const regexPhone = /^\d{10}$/;
 

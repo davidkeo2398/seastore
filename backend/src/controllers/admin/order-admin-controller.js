@@ -1,5 +1,6 @@
 const { orderAdminService } = require("../../services");
 
+// lấy lại service trả ra thông báo
 module.exports = {
   getOrders: async (req, res) => {
     try {

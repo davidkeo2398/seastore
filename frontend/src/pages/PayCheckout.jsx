@@ -18,7 +18,8 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
+// import { Checkbox } from "@/components/ui/checkbox";
+import { SunIcon } from "@radix-ui/react-icons";
 import {
   Select,
   SelectContent,
@@ -32,6 +33,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import LoginDialog from "./LoginDiaLog";
 import { TermsModal, PrivacyModal } from "./Modal";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const paymentMethods = [
   {
@@ -138,37 +140,66 @@ export default function PayCheckout() {
     }
   };
 
-  const checkInvalid = async (fieldName, value) => {
-    const regexFullName = /^[\p{L}\s]+$/u;
-    const regexEmail = /\b@\w+\.{1}com\.{1}w+/;
-    const regexPhone = /^0\d{9,10}$/;
-    const regexAddress = /^[a-zA-ZÀ-ỹ0-9\s,./\-]+$/;
-    switch (fieldName) {
-      case "full_name":
-        return regexFullName.test(value.trim())
-          ? setInvalidFullName(false)
-          : setInvalidFullName(true);
-        break;
-      case "user_email":
-        return regexEmail.test(value.trim())
-          ? setInvalidEmail(false)
-          : setInvalidEmail(true);
-        break;
-      case "phone_user":
-        return regexPhone.test(value.trim())
-          ? setInvalidPhone(false)
-          : setInvalidPhone(true);
-        break;
-      case "address_user":
-        return regexAddress.test(value.trim())
-          ? setInvalidAddress(false)
-          : setInvalidAddress(true);
-        break;
-      default:
-        return;
-        break;
+  const checkInvalid = (fieldName, value) => {
+    const validators = {
+      full_name: {
+        regex: /^[\p{L}\s]+$/u,
+        setInvalid: setInvalidFullName,
+      },
+      user_email: {
+        regex: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        setInvalid: setInvalidEmail,
+      },
+      phone_user: {
+        regex: /^0\d{9,10}$/,
+        setInvalid: setInvalidPhone,
+      },
+      address_user: {
+        regex: /^[a-zA-ZÀ-ỹ0-9\s,./\-]+$/,
+        setInvalid: setInvalidAddress,
+      },
+    };
+
+    const validator = validators[fieldName];
+    if (validator) {
+      const isValid = validator.regex.test(value.trim());
+      validator.setInvalid(!isValid);
+      return isValid;
     }
   };
+
+  // const checkInvalid = async (fieldName, value) => {
+  //   const regexFullName = /^[\p{L}\s]+$/u;
+  //   const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  //   const regexPhone = /^0\d{9,10}$/;
+  //   const regexAddress = /^[a-zA-ZÀ-ỹ0-9\s,./\-]+$/;
+
+  //   switch (fieldName) {
+  //     case "full_name":
+  //       return regexFullName.test(value.trim())
+  //         ? setInvalidFullName(false)
+  //         : setInvalidFullName(true);
+  //       break;
+  //     case "user_email":
+  //       return regexEmail.test(value.trim())
+  //         ? setInvalidEmail(false)
+  //         : setInvalidEmail(true);
+  //       break;
+  //     case "phone_user":
+  //       return regexPhone.test(value.trim())
+  //         ? setInvalidPhone(false)
+  //         : setInvalidPhone(true);
+  //       break;
+  //     case "address_user":
+  //       return regexAddress.test(value.trim())
+  //         ? setInvalidAddress(false)
+  //         : setInvalidAddress(true);
+  //       break;
+  //     default:
+  //       return;
+  //       break;
+  //   }
+  // };
 
   // const handleCreateOrder = async () => {
   //   const response = await axiosInstance.post("/order", payload);
@@ -200,7 +231,7 @@ export default function PayCheckout() {
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    checkInvalid(field, value);
+    // checkInvalid(field, value);
     console.log(`Updated ${field}:`, value);
   };
 
@@ -462,43 +493,6 @@ export default function PayCheckout() {
           </div>
         );
 
-      // case "bank-transfer":
-      //   return (
-      //     <div className="space-y-4">
-      //       <div>
-      //         <Label htmlFor="bankCode">Chọn ngân hàng</Label>
-      //         <Select
-      //           value={formData.bankCode}
-      //           onValueChange={(value) => handleInputChange("bankCode", value)}
-      //         >
-      //           <SelectTrigger>
-      //             <SelectValue placeholder="Chọn ngân hàng" />
-      //           </SelectTrigger>
-      //           <SelectContent>
-      //             <SelectItem value="vcb">Vietcombank</SelectItem>
-      //             <SelectItem value="tcb">Techcombank</SelectItem>
-      //             <SelectItem value="mb">MB Bank</SelectItem>
-      //             <SelectItem value="acb">ACB</SelectItem>
-      //             <SelectItem value="vib">VIB</SelectItem>
-      //           </SelectContent>
-      //         </Select>
-      //       </div>
-      //       <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
-      //         <div className="flex items-start space-x-2">
-      //           <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-      //           <div className="text-sm text-yellow-800">
-      //             <p className="mb-1 font-medium">Hướng dẫn chuyển khoản:</p>
-      //             <ul className="space-y-1">
-      //               <li>1. Chọn ngân hàng và tiến hành thanh toán</li>
-      //               <li>2. Sử dụng mã QR hoặc thông tin tài khoản</li>
-      //               <li>3. Đơn hàng sẽ được xử lý sau khi nhận được tiền</li>
-      //             </ul>
-      //           </div>
-      //         </div>
-      //       </div>
-      //     </div>
-      //   );
-
       case "cod":
         return (
           <div className="space-y-4">
@@ -522,31 +516,6 @@ export default function PayCheckout() {
         return null;
     }
   };
-
-  // Hiển thị thông báo thành công khi thanh toán MoMo
-  // if (showSuccess) {
-  //   return (
-  //     <div className="flex flex-col items-center justify-center min-h-[60vh]">
-  //       <div className="p-8 text-center bg-green-100 border border-green-300 rounded-lg shadow-md">
-  //         <h2 className="mb-2 text-2xl font-bold text-green-700">
-  //           Thanh toán thành công!
-  //         </h2>
-  //         <p className="mb-4 text-green-800">
-  //           Cảm ơn bạn đã sử dụng MoMo Test. Đang chuyển hướng...
-  //         </p>
-  //         <div className="flex justify-center gap-4">
-  //           <Button onClick={() => navigate("/")}>Mua tiếp</Button>
-  //           <Button
-  //             variant="outline"
-  //             onClick={() => navigate("/orderTracking")}
-  //           >
-  //             Xem đơn đã mua
-  //           </Button>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="container px-4 py-8 mx-auto">
@@ -724,33 +693,43 @@ export default function PayCheckout() {
               <Card>
                 <CardContent className="pt-6">
                   <div className="space-y-4">
-                    <div className="flex ce-x-2 bgitems-center accent-red-500">
-                      <Checkbox
-                        id="saveInfo"
-                        checked={!!formData.saveInfo}
-                        onCheckedChange={(checked) =>
-                          handleInputChange("saveInfo", checked)
+                    {/* Lưu thông tin */}
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className={`flex items-center justify-center w-6 h-6 rounded-full ${
+                          formData.saveInfo
+                            ? "bg-black text-white"
+                            : "border-gray-600 border-2"
+                        }`}
+                        onClick={() =>
+                          handleInputChange("saveInfo", !formData.saveInfo)
                         }
-                      />
+                      >
+                        {formData.saveInfo && (
+                          <span className="block w-3 h-3 bg-white rounded-full"></span>
+                        )}
+                      </div>
                       <Label htmlFor="saveInfo" className="text-sm">
                         Lưu thông tin để thanh toán nhanh hơn lần sau
                       </Label>
                     </div>
+
+                    {/* Đồng ý điều khoản */}
                     <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="agreeTerms"
-                        checked={!!formData.agreeTerms}
-                        onCheckedChange={(checked) =>
-                          handleInputChange("agreeTerms", checked)
-                        }
-                        className={
+                      <div
+                        className={`flex items-center justify-center w-6 h-6 rounded-full ${
                           formData.agreeTerms
-                            ? "bg-white border-black text-black" // text-white để tick nổi bật trên nền đen
-                            : "border-gray-300"
+                            ? "bg-black text-white"
+                            : "border-gray-600 border-2"
+                        }`}
+                        onClick={() =>
+                          handleInputChange("agreeTerms", !formData.agreeTerms)
                         }
                       >
-                        <Checkbox.Indicator className="text-black" />
-                      </Checkbox>
+                        {formData.agreeTerms && (
+                          <span className="block w-2 h-2 bg-white rounded-full"></span>
+                        )}
+                      </div>
                       <Label htmlFor="agreeTerms" className="text-sm">
                         Tôi đồng ý với{" "}
                         <span

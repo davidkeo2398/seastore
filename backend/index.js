@@ -23,38 +23,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware for user authentication
-const middleware = (req, res, next) => {
-  if (!req.headers['authorization']) {
-    return res.status(403).json({ message: 'Không có mã nào được cung cấp' });
-  }
-  const token = req.headers['authorization'].split(' ')[1];
-  jwt.verify(token, 'your_jwt_secret', (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: 'Không thể xác thực mã' });
-    }
-    req.userId = decoded.iduser;
-    next();
-  });
-};
 
-// Middleware for admin authentication
-const adminMiddleware = (req, res, next) => {
-  if (!req.headers['authorization']) {
-    return res.status(403).json({ message: 'Không có mã nào được cung cấp' });
-  }
-  const token = req.headers['authorization'].split(' ')[1];
-  jwt.verify(token, 'your_jwt_secret', (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: 'Không thể xác thực mã' });
-    }
-    if (decoded.isAdmin !== 1) {
-      return res.status(401).json({ message: 'Không đủ quyền truy cập' });
-    }
-    req.userId = decoded.iduser;
-    next();
-  });
-};
 const {router, adminRouter} = require('./src/routes/index');
 app.use('/api', router);
 //admin

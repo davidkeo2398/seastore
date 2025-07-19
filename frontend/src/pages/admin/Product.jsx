@@ -67,8 +67,8 @@ export default function ProductsPage() {
     old_price: "",
     image: "",
     category_id: "",
-    agency_id: "1",
-    warehouse_id: "",
+    agency_id: 1,
+    warehouse_id: 1,
     unit: "",
     number_of_inventory: 50,
   });
@@ -156,7 +156,7 @@ export default function ProductsPage() {
       image: "",
       category_id: "",
       agency_id: "1",
-      warehouse_id: "",
+      warehouse_id: "1",
       unit: "",
       number_of_inventory: 50,
     });
@@ -240,6 +240,8 @@ export default function ProductsPage() {
       !formData.unit ||
       formData.number_of_inventory === ""
     ) {
+      console.error("Dữ liệu không hợp lệ:", productData);
+
       toast.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
       return;
     }
@@ -258,10 +260,10 @@ export default function ProductsPage() {
       try {
         const productData = {
           product_name: formData.product_name,
-          price: Number(formData.price),
+          price: parseFloat(formData.price.replace(/\./g, "")), // Loại bỏ dấu chấm và chuyển thành số
           description: formData.description,
           old_price: formData.old_price
-            ? Number(formData.old_price)
+            ? parseFloat(formData.old_price.replace(/\./g, ""))
             : undefined,
           image: formData.image,
           category_id: Number(formData.category_id),
@@ -272,16 +274,25 @@ export default function ProductsPage() {
           unit: formData.unit,
           number_of_inventory: Number(formData.number_of_inventory),
         };
+        console.log(
+          "Dữ liệu gửi đến API:",
+          JSON.stringify(productData, null, 2)
+        );
+
         await axiosInstance.post("/admin/products", productData);
         toast.success("Thêm sản phẩm thành công!");
         fetchProducts();
       } catch (error) {
-        console.error("Lỗi khi thêm sản phẩm:", error);
+        console.error(
+          "Lỗi khi thêm sản phẩm:",
+          error.response?.data || error.message
+        );
         alert("Lỗi khi thêm sản phẩm: " + error.message);
         toast.error("Thêm sản phẩm thất bại!");
         return;
       }
     }
+
     setIsDialogOpen(false);
     resetForm();
   }

@@ -29,7 +29,6 @@ import {
 import axiosInstance from "@/lib/axios";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-
 export default function ShoppingCart() {
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +61,7 @@ export default function ShoppingCart() {
     );
   }, [cartItems]);
 
-  //tông tiền của giỏ hàng
+  //tông tiền của giỏ hàng, gọi callback để tính toán lại khi có sự thay đổi
   const getTotal = useCallback(() => {
     const subtotal = getSubtotal(); //  trước giảm giá
     return subtotal - rankDiscountAmount - discount;
@@ -147,6 +146,9 @@ export default function ShoppingCart() {
     return Math.round(((old_price - newPrice) / old_price) * 100);
   };
 
+  const handleRedirect = () => {
+    navigate("/"); // Chuyển hướng đến Home
+  };
   // số lượng sản phẩm trong giỏ hàng
   const handleUpdateQuantity = (id, newQuantity) => {
     console.log("update quantity", id, newQuantity);
@@ -198,7 +200,7 @@ export default function ShoppingCart() {
   // k được áp dụng mã giảm giá và chiết khấu đồng thời
   const handleCheckout = async () => {
     setIsLoading(true);
-    // Kiểm tra nếu cả mã giảm giá và chiết khấu hạng đại lý 
+    // Kiểm tra nếu cả mã giảm giá và chiết khấu hạng đại lý
     if (discount > 0 && rankDiscountAmount > 0) {
       alert(
         "Bạn không thể áp dụng cả mã giảm giá và chiết khấu hạng đại lý đồng thời. Vui lòng chọn một trong hai."
@@ -229,9 +231,17 @@ export default function ShoppingCart() {
             <Button
               size="lg"
               className="text-black bg-blue-600 hover:bg-blue-700"
-              onClick={() => navigate("/")}
+              onClick={() => {
+                try {
+                  console.log("Trở về trang chủ");
+                  navigate("/"); // Chuyển hướng đến Home
+                } catch (error) {
+                  console.error("Lỗi khi chuyển hướng:", error);
+                  alert("Đã xảy ra lỗi khi chuyển hướng. Vui lòng thử lại!"); // Hiển thị thông báo lỗi
+                }
+              }}
             >
-              <ArrowLeft className="w-4 h-4 mr-2" /> 
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Tiếp tục mua sắm
             </Button>
           </div>
@@ -471,6 +481,9 @@ export default function ShoppingCart() {
                       navigate("/rank", {
                         state: { agencyRankId: agency?.agency_rank_id },
                       })
+                    }
+                    disabled={
+                      userInfo.role?.role_name !== "admin_agency" || !agency
                     }
                   >
                     <Info className="w-4 h-4 mr-2" />

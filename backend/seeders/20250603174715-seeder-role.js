@@ -1,5 +1,6 @@
 'use strict';
 
+// tạo dữ liệu mẫu cho bảng role
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {

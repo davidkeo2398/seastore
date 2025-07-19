@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import axiosInstance from "@/lib/axios";
+import { toast } from "sonner";
 
 export default function AgencyRankPage() {
   const navigate = useNavigate();
@@ -47,8 +48,10 @@ export default function AgencyRankPage() {
       fetchAgencyRankDetails();
     } else {
       setLoading(false);
-      setError("Không có thông tin hạng đại lý.");
-    }
+      toast("Không có ID hạng đại lý để hiển thị.", {
+      });
+      setError("Không có ID hạng đại lý để hiển thị.");
+      }
   }, [agencyRankId]);
 
   return (

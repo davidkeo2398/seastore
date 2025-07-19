@@ -2,6 +2,7 @@ const { verifyToken } = require("../config/authentication");
 const { User, Role } = require("../Model/Index");
 //401 k xác thực, token không hợp lệ
 //403 k có quyền truy cập, token hợp lệ nhưng không có quyền
+
 const authMiddleware = async (req, res, next) => {
   try {
     //kiểm tra token trong header
@@ -50,7 +51,7 @@ const authMiddleware = async (req, res, next) => {
     });
   }
 };
-
+//kiểm tra quyền admin
 const adminAuthMiddleware = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];

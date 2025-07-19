@@ -48,7 +48,6 @@ import {
 } from "lucide-react";
 import axiosInstance from "@/lib/axios";
 
-
 // ham tính tổng doanh thu
 function calculateTotalRevenue(orders) {
   return orders
@@ -99,11 +98,14 @@ export default function OrdersPage() {
   //   toast.success("Cập nhật trạng thái đơn hàng thành công!");
   // };
 
+  // Cập nhật trạng thái đơn hàng
   const handleStatusChange = async (order_id, newStatus) => {
     try {
       await axiosInstance.patch(`/admin/order/${order_id}`, {
         status: newStatus,
       });
+
+      // cập nhật trạng thái nếu khớp cập nhật trạng thái đơn hàng
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.order_id === order_id ? { ...order, status: newStatus } : order
@@ -116,15 +118,17 @@ export default function OrdersPage() {
     }
   };
   const handleViewDetails = (order) => {
-    setSelectedOrder(order);
+    console.log("Selected order:", order);
+    setSelectedOrder(order); // lưu đơn hàng đã chọn
+    // mở dialog chi tiết đơn hàng
     setIsDetailDialogOpen(true);
   };
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       order.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.order_id.toLowerCase().includes(searchTerm.toLowerCase());
+      order.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.order_code?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       statusFilter === "all" || order.status === statusFilter;
@@ -134,7 +138,9 @@ export default function OrdersPage() {
     return matchesSearch && matchesStatus;
   });
 
+  // tổng số lượng đơn hàng
   const totalOrders = orders.length;
+  // tổng doanh thu khi hoàn thành
   const totalRevenue = calculateTotalRevenue(orders);
   const pendingOrders = orders.filter(
     (order) => order.status === "pending"
@@ -142,8 +148,6 @@ export default function OrdersPage() {
   const completedOrders = orders.filter(
     (order) => order.status === "completed"
   ).length;
-
-
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -164,34 +168,38 @@ export default function OrdersPage() {
     }
   };
 
-  const getPaymentBadge = (status) => {
-    switch (status) {
-      case "completed":
-        return (
-          <Badge className="text-green-800 bg-green-100 hover:bg-green-200">
-            Đã thanh toán
-          </Badge>
-        );
-      case "pending":
-        return (
-          <Badge className="text-orange-800 bg-orange-100 hover:bg-orange-200">
-            Chờ thanh toán
-          </Badge>
-        );
-      case "failed":
-        return <Badge variant="destructive">Thất bại</Badge>;
-      case "cancelled":
-        return (
-          <Badge className="text-gray-800 bg-gray-100 hover:bg-gray-200">
-            Đã hoàn tiền
-          </Badge>
-        );
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
+  // const getPaymentBadge = (status) => {
+  //   switch (status) {
+  //     case "completed":
+  //       return (
+  //         <Badge className="text-green-800 bg-green-100 hover:bg-green-200">
+  //           Đã thanh toán
+  //         </Badge>
+  //       );
+  //     case "pending":
+  //       return (
+  //         <Badge className="text-orange-800 bg-orange-100 hover:bg-orange-200">
+  //           Chờ thanh toán
+  //         </Badge>
+  //       );
+  //     case "failed":
+  //       return <Badge variant="destructive">Thất bại</Badge>;
+  //     case "cancelled":
+  //       return (
+  //         <Badge className="text-gray-800 bg-gray-100 hover:bg-gray-200">
+  //           Đã hoàn tiền
+  //         </Badge>
+  //       );
+  //     default:
+  //       return <Badge variant="outline">{status}</Badge>;
+  //   }
+  // };
 
   // Tính tổng tiền theo user
+
+  // tổng tiền theo user
+
+  // Tính tổng tiền theo user dựa trên các đơn hàng
   const userTotals = {};
   orders.forEach((order) => {
     if (!order.user_id) return;
@@ -202,6 +210,7 @@ export default function OrdersPage() {
         total: 0,
       };
     }
+    // Cộng dồn tổng tiền cho user
     userTotals[order.user_id].total += Number(order.total) || 0;
     console.log("userTotals", userTotals);
   });
@@ -315,7 +324,7 @@ export default function OrdersPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tất cả trạng thái</SelectItem>
-                <SelectItem value="processing">Đang xử lý</SelectItem>
+                <SelectItem value="pending">Đang xử lý</SelectItem>
                 <SelectItem value="completed">Hoàn thành</SelectItem>
               </SelectContent>
             </Select>
@@ -474,69 +483,76 @@ export default function OrdersPage() {
               Thông tin chi tiết về đơn hàng {selectedOrder?.order_id}
             </DialogDescription>
           </DialogHeader>
-          {selectedOrder && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium">Thông tin khách hàng</h4>
-                  <div className="space-y-1 text-sm">
-                    <div className="flex items-center gap-2">
-                      <User className="w-3 h-3" />
-                      {selectedOrder.user_name || "N/A"}
-                    </div>
-                    <div>
-                      <span className="font-medium">Số điện thoại: </span>
-                      {selectedOrder.phone_user ||
-                        selectedOrder.phone_agency ||
-                        "N/A"}
+          {selectedOrder ? (
+            (console.log("Selected order:", selectedOrder),
+            (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Thông tin khách hàng</h4>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex items-center gap-2">
+                        <User className="w-3 h-3" />
+                        {selectedOrder.user_name || "N/A"}
+                      </div>
+                      <div>
+                        <span className="font-medium">Số điện thoại: </span>
+                        {selectedOrder.phone_user ||
+                          selectedOrder.phone_agency ||
+                          "N/A"}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-medium">Thông tin đơn hàng</h4>
-                  <div className="space-y-1 text-sm">
-                    <div>Mã: {selectedOrder.order_id}</div>
-                    <div>
-                      Ngày:{" "}
-                      {new Date(selectedOrder.order_date).toLocaleDateString(
-                        "vi-VN"
-                      )}
-                    </div>
-                    {/* <div>
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Thông tin đơn hàng</h4>
+                    <div className="space-y-1 text-sm">
+                      <div>Mã: {selectedOrder.order_id}</div>
+                      <div>
+                        Ngày:{" "}
+                        {new Date(selectedOrder.order_date).toLocaleDateString(
+                          "vi-VN"
+                        )}
+                      </div>
+                      {/* <div>
                       Phương thức giao hàng: {selectedOrder.shipping_method}
                     </div> */}
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-medium">Địa chỉ giao hàng</h4>
+                  <div className="space-y-1 text-sm">
+                    <div>{selectedOrder.address_agency}</div>
+                    <div>
+                      {/* {selectedOrder.city || "N/A"},{" "} */}
+                      {selectedOrder.country || "Việt Nam"}{" "}
+                      {selectedOrder.zipCode || ""}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between pt-4 border-t">
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">
+                      Trạng thái đơn hàng
+                    </div>
+                    {getStatusBadge(selectedOrder.status)}
+                  </div>
+                  <div className="space-y-1 text-right">
+                    <div className="text-sm text-muted-foreground">
+                      Tổng tiền
+                    </div>
+                    <div className="text-2xl font-bold">
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(selectedOrder.total)}
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Địa chỉ giao hàng</h4>
-                <div className="space-y-1 text-sm">
-                  <div>{selectedOrder.address_agency}</div>
-                  <div>
-                    {/* {selectedOrder.city || "N/A"},{" "} */}
-                    {selectedOrder.country || "Việt Nam"}{" "}
-                    {selectedOrder.zipCode || ""}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center justify-between pt-4 border-t">
-                <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">
-                    Trạng thái đơn hàng
-                  </div>
-                  {getStatusBadge(selectedOrder.status)}
-                </div>
-                <div className="space-y-1 text-right">
-                  <div className="text-sm text-muted-foreground">Tổng tiền</div>
-                  <div className="text-2xl font-bold">
-                    {new Intl.NumberFormat("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }).format(selectedOrder.total)}
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))
+          ) : (
+            <p> Không có thông tin chi tiết đơn hàng nào được chọn.</p>
           )}
         </DialogContent>
       </Dialog>

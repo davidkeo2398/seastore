@@ -15,9 +15,11 @@ const generateToken = (user) => {
     resources: user.resources,
     role_name: role.name
   };
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '3h' });
+  //env JWT_SECRET 
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '8h' });
 }
-//xác thực token
+
+// giải mã token
 const verifyToken = (token) => {
     // Kiểm tra token có tồn tại không
   if (!token) {

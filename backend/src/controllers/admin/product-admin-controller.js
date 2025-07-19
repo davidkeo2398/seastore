@@ -59,8 +59,8 @@ module.exports = {
         old_price,
         image,
         category_id,
-        agency_id,
-        warehouse_id,
+        agency_id: agency_id || 1, // Mặc định là 1 nếu không có giá trị
+        warehouse_id: warehouse_id || 1, // Mặc định là 1 nếu không có giá trị
         unit,
         number_of_inventory,
         status

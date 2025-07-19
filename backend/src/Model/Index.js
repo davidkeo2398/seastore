@@ -21,7 +21,6 @@ const Warehouse = WarehouseModel(sequelize);
 const Product = ProductModel(sequelize);
 const Promotion = PromotionModel(sequelize);
 
-// --- KÍCH HOẠT VÀ BỔ SUNG CÁC MỐI QUAN HỆ ---
 // User - Role
 Role.hasMany(User, { foreignKey: 'role_id', as: 'users' });
 User.belongsTo(Role, { foreignKey: 'role_id', as: 'role' });

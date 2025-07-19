@@ -1,22 +1,6 @@
 const { Sequelize, DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/dbcontext");
-// const { Order } = require("./Index");
 
-// sequelize.define('User',
-//     {
-//         user_id: {
-//             type: DataTypes.INTEGER,
-//             primaryKey: true,
-//             autoIncrement: true
-//         },
-//         user_name: {
-//             type: DataTypes.STRING,
-//             allowNull: false
-
-//         },
-
-//     }
-// );
 
 module.exports = (sequelize) => {
   class User extends Model {

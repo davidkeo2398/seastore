@@ -1,5 +1,6 @@
 const { Order, Categories } = require("../../Model/Index");
 
+// xử lý  logic, database
 module.exports = {
     getOrders: async()=> {
         try{
