@@ -19,7 +19,11 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "@/lib/firebase";
 import setAuthToken from "@/ultils/Authentication";
 
-export default function LoginDialog({ onClose, onLoginSuccess, onShowRegister }) {
+export default function LoginDialog({
+  onClose,
+  onLoginSuccess,
+  onShowRegister,
+}) {
   const [errorMessages, setErrorMessages] = useState("");
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -42,7 +46,7 @@ export default function LoginDialog({ onClose, onLoginSuccess, onShowRegister })
         password,
       });
       console.log("Login response:", data.data.user);
-// token trả về từ server
+      // token trả về từ server
       if (data.data.accessToken) {
         // document.cookie = `token=${data.data.accessToken}; max-age=14400; path=/`;
         setAuthToken(data.data.accessToken); // lueu token vào sessionStorage

@@ -78,6 +78,19 @@ module.exports = {
     vnp_Params["vnp_SecureHash"] = signed;
     vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false }); // link thanh toán
     console.log('vnpUrl', returnUrl)
-    return vnpUrl;
+    return vnpUrl; //
   },
+  // vnpayReturn: async (req, res) => {
+  //   const vnp_Params = req.query;
+
+  //   // Kiểm tra mã phản hồi từ VNPay
+  //   const responseCode = vnp_Params["vnp_ResponseCode"];
+  //   if (responseCode === "00") {
+  //     // Thanh toán thành công
+  //     return res.redirect("/orderSuccess");
+  //   } else {
+  //     // Thanh toán thất bại hoặc bị hủy
+  //     return res.redirect("/cart");
+  //   }
+  // },
 };

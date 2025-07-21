@@ -1,5 +1,6 @@
 // tạo mã code order
 module.exports = {
+  // Hàm để tạo mã code dựa trên ngày giờ hiện tại
   generateCode: (date) => {
     const now = new Date();
     // 2. Ghép nối các thành phần thời gian lại với nhau

@@ -1,25 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  CreditCard,
-  Package,
-  Truck,
-  CheckCircle,
-  Clock,
-  AlertCircle,
-  Eye,
-  RefreshCw,
-  ArrowLeft,
-  Save,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import axiosInstance from "@/lib/axios";
-import {
   Table,
   TableBody,
   TableCell,
@@ -27,60 +7,35 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import axiosInstance from "@/lib/axios";
 
-export default function OrderTrackingWithCheckboxes() {
-  const location = useLocation();
-  const { order: createdOrder } = location.state || {}; // Lấy order từ location.state
-
+export default function OrderTracking() {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchOrderId, setSearchOrderId] = useState( //tìm kiếm theo mã đơn hàng
-    createdOrder?.order_id?.toString() || ""
-  ); // Khởi tạo từ createdOrder
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
+  // Fetch orders from API
   const fetchOrders = async () => {
     try {
       const response = await axiosInstance.get("/order/my-order");
-      if (response.data && response.data.data.length > 0) {
-        setOrders(response.data.data); //câp nhật danh sách đơn hàng
-        setLoading(false);
-      } else { // Nếu không có đơn hàng, đặt orders thành mảng rỗng
-        setOrders([]);
-      }
-      setLoading(false);
+      setOrders(response.data.data || []);
     } catch (error) {
       console.error("Error fetching orders:", error);
       setOrders([]);
-      setLoading(false);
     }
   };
- 
+
   useEffect(() => {
     fetchOrders();
   }, []);
-  
-  useEffect(() => {
-    // Nếu có đơn hàng mới được tạo, cập nhật searchOrderId 
-    if (createdOrder) {
-      setSearchOrderId(createdOrder.order_id.toString());
-    }
-  }, [createdOrder]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(price);
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-      minimumFractionDigits: 0, // Không hiển thị số lẻ sau dấu phẩy (vd: 1.000.000₫ thay vì 1.000.000,00₫)
-    }).format(amount);
   };
 
   const formatDate = (dateString) => {
@@ -92,75 +47,87 @@ export default function OrderTrackingWithCheckboxes() {
       minute: "2-digit",
     });
   };
-  
-  const getStatusText = (status) => {
+
+  const getStatusBadge = (status) => {
     switch (status) {
-      case "processing":
-        return "Đang xử lý";
+      case "pending":
+        return <span className="text-yellow-600">Đang xử lý</span>;
       case "completed":
-        return "Hoàn thành";
+        return <span className="text-green-600">Hoàn thành</span>;
+      case "cancelled":
+        return <span className="text-red-600">Đã hủy</span>;
       default:
-        return status; // Hiển thị trạng thái gốc nếu không khớp
+        return <span>{status}</span>;
     }
   };
 
-  const filteredOrders = orders.filter((order) => {
-    const search = searchOrderId.toLowerCase();
-    return (
-      !searchOrderId ||
-      order.order_id.toString().includes(search) ||
-      (order.full_name && order.full_name.toLowerCase().includes(search)) ||
-      (order.user_email && order.user_email.toLowerCase().includes(search))
-    );
-  });
-
-  
+  const handleViewDetails = (order) => {
+    setSelectedOrder(order);
+    setIsDetailDialogOpen(true);
+  };
 
   return (
     <div className="container px-4 py-8 mx-auto">
-      <h1 className="mb-6 text-3xl font-bold">Quản lý đơn hàng đã đặt</h1>
-      {/* <div className="mb-4">
-        <Input
-          type="text"
-          placeholder="Tìm kiếm theo tên, email,hoặc ID..."
-          value={searchOrderId}
-          onChange={(e) => setSearchOrderId(e.target.value)}
-          className="max-w-sm"
-        />
-      </div> */}
+      <h1 className="mb-6 text-3xl font-bold">Theo dõi đơn hàng</h1>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Mã đơn hàng</TableHead>
-            <TableHead>Tổng đơn</TableHead>
+            <TableHead>Tên đại lý</TableHead>
+            <TableHead>Tổng tiền</TableHead>
             <TableHead>Trạng thái</TableHead>
             <TableHead>Phương thức thanh toán</TableHead>
-            <TableHead>Ngày tạo</TableHead>
+            <TableHead>Ngày đặt</TableHead>
+            <TableHead>Hành động</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredOrders.length > 0 ? (
-            filteredOrders.map((orders) => (
-              <TableRow key={orders.order_id}>
-                <TableCell className="font-medium">{orders.order_code}</TableCell>
-                <TableCell>{formatCurrency(orders.total)}</TableCell>
-                <TableCell>{orders.status}</TableCell>
-                <TableCell>{orders.payment_method}</TableCell>
-                <TableCell>{formatDate(orders.order_date)}</TableCell>
+          {orders.length > 0 ? (
+            orders.map((order) => (
+              <TableRow key={order.order_id}>
+                <TableCell>{order.order_code}</TableCell>
+                <TableCell>{order.agency_name}</TableCell>
+                <TableCell>{formatPrice(order.total)}</TableCell>
+                <TableCell>{getStatusBadge(order.status)}</TableCell>
+                <TableCell>{order.payment_method}</TableCell>
+                <TableCell>{formatDate(order.order_date)}</TableCell>
+                <TableCell>
+                  <Button onClick={() => handleViewDetails(order)}>Chi tiết</Button>
+                </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={11}
-                className="py-4 text-center text-muted-foreground"
-              >
-                Bạn cần đăng nhập hoặc không tìm thấy đơn hàng cho tài khoản này.
+              <TableCell colSpan={7} className="text-center">
+                Không có đơn hàng nào.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
+
+      {/* Dialog Chi tiết đơn hàng */}
+      <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Chi tiết đơn hàng</DialogTitle>
+          </DialogHeader>
+          {selectedOrder ? (
+            <div>
+              <p><strong>Mã đơn hàng:</strong> {selectedOrder.order_code}</p>
+              <p><strong>Tên đại lý:</strong> {selectedOrder.agency_name}</p>
+              <p><strong>Địa chỉ:</strong> {selectedOrder.address_agency}</p>
+              <p><strong>Số điện thoại:</strong> {selectedOrder.phone_agency}</p>
+              <p><strong>Tổng tiền:</strong> {formatPrice(selectedOrder.total)}</p>
+              <p><strong>Trạng thái:</strong> {getStatusBadge(selectedOrder.status)}</p>
+              <p><strong>Phương thức thanh toán:</strong> {selectedOrder.payment_method}</p>
+              <p><strong>Ngày đặt:</strong> {formatDate(selectedOrder.order_date)}</p>
+            </div>
+          ) : (
+            <p>Không có thông tin chi tiết.</p>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

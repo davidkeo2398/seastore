@@ -1,6 +1,6 @@
 const { Promotion } = require('../Model/Index');
 
-
+// Lấy danh sách khuyến mãi
 module.exports = {
     getPromotions: async () => {
         try {

@@ -16,7 +16,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -33,6 +33,7 @@ export default function ShoppingCart() {
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { cart, addToCart, updateQuantity, removeFromCart, getCartTotal } =
     useCart();
 
@@ -76,6 +77,7 @@ export default function ShoppingCart() {
   }, [cartItems]);
 
   useEffect(() => {
+    // lấy thông tin user và agency
     const fetchUserAndAgency = async () => {
       try {
         const userRes = await axiosInstance.get("/auth/userInfo");
@@ -120,6 +122,7 @@ export default function ShoppingCart() {
     fetchPromotion();
   }, [cart]);
 
+  // chiết khấu từ rank
   useEffect(() => {
     const subtotal = getSubtotal();
     // tien chiet khau: tong tiền * phần trăm giảm giá rank
@@ -177,6 +180,7 @@ export default function ShoppingCart() {
     setIsApplyingCoupon(false);
   };
 
+  // khu vực lấy thông tin khuyến mãi
   const getDiscount = (promotion_code) => {
     // tìm trong ds khuyến mãi
     const promotion = promotions.filter(
@@ -208,12 +212,28 @@ export default function ShoppingCart() {
       setIsLoading(false);
       return;
     } else {
+      // Reset mã giảm giá
+      setCouponCode("");
+      setDiscount(0);
+      setAppliedCoupon(null);
+      localStorage.removeItem("promotion_code");
+      localStorage.removeItem("discount");
+
       localStorage.setItem("finalOrderTotal", getTotal()); // lưu tổng tiền cuối cùng
       alert("Đang chuyển đến trang thanh toán...");
       navigate("/PayCheckout");
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const vnp_ResponseCode = params.get("vnp_ResponseCode");
+
+    if (vnp_ResponseCode && vnp_ResponseCode !== "00") {
+      alert("Thanh toán bị hủy. Bạn đã quay lại giỏ hàng.");
+    }
+  }, [location]);
 
   if (cartItems.length === 0) {
     return (

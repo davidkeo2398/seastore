@@ -44,6 +44,7 @@ module.exports = {
     }
   },
 
+  // kiêm tra emai, username đã tồn tại hay chưa
   signup: async (userInfo) => {
     const {
       email,

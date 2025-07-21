@@ -147,7 +147,7 @@ export default function PayCheckout() {
         setInvalid: setInvalidFullName,
       },
       user_email: {
-        regex: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        regex:  /^[a-zA-Z0-9]([a-zA-Z0-9._-])*[a-zA-Z0-9]@gmail\.com$/,
         setInvalid: setInvalidEmail,
       },
       phone_user: {
@@ -231,7 +231,7 @@ export default function PayCheckout() {
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // checkInvalid(field, value);
+    checkInvalid(field, value); // Kiểm tra điều kiện ngay khi thay đổi
     console.log(`Updated ${field}:`, value);
   };
 
@@ -267,19 +267,7 @@ export default function PayCheckout() {
       return;
     }
 
-    // Nếu chọn ví điện tử và loại là momo thì giả lập thanh toán thành công
-    // if (selectedPayment === "e-wallet" && formData.eWalletType === "momo") {
-    //   if (!formData.eWalletPhone || formData.eWalletPhone.length < 10) {
-    //     alert("Vui lòng nhập số điện thoại ví MoMo hợp lệ");
-    //     return;
-    //   }
-    //   setShowSuccess(true);
-    //   timeoutRef.current = setTimeout(() => {
-    //     navigate("/orderSuccess");
-    //   }, 2000);
-    //   return;
-    // }
-    // navigate("/orderSuccess");
+   
 
     console.log("form data", formData);
     console.log("userInfo", userInfo);
@@ -323,6 +311,7 @@ export default function PayCheckout() {
       payment_method: selectedPayment.toLowerCase(),
       products: products,
       promotion_code: promotion_code,
+     
     };
     console.log("payload", payload);
 
@@ -351,7 +340,7 @@ export default function PayCheckout() {
     } else {
       navigate("/orderTracking");
     }
-    alert("Thanh toán thành công!");
+    alert("Đặt hàng thành công!");
     setIsProcessing(false);
   };
 

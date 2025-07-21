@@ -64,7 +64,7 @@ module.exports = {
         order_date: order_date,
         payment_method: payment_method,
         promotion_code: promotion_code ?? null,
-        status: "completed",
+        status: "pending", // mặc định là đã hoàn thành
       };
       console.log("payload", payload);
       // ghi vào database
@@ -81,11 +81,12 @@ module.exports = {
         )
       );
 
-      //giảm số lượng tồn kho
+      //giảm số lượng tồn kho : tổng : hạng
       if (newOrder.status === "completed") {
         await Promise.all(
           orderItems.map((product) => {
-            Product.findOne({ where: { product_id: product.product_id } }).then(
+            Product.findOne({ where: { product_id: product.product_id } }).
+            then( // xử lý : decrement trừ số lượng tồn kho
               (model) => {
                 model.decrement({ number_of_inventory: product.quantity }); // giảm số lượng tồn kho
               }
@@ -108,7 +109,7 @@ module.exports = {
           rankName = "Gold";
         } else if (ordersTotal >= 5_000_000) {
           rankName = "Silver";
-        } else if (ordersTotal >= 100_000) {
+        } else if (ordersTotal >= 1_000_000) {
           rankName = "Bronze";
         } else {
           rankName = null;
