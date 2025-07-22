@@ -66,7 +66,7 @@ module.exports = {
   },
   getProductById: async (product_id) => {
     try {
-      const product = Product.findOne({ where: { product_id: product_id } });
+      const product = await Product.findByPk(product_id);
       return product;
     } catch (err) {
       throw new Error("Get a product fail: ", err);

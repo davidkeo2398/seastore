@@ -80,13 +80,17 @@ export default function OrdersPage() {
   };
 
   const fetchOrderDetails = async (order_id) => {
-    setOrderItems([]);
+    setOrderItems([]); // Xóa dữ liệu cũ trước khi tải mới
     try {
-      const response = await axiosInstance.get(`/order-item/${order_id}`);
-      setOrderItems(response.data || []);
+      const response = await axiosInstance.get(`/admin/order/${order_id}`);
+      console.log("Admin order details response:", response.data);
+
+      setSelectedOrder(response.data);
+      setOrderItems(response.data.items || []);
     } catch (error) {
-      console.error("Error fetching order details:", error);
+      console.error("Error fetching admin order details:", error);
       setOrderItems([]);
+      toast.error("Không thể lấy chi tiết đơn hàng!");
     }
   };
 
@@ -112,10 +116,12 @@ export default function OrdersPage() {
 
     const currentStatusInfo = statusFlow[currentOrder.status];
     const isAllowedTransition = currentStatusInfo.next.includes(newStatus);
-    const isCancelled = newStatus === 'cancelled';
+    const isCancelled = newStatus === "cancelled";
 
     if (!isAllowedTransition && !(isCancelled && currentStatusInfo.canCancel)) {
-      toast.error(`Không thể thay đổi trạng thái từ "${currentOrder.status}" thành "${newStatus}".`);
+      toast.error(
+        `Không thể thay đổi trạng thái từ "${currentOrder.status}" thành "${newStatus}".`
+      );
       return;
     }
 
@@ -126,7 +132,9 @@ export default function OrdersPage() {
     setOrders(updatedOrders);
 
     try {
-      await axiosInstance.patch(`/admin/order/${order_id}`, { status: newStatus });
+      await axiosInstance.patch(`/admin/order/${order_id}`, {
+        status: newStatus,
+      });
       toast.success("Cập nhật trạng thái đơn hàng thành công!");
     } catch (error) {
       toast.error("Cập nhật trạng thái thất bại!");
@@ -144,8 +152,9 @@ export default function OrdersPage() {
     const searchTermLower = searchTerm.toLowerCase();
     const matchesSearch =
       order.user_name?.toLowerCase().includes(searchTermLower) ||
-      order.email?.toLowerCase().includes(searchTermLower) ||
-      order.order_code?.toLowerCase().includes(searchTermLower);
+      order.user_email?.toLowerCase().includes(searchTermLower) ||
+      order.order_code?.toLowerCase().includes(searchTermLower) ||
+      order.phone_user?.toLowerCase().includes(searchTermLower);
     const matchesStatus =
       statusFilter === "all" || order.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -153,17 +162,33 @@ export default function OrdersPage() {
 
   const totalOrders = orders.length;
   const totalRevenue = calculateTotalRevenue(orders);
-  const pendingOrders = orders.filter((order) => order.status === "pending").length;
-  const completedOrders = orders.filter((order) => order.status === "completed").length;
+  const pendingOrders = orders.filter(
+    (order) => order.status === "pending"
+  ).length;
+  const completedOrders = orders.filter(
+    (order) => order.status === "completed"
+  ).length;
 
   const getStatusBadge = (status) => {
     switch (status) {
       case "pending":
-        return <Badge className="text-yellow-800 bg-yellow-100 hover:bg-yellow-200">Đang xử lý</Badge>;
+        return (
+          <Badge className="text-yellow-800 bg-yellow-100 hover:bg-yellow-200">
+            Đang xử lý
+          </Badge>
+        );
       case "delivering":
-        return <Badge className="text-blue-800 bg-blue-100 hover:bg-blue-200">Đang vận chuyển</Badge>;
+        return (
+          <Badge className="text-blue-800 bg-blue-100 hover:bg-blue-200">
+            Đang vận chuyển
+          </Badge>
+        );
       case "completed":
-        return <Badge className="text-green-800 bg-green-100 hover:bg-green-200">Hoàn thành</Badge>;
+        return (
+          <Badge className="text-green-800 bg-green-100 hover:bg-green-200">
+            Hoàn thành
+          </Badge>
+        );
       case "cancelled":
         return <Badge variant="destructive">Đã hủy</Badge>;
       default:
@@ -220,35 +245,51 @@ export default function OrdersPage() {
             <CardTitle className="text-sm font-medium">Tổng đơn hàng</CardTitle>
             <ShoppingCart className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent><div className="text-2xl font-bold">{totalOrders}</div></CardContent>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalOrders}</div>
+          </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Doanh thu</CardTitle>
             <DollarSign className="w-4 h-4 text-green-600" />
           </CardHeader>
-          <CardContent><div className="text-2xl font-bold text-green-600">{totalRevenue.toLocaleString("vi-VN")} đ</div></CardContent>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {totalRevenue.toLocaleString("vi-VN")} đ
+            </div>
+          </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Đang xử lý</CardTitle>
             <Clock className="w-4 h-4 text-orange-600" />
           </CardHeader>
-          <CardContent><div className="text-2xl font-bold text-orange-600">{pendingOrders}</div></CardContent>
+          <CardContent>
+            <div className="text-2xl font-bold text-orange-600">
+              {pendingOrders}
+            </div>
+          </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Hoàn thành</CardTitle>
             <Package className="w-4 h-4 text-blue-600" />
           </CardHeader>
-          <CardContent><div className="text-2xl font-bold text-blue-600">{completedOrders}</div></CardContent>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {completedOrders}
+            </div>
+          </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>Danh sách đơn hàng</CardTitle>
-          <CardDescription>Tìm kiếm và quản lý đơn hàng của khách hàng</CardDescription>
+          <CardDescription>
+            Tìm kiếm và quản lý đơn hàng của khách hàng
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4 mb-6 sm:flex-row">
@@ -295,33 +336,51 @@ export default function OrdersPage() {
                     <TableCell colSpan={7} className="py-8 text-center">
                       <div className="flex flex-col items-center gap-2">
                         <ShoppingCart className="w-8 h-8 text-muted-foreground" />
-                        <p className="text-muted-foreground">Không có đơn hàng nào.</p>
+                        <p className="text-muted-foreground">
+                          Không có đơn hàng nào.
+                        </p>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredOrders.map((order) => {
-                    const isFinalStatus = order.status === 'completed' || order.status === 'cancelled';
+                    const isFinalStatus =
+                      order.status === "completed" ||
+                      order.status === "cancelled";
                     return (
                       <TableRow key={order.order_id}>
                         <TableCell>
-                          <code className="px-2 py-1 text-sm rounded bg-muted">{order.order_code}</code>
+                          <code className="px-2 py-1 text-sm rounded bg-muted">
+                            {order.order_code}
+                          </code>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3 text-muted-foreground" />
-                            {new Date(order.order_date).toLocaleDateString("vi-VN")}
+                            {new Date(order.order_date).toLocaleDateString(
+                              "vi-VN"
+                            )}
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="font-medium">{order.user_name || "N/A"}</div>
-                          <div className="text-sm text-muted-foreground">{order.user_email || "N/A"}</div>
+                          <div className="font-medium">
+                            {order.user_name || "N/A"}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {order.user_email || "N/A"}
+                          </div>
                         </TableCell>
-                        <TableCell className="max-w-[200px] truncate" title={order.address_agency}>
+                        <TableCell
+                          className="max-w-[200px] truncate"
+                          title={order.address_agency}
+                        >
                           {order.address_agency}
                         </TableCell>
                         <TableCell className="font-medium">
-                          {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(order.total)}
+                          {new Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(order.total)}
                         </TableCell>
                         <TableCell>
                           {isFinalStatus ? (
@@ -329,22 +388,57 @@ export default function OrdersPage() {
                           ) : (
                             <Select
                               value={order.status}
-                              onValueChange={(value) => handleStatusChange(order.order_id, value)}
+                              onValueChange={(value) =>
+                                handleStatusChange(order.order_id, value)
+                              }
                             >
                               <SelectTrigger className="w-[150px] h-8">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="pending" disabled={order.status !== 'pending'}>Đang xử lý</SelectItem>
-                                <SelectItem value="delivering" disabled={!statusFlow[order.status].next.includes('delivering')}>Đang vận chuyển</SelectItem>
-                                <SelectItem value="completed" disabled={!statusFlow[order.status].next.includes('completed')}>Hoàn thành</SelectItem>
-                                <SelectItem value="cancelled" disabled={!statusFlow[order.status].canCancel}>Đã hủy</SelectItem>
+                                <SelectItem
+                                  value="pending"
+                                  disabled={order.status !== "pending"}
+                                >
+                                  Đang xử lý
+                                </SelectItem>
+                                <SelectItem
+                                  value="delivering"
+                                  disabled={
+                                    !statusFlow[order.status].next.includes(
+                                      "delivering"
+                                    )
+                                  }
+                                >
+                                  Đang vận chuyển
+                                </SelectItem>
+                                <SelectItem
+                                  value="completed"
+                                  disabled={
+                                    !statusFlow[order.status].next.includes(
+                                      "completed"
+                                    )
+                                  }
+                                >
+                                  Hoàn thành
+                                </SelectItem>
+                                <SelectItem
+                                  value="cancelled"
+                                  disabled={!statusFlow[order.status].canCancel}
+                                >
+                                  Đã hủy
+                                </SelectItem>
                               </SelectContent>
                             </Select>
                           )}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button variant="outline" size="sm" onClick={() => handleViewDetails(order)} title="Xem chi tiết">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewDetails(order)}
+                            title="Xem chi tiết"
+                          >
                             <Eye className="w-4 h-4" />
                           </Button>
                         </TableCell>
@@ -372,15 +466,28 @@ export default function OrdersPage() {
                 <div className="space-y-2">
                   <h4 className="font-medium">Thông tin khách hàng</h4>
                   <div className="space-y-1 text-sm">
-                    <div className="flex items-center gap-2"><User className="w-3 h-3" />{selectedOrder.user_name || "N/A"}</div>
-                    <div><span className="font-medium">SĐT: </span>{selectedOrder.phone_user || selectedOrder.phone_agency || "N/A"}</div>
+                    <div className="flex items-center gap-2">
+                      <User className="w-3 h-3" />
+                      {selectedOrder.user_name || "N/A"}
+                    </div>
+                    <div>
+                      <span className="font-medium">SĐT: </span>
+                      {selectedOrder.phone_user ||
+                        selectedOrder.phone_agency ||
+                        "N/A"}
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-medium">Thông tin đơn hàng</h4>
                   <div className="space-y-1 text-sm">
                     <div>Mã: {selectedOrder.order_code}</div>
-                    <div>Ngày: {new Date(selectedOrder.order_date).toLocaleDateString("vi-VN")}</div>
+                    <div>
+                      Ngày:{" "}
+                      {new Date(selectedOrder.order_date).toLocaleDateString(
+                        "vi-VN"
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -393,15 +500,29 @@ export default function OrdersPage() {
                 <ul className="space-y-2 overflow-y-auto text-sm max-h-60">
                   {orderItems.length > 0 ? (
                     orderItems.map((item) => (
-                      <li key={item.order_item_id} className="flex items-center gap-4">
-                        <img src={item.product?.image || "/placeholder.png"} alt={item.product?.product_name || "Sản phẩm"} className="object-cover w-16 h-16 rounded"/>
+                      <li
+                        key={item.order_item_id}
+                        className="flex items-center gap-4"
+                      >
+                        <img
+                          src={item.product?.image || "/placeholder.png"}
+                          alt={item.product?.product_name || "Sản phẩm"}
+                          className="object-cover w-16 h-16 rounded"
+                        />
                         <div className="flex-1">
-                          <p className="font-medium">{item.product?.product_name || "N/A"}</p>
-                          <p className="text-muted-foreground">Số lượng: {item.quantity}</p>
+                          <p className="font-medium">
+                            {item.product?.product_name || "N/A"}
+                          </p>
+                          <p className="text-muted-foreground">
+                            Số lượng: {item.quantity}
+                          </p>
                         </div>
                         <p className="font-medium">
                           {item.product?.price
-                            ? new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(item.product.price * item.quantity)
+                            ? new Intl.NumberFormat("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              }).format(item.product.price * item.quantity)
                             : "N/A"}
                         </p>
                       </li>
@@ -413,13 +534,18 @@ export default function OrdersPage() {
               </div>
               <div className="flex items-center justify-between pt-4 border-t">
                 <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">Trạng thái</div>
+                  <div className="text-sm text-muted-foreground">
+                    Trạng thái
+                  </div>
                   {getStatusBadge(selectedOrder.status)}
                 </div>
                 <div className="space-y-1 text-right">
                   <div className="text-sm text-muted-foreground">Tổng tiền</div>
                   <div className="text-2xl font-bold">
-                    {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(selectedOrder.total)}
+                    {new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(selectedOrder.total)}
                   </div>
                 </div>
               </div>

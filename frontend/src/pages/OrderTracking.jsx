@@ -8,8 +8,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import axiosInstance from "@/lib/axios";
+// import { response } from "express";
 
 export default function OrderTracking() {
   const [orders, setOrders] = useState([]);
@@ -52,6 +58,8 @@ export default function OrderTracking() {
     switch (status) {
       case "pending":
         return <span className="text-yellow-600">Đang xử lý</span>;
+      case "delivering":
+        return <span className="text-blue-600">Đang vận chuyển</span>;
       case "completed":
         return <span className="text-green-600">Hoàn thành</span>;
       case "cancelled":
@@ -61,9 +69,42 @@ export default function OrderTracking() {
     }
   };
 
-  const handleViewDetails = (order) => {
-    setSelectedOrder(order);
-    setIsDetailDialogOpen(true);
+  const handleViewDetails = async (order) => {
+    console.log("Fetching details for order ID:", order.order_id);
+    try {
+      const response = await axiosInstance.get(`/order-item/${order.order_id}`);
+      console.log("Order details response:", response.data);
+      const { order: orderDetails, orderItems } = response.data;
+
+      setSelectedOrder({
+        ...orderDetails,
+        items: orderItems,
+      });
+      setIsDetailDialogOpen(true);
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+      alert("Không thể lấy chi tiết đơn hàng. Vui lòng thử lại sau.");
+    }
+  };
+
+  const handleCancelOrder = async (order_id) => {
+    try {
+      console.log("response", order_id);
+      const response = await axiosInstance.patch(`/order/${order_id}/status`, {
+        status: "cancelled", // thành hủy
+      });
+      console.log("Cancelling order with ID:", order_id);
+
+      if (response.status === 200) {
+        alert("Đơn hàng đã được hủy thành công.");
+        fetchOrders(); // Refresh the order list
+      } else {
+        alert("Không thể xử lý đơn hàng. Vui lòng thử lại.");
+      }
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      alert("Đã xảy ra lỗi khi hủy đơn hàng. Vui lòng thử lại sau.");
+    }
   };
 
   return (
@@ -92,13 +133,27 @@ export default function OrderTracking() {
                 <TableCell>{order.payment_method}</TableCell>
                 <TableCell>{formatDate(order.order_date)}</TableCell>
                 <TableCell>
-                  <Button onClick={() => handleViewDetails(order)}>Chi tiết</Button>
+                  <Button
+                    className="text-black bg-blue-500 hover:bg-blue-600"
+                    onClick={() => handleViewDetails(order)}
+                  >
+                    Chi tiết
+                  </Button>
+
+                  {order.status === "pending" && (
+                    <Button
+                      className="ml-2 text-black bg-red- 500 hover:bg-red-600"
+                      onClick={() => handleCancelOrder(order.order_id)}
+                    >
+                      Hủy đơn
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="text-center">
+              <TableCell colSpan={8} className="text-center">
                 Không có đơn hàng nào.
               </TableCell>
             </TableRow>
@@ -114,14 +169,49 @@ export default function OrderTracking() {
           </DialogHeader>
           {selectedOrder ? (
             <div>
-              <p><strong>Mã đơn hàng:</strong> {selectedOrder.order_code}</p>
-              <p><strong>Tên đại lý:</strong> {selectedOrder.agency_name}</p>
-              <p><strong>Địa chỉ:</strong> {selectedOrder.address_agency}</p>
-              <p><strong>Số điện thoại:</strong> {selectedOrder.phone_agency}</p>
-              <p><strong>Tổng tiền:</strong> {formatPrice(selectedOrder.total)}</p>
-              <p><strong>Trạng thái:</strong> {getStatusBadge(selectedOrder.status)}</p>
-              <p><strong>Phương thức thanh toán:</strong> {selectedOrder.payment_method}</p>
-              <p><strong>Ngày đặt:</strong> {formatDate(selectedOrder.order_date)}</p>
+              <p>
+                <strong>Mã đơn hàng:</strong> {selectedOrder.order_code}
+              </p>
+              <p>
+                <strong>Tên đại lý:</strong> {selectedOrder.agency_name}
+              </p>
+              <p>
+                <strong>Địa chỉ:</strong> {selectedOrder.address_agency}
+              </p>
+              <p>
+                <strong>Số điện thoại:</strong> {selectedOrder.phone_agency}
+              </p>
+              <p>
+                <strong>Tổng tiền:</strong> {formatPrice(selectedOrder.total)}
+              </p>
+              <p>
+                <strong>Trạng thái:</strong>{" "}
+                {getStatusBadge(selectedOrder.status)}
+              </p>
+              <p>
+                <strong>Phương thức thanh toán:</strong>{" "}
+                {selectedOrder.payment_method}
+              </p>
+              <p>
+                <strong>Ngày đặt:</strong>{" "}
+                {formatDate(selectedOrder.order_date)}
+              </p>
+              <h3 className="mt-4 font-bold">Danh sách sản phẩm:</h3>
+              <ul>
+                {selectedOrder.items.map((item) => (
+                  <li key={item.product_id} className="mt-2">
+                    <p>
+                      <strong>Tên sản phẩm:</strong> {item.product.product_name}
+                    </p>
+                    <p>
+                      <strong>Số lượng:</strong> {item.quantity}
+                    </p>
+                    <p>
+                      <strong>Giá:</strong> {formatPrice(item.product.price)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
             </div>
           ) : (
             <p>Không có thông tin chi tiết.</p>

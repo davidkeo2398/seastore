@@ -56,7 +56,6 @@ Agency.belongsTo(AgencyRank, { foreignKey: 'agency_rank_id', as: 'rank' });
 // User - Agency
 User.hasOne(Agency, { foreignKey: 'user_id', as: 'agencyInfo' });
 Agency.belongsTo(User, { foreignKey: 'user_id', as: 'userInfo' });
-// --- KẾT THÚC ---
 
 // Sync all models
 sequelize.sync()

@@ -1,6 +1,9 @@
 const Order = require("../Model/Index");
 const { orderService } = require("../services/index");
-const { getOrderByUser } = require("../services/order-service");
+const {
+  getOrderByUser,
+  updateOrderStatus,
+} = require("../services/order-service");
 const generateCode = require("../utils/generateCode");
 
 module.exports = {
@@ -59,6 +62,27 @@ module.exports = {
     } catch (error) {
       return res.status(400).json({
         message: "Get orders by user failed",
+        data: [],
+        error: error.message,
+      });
+    }
+  },
+
+  updateOrderStatus: async (req, res) => {
+    try {
+      const { order_id } = req.params;
+      const { status } = req.body;
+
+      const result = await orderService.updateOrderStatus(order_id, status);
+
+      return res.status(200).json({
+        message: "Order status updated successfully",
+        data: result,
+      });
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      return res.status(400).json({
+        message: "Order status update failed",
         data: [],
         error: error.message,
       });

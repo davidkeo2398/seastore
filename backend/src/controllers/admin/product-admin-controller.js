@@ -1,6 +1,5 @@
 const { productAdminService } = require("../../services");
 
-
 module.exports = {
   getProducts: async (req, res) => {
     try {
@@ -18,7 +17,9 @@ module.exports = {
 
   getProductById: async (req, res) => {
     try {
+      console.log("Fetching product with ID:", req.params.id);
       const result = await productAdminService.getProductById(req.params.id);
+      
       if (!result) {
         return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
       }
@@ -45,7 +46,7 @@ module.exports = {
         warehouse_id,
         unit,
         number_of_inventory,
-        status
+        status,
       } = req.body;
 
       if (!product_name || !price || !category_id || !agency_id || !unit) {
@@ -63,7 +64,7 @@ module.exports = {
         warehouse_id: warehouse_id || 1, // Mặc định là 1 nếu không có giá trị
         unit,
         number_of_inventory,
-        status
+        status,
       });
       res
         .status(201)

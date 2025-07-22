@@ -63,7 +63,7 @@ export default function PayCheckout() {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({});
   const [orderSummary, setOrderSummary] = useState([]);
-  const [selectedPayment, setSelectedPayment] = useState("cash");
+  const [selectedPayment, setSelectedPayment] = useState("VNPay");
   const [isProcessing, setIsProcessing] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [formData, setFormData] = useState({
@@ -759,7 +759,7 @@ export default function PayCheckout() {
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">
-                            {item.name}
+                            {item.product_name}
                           </p>
                           <p className="text-xs text-gray-600">
                             Số lượng: {item.quantity}

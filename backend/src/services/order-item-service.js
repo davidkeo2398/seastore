@@ -12,7 +12,7 @@ module.exports = {
   },
   getOrderItemsByOrderId: async (orderId) => {
     try {
-      const orderItems = await OrderItem.findAll({
+      const orderItems = await OrderItem.findAll({ // findAll sẽ trả về tất cả sản phẩm thay vì findByPk
         where: { order_id: orderId }, // orderId là  biến  của đơn hàng
         include: [
           {
@@ -60,4 +60,39 @@ module.exports = {
       throw new Error("Failed to delete order item");
     }
   },
+  getProductWithOrderItems: async (productId) => {
+    try {
+      const productWithOrderItems = await Product.findByPk(productId, {
+        include: [
+          {
+            model: OrderItem,
+            as: "orderItems", // Alias phải khớp với định nghĩa trong associate
+            attributes: ["order_item_id", "quantity", "order_id"], // Chỉ lấy các cột cần thiết
+          },
+        ],
+      });
+      return productWithOrderItems;
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm kèm theo chi tiết đơn hàng:", error);
+      throw new Error("Error fetching product with order items");
+    }
+  },
+  getOrderItemsByProductId: async (productId) => {
+  try {
+    const orderItems = await OrderItem.findAll({
+      where: { product_id: productId },
+      include: [
+        {
+          model: Order,
+          as: "order", // Alias phải khớp với định nghĩa trong associate
+          attributes: ["order_id", "order_code", "order_date"], // Chỉ lấy các cột cần thiết
+        },
+      ],
+    });
+    return orderItems;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách đơn hàng liên quan đến sản phẩm:", error);
+    throw new Error("Error fetching order items by product ID");
+  }
+},
 };

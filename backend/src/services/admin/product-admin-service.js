@@ -13,21 +13,24 @@ module.exports = {
 
   getProductById: async (productId) => {
     try {
-      const product = await Product.findByPk(product_id, {
-        include: [
-          {
-            model: Categories,
-            as: "category",
-            attributes: ["category_name"],
-          },
-          {
-            model: Warehouse,
-            as: "warehouse",
-            attributes: ["warehouse_name"],
-          },
-        ],
-      });
-      return productId ? product : null; // Trả về null nếu không tìm thấy sản phẩm
+      console.log("Fetching product with ID:", productId);
+
+      const product = await Product.findByPk(productId);
+      // include: [
+      //   {
+      //     model: Categories,
+      //     as: "category",
+      //     attributes: ["category_name"],
+      //   },
+      //   {
+      //     model: Warehouse,
+      //     as: "warehouse",
+      //     attributes: ["warehouse_name"],
+      //   },
+      // ],
+
+      console.log("Product details:", product);
+      return product || null;
     } catch (error) {
       console.error("Lỗi khi lấy chi tiết sản phẩm:", error);
       throw new Error("Không thể lấy chi tiết sản phẩm");

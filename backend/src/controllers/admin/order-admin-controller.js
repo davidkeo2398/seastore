@@ -35,4 +35,23 @@ module.exports = {
       });
     }
   },
+
+  getOrderDetails: async (req, res) => {
+  try {
+    const orderId = req.params.order_id;
+    console.log("Fetching details for admin order ID:", orderId);
+
+    // Lấy thông tin đơn hàng
+    const order = await orderAdminService.getOrderDetails(orderId);
+
+    if (!order) {
+      return res.status(404).json({ message: "Không tìm thấy đơn hàng." });
+    }
+
+    res.status(200).json(order);
+  } catch (error) {
+    console.error("Error fetching admin order details:", error);
+    res.status(500).json({ error: "Failed to fetch admin order details" });
+  }
+},
 };

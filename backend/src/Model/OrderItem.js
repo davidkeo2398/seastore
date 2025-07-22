@@ -69,8 +69,7 @@ module.exports = (sequelize) => {
       foreignKey: "order_id",
       as: "order",
     });
-  };
-  OrderItem.associate = (models) => {
+
     OrderItem.belongsTo(models.Product, {
       foreignKey: "product_id",
       as: "product", // Alias phải khớp với phần include trong truy vấn
