@@ -39,7 +39,7 @@ module.exports = {
   getOrderDetails: async (req, res) => {
   try {
     const orderId = req.params.order_id;
-    console.log("Fetching details for admin order ID:", orderId);
+
 
     // Lấy thông tin đơn hàng
     const order = await orderAdminService.getOrderDetails(orderId);

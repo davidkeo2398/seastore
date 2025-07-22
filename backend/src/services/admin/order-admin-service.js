@@ -1,4 +1,5 @@
-const { Order, Categories } = require("../../Model/Index");
+const { raw } = require("body-parser");
+const { Order, OrderItem, Product, User } = require("../../Model/Index");
 
 // xử lý  logic, database
 module.exports = {
@@ -27,17 +28,24 @@ module.exports = {
   },
   getOrderDetails: async (orderId) => {
     try {
+      //   const order = await Order.findByPk(orderId, {}); // x
+      //   const order_items = await OrderItem.findAll({
+      //     where: { order_id: orderId },
+      //   }); // y
+      //   const products = [];
+      //   for (const item of order_items) {
+      //     const product = await Product.findOne({where: {product_id: item.product_id}, raw: true}); // lấy thông tin sản phẩm
+      //     const newProduct = {...product, quantity: item.quantity}
+      //     products.push(newProduct);
+      //   }
+
+      //   return { order: order, items: products };
       const order = await Order.findByPk(orderId, {
         include: [
           {
             model: User,
             as: "user",
-            attributes: ["user_id", "user_name", "user_email", "phone_user"],
-          },
-          {
-            model: Agency,
-            as: "agency",
-            attributes: ["agency_name", "address_agency", "phone_agency"],
+            // attributes: ["user_id", "user_name", "email", "phone"],
           },
           {
             model: OrderItem,
@@ -46,7 +54,7 @@ module.exports = {
               {
                 model: Product,
                 as: "product",
-                attributes: ["product_id", "product_name", "price", "image"],
+                // attributes: ["product_id", "product_name", "price", "image"],
               },
             ],
           },

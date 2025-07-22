@@ -100,11 +100,11 @@ export default function OrdersPage() {
   }, []);
 
   // Tải chi tiết đơn hàng khi một đơn hàng được chọn
-  useEffect(() => {
-    if (selectedOrder) {
-      fetchOrderDetails(selectedOrder.order_id);
-    }
-  }, [selectedOrder]);
+  // useEffect(() => {
+  //   if (selectedOrder) {
+  //     fetchOrderDetails(selectedOrder.order_id);
+  //   }
+  // }, []);
 
   // Hàm xử lý thay đổi trạng thái đơn hàng
   const handleStatusChange = async (order_id, newStatus) => {
@@ -143,9 +143,12 @@ export default function OrdersPage() {
     }
   };
 
-  const handleViewDetails = (order) => {
-    setSelectedOrder(order);
+  const handleViewDetails = (order, order_id) => {
+    console.log("Viewing details for order:", order_id);
+    fetchOrderDetails(order_id);
+    // setSelectedOrder(order);
     setIsDetailDialogOpen(true);
+    console.log("product", orderItems);
   };
 
   const filteredOrders = orders.filter((order) => {
@@ -436,7 +439,7 @@ export default function OrdersPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleViewDetails(order)}
+                            onClick={() => handleViewDetails(order, order.order_id)}
                             title="Xem chi tiết"
                           >
                             <Eye className="w-4 h-4" />
