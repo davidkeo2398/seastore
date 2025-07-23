@@ -157,13 +157,15 @@ export default function OrdersPage() {
       order.user_name?.toLowerCase().includes(searchTermLower) ||
       order.user_email?.toLowerCase().includes(searchTermLower) ||
       order.order_code?.toLowerCase().includes(searchTermLower) ||
-      order.phone_user?.toLowerCase().includes(searchTermLower);
+      order.phone_user?.toLowerCase().includes(searchTermLower) ||
+      order.phone_agency?.toLowerCase().includes(searchTermLower);
     const matchesStatus =
       statusFilter === "all" || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const totalOrders = orders.length;
+  const totalCancelled = orders.filter((order) => order.status === "cancelled").length;
   const totalRevenue = calculateTotalRevenue(orders);
   const pendingOrders = orders.filter(
     (order) => order.status === "pending"
@@ -283,6 +285,15 @@ export default function OrdersPage() {
             <div className="text-2xl font-bold text-blue-600">
               {completedOrders}
             </div>
+          </CardContent>
+        </Card>
+         <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium">Đã hủy</CardTitle>
+            <ShoppingCart className="w-4 h-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalCancelled}</div>
           </CardContent>
         </Card>
       </div>
@@ -439,7 +450,9 @@ export default function OrdersPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleViewDetails(order, order.order_id)}
+                            onClick={() =>
+                              handleViewDetails(order, order.order_id)
+                            }
                             title="Xem chi tiết"
                           >
                             <Eye className="w-4 h-4" />

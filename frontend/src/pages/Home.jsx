@@ -4,6 +4,7 @@ import ProductList from "@/pages/ProductList";
 import CategoriesList from "@/common/Categories/CategoriesList";
 import Banner from "@/common/Banner/Banner";
 import axiosInstance from "@/lib/axios";
+import ChatbotButton from "@/pages/Chatbot";
 
 export default function Home() {
   const [allProducts, setAllProducts] = useState([]);
@@ -181,6 +182,7 @@ export default function Home() {
       </div> */}
 
       <ProductList filteredProducts={products} />
+     
     </div>
   );
 }

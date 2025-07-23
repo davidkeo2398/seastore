@@ -37,21 +37,20 @@ module.exports = {
   },
 
   getOrderDetails: async (req, res) => {
-  try {
-    const orderId = req.params.order_id;
+    try {
+      const orderId = req.params.order_id;
 
+      // Lấy thông tin đơn hàng
+      const order = await orderAdminService.getOrderDetails(orderId);
 
-    // Lấy thông tin đơn hàng
-    const order = await orderAdminService.getOrderDetails(orderId);
+      if (!order) {
+        return res.status(404).json({ message: "Không tìm thấy đơn hàng." });
+      }
 
-    if (!order) {
-      return res.status(404).json({ message: "Không tìm thấy đơn hàng." });
+      res.status(200).json(order);
+    } catch (error) {
+      console.error("Error fetching admin order details:", error);
+      res.status(500).json({ error: "Failed to fetch admin order details" });
     }
-
-    res.status(200).json(order);
-  } catch (error) {
-    console.error("Error fetching admin order details:", error);
-    res.status(500).json({ error: "Failed to fetch admin order details" });
-  }
-},
+  },
 };

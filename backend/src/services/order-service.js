@@ -85,23 +85,25 @@ module.exports = {
       if (newOrder.status === "completed") {
         await Promise.all(
           orderItems.map((product) => {
-            Product.findOne({ where: { product_id: product.product_id } }).
-            then( // xử lý : decrement trừ số lượng tồn kho
+            Product.findOne({ where: { product_id: product.product_id } }).then(
+              // xử lý : decrement trừ số lượng tồn kho
               (model) => {
                 model.decrement({ number_of_inventory: product.quantity }); // giảm số lượng tồn kho
               }
             );
           })
         );
-        
+
         //tính tổng chi tiêu
-        const ordersTotal = await Order.sum("total", { // đơn hàng đã hoàn thành
+        const ordersTotal = await Order.sum("total", {
+          // đơn hàng đã hoàn thành
           where: { user_id, status: "completed" },
           transaction: t,
         });
 
         // hạng thành viên
-        if (ordersTotal >= 40_000_000) { // so sánh hạng cao nhất
+        if (ordersTotal >= 40_000_000) {
+          // so sánh hạng cao nhất
           rankName = "Diamond";
         } else if (ordersTotal >= 30_000_000) {
           rankName = "Platinum";
@@ -117,7 +119,8 @@ module.exports = {
 
         // cập nhật hạng thành viên nếu có
         if (rankName) {
-          const agency = await AgencyRank.findOne({ // lấy danh sách hạng thành viên
+          const agency = await AgencyRank.findOne({
+            // lấy danh sách hạng thành viên
             where: { agency_rank_name: rankName },
             transaction: t, //truy vấn trong giao dịch hiện tại
           });
@@ -125,7 +128,7 @@ module.exports = {
             throw new Error(`Agency rank '${rankName}' not found`);
           }
           // cập nhật hạng thành viên cho người dùng
-          await user.then((model) => { 
+          await user.then((model) => {
             model.update({ agency_rank_id: agency.agency_rank_id }); // nếu xác định hạng mới, cập nhật hạng cho người dùng
           });
         }
@@ -139,11 +142,11 @@ module.exports = {
       throw new Error("Failed to create order");
     }
   },
-    countOrder: async () => {
+  countOrder: async () => {
     try {
       return Order.count();
     } catch (err) {
-      return 0
+      return 0;
     }
   },
   getOrders: async () => {
@@ -210,7 +213,10 @@ module.exports = {
   updateOrderStatus: async (orderId, status) => {
     try {
       // Cập nhật trạng thái đơn hàng trong cơ sở dữ liệu
-      const updatedOrder = await Order.update({ status }, { where: { order_id: orderId } });
+      const updatedOrder = await Order.update(
+        { status },
+        { where: { order_id: orderId } }
+      );
       if (updatedOrder[0] === 1) {
         return { message: "Cập nhật trạng thái thành công." };
       } else {

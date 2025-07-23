@@ -12,6 +12,7 @@ const agencyRankRoutes = require("./agency-rank-route");
 const momoRoute = require("./momo-route");
 const vnpayRoute = require("./vnpay-route");
 const orderItemRoutes = require("./order-item-route");
+const chatbotRoute = require("./chatbot-route");
 
 //Authentication group api routes
 router.use("/auth", authRoutes);
@@ -30,5 +31,9 @@ router.use('/momo', momoRoute);
 
 //admin
 const { adminRouter } = require("./admin/index");
+
+
+//chatbot
+router.use("/chatbot", chatbotRoute);
 
 module.exports = { router, adminRouter };
