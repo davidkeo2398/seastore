@@ -12,6 +12,8 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
+
+
   // const [priceRange, setPriceRange] = useState({ min: 0, max: Infinity });
 
   // const [sortOrder, setSortOrder] = useState("asc"); // Thứ tự sắp xếp: asc hoặc desc
@@ -31,7 +33,7 @@ export default function Home() {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await axiosInstance.get("/categories");
+      const { data } = await axiosInstance.get("/categoríes");
       setCategories(data.data); // Lưu danh sách danh mục
       console.log("Categories fetched successfully", data.data);
     } catch (error) {
@@ -39,38 +41,65 @@ export default function Home() {
     }
   };
 
+  const fetchProductCount = async (categoryId) => {
+    try {
+      const { data } = await axiosInstance.get(
+        `/product/category/${categoryId}`
+      );
+      setCategoryProductCount(data.data);
+      console.log("Category product count:", data.data);
+    } catch (error) {
+      console.error("Error fetching product count by category:", error);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
     fetchCategories();
+    fetchProductCount();
   }, []);
 
   useEffect(() => {
     console.log("All products:", allProducts);
     console.log("Selected category:", selectedCategory);
 
-    const filtered = allProducts.filter((product) => {
-      const matchesName = product.product_name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const matchesCategory =
-        selectedCategory === "all" ||
-        product.category_id === Number(selectedCategory);
-      // const matchesPrice =
-      //   product.price >= priceRange.min && product.price <= priceRange.max;
-      // console.log("Matches price:", matchesPrice); // Kiểm tra điều kiện giá
+    const filtered = allProducts
+      .filter((product) => {
+        const matchesName = product.product_name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        const matchesCategory =
+          selectedCategory === "all" ||
+          product.category_id === Number(selectedCategory);
 
-      return matchesName && matchesCategory ;
-    });
-    // .sort((a, b) =>
-    //   sortOrder === "asc" ? a.price - b.price : b.price - a.price
+        // const matchesPrice =
+        //   product.price >= priceRange.min && product.price <= priceRange.max;
+        // console.log("Matches price:", matchesPrice); // Kiểm tra điều kiện giá
+
+        return matchesName && matchesCategory ;
+      });
+      // .sort((a, b) => {
+      //   if (sortOrder === "asc") {
+      //     return a.price - b.price;
+      //   } else {
+      //     return b.price - a.price;
+      //   }
+      // });
+
+    console.log("Filtered products:", filtered);
 
     setProducts(filtered);
-  }, [allProducts, searchTerm, selectedCategory]); //]); // thay đổi các biến sẽ kích hoạt useEffect
+  },
+  // CẬP NHẬT KHI CÓ SỰ THAY ĐỔI CÁC BIẾN -> kích hoạt useEffect
+  [allProducts, searchTerm, selectedCategory]); //]); 
 
   // Xử lý khi chọn danh mục
   const handleCategorySelect = (categoryId) => {
     console.log("Selected category ID:", categoryId);
     setSelectedCategory(categoryId); // Cập nhật danh mục được chọn
+    //số lượng
+    fetchProductCount(categoryId); // Lấy số lượng sản phẩm theo danh mục
+    console.log("Fetching product count for category:", categoryId);
   };
 
   // Hiển thị tất cả sản phẩm
@@ -79,13 +108,7 @@ export default function Home() {
     console.log("Showing all products", allProducts);
   };
 
-  // // Xử lý khi thay đổi khoảng giá
-  // const handlePriceChange = (type, value) => {
-  //   setPriceRange((prev) => ({
-  //     ...prev,
-  //     [type]: Number(value) || 0,
-  //   }));
-  // };
+  
 
   const formatCurrency = (value) => {
     if (value === Infinity) return ""; // Nếu là Infinity, trả về chuỗi rỗng
@@ -137,7 +160,14 @@ export default function Home() {
         </div>
       </div>
 
-      {/* <div className="filter-panel">
+      {/* <div className="product-count">
+        {categoryProductCount !== null && (
+          <p>Số lượng sản phẩm trong danh mục: {categoryProductCount}</p>
+        )}
+      </div> */}
+      
+      {/* Lọc theo giá
+      <div className="filter-panel">
         <div className="filter-item">
           <label>Khoảng giá:</label>
           <div className="price-range">
@@ -166,7 +196,8 @@ export default function Home() {
         </div>
       </div> */}
 
-      {/* <div className="filter-panel">
+      {/* Lọc theo thu tu 
+      <div className="filter-panel">
         <div className="filter-item">
           <label>Sắp xếp:</label>
           <select
@@ -179,6 +210,8 @@ export default function Home() {
           </select>
         </div>
       </div> */}
+
+     
 
       <ProductList filteredProducts={products} />
     </div>

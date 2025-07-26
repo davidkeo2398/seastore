@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 
 export default function AdminLayout() {
+  const { children } = { children: <Outlet /> };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
@@ -62,7 +64,7 @@ export default function AdminLayout() {
               Quản lý người dùng
             </Button>
           </Link>
-           {/* <Link to="/admin/categories">
+          {/* <Link to="/admin/categories">
             <Button
               variant="ghost"
               className="justify-start w-full text-gray-700 hover:text-blue-700 hover:bg-blue-50"

@@ -217,9 +217,10 @@ export default function ShoppingCart() {
       setDiscount(0);
       setAppliedCoupon(null);
       localStorage.removeItem("promotion_code");
-      localStorage.removeItem("discount");
+      // localStorage.removeItem("discount");
 
       localStorage.setItem("finalOrderTotal", getTotal()); // lưu tổng tiền cuối cùng
+      console.log("Final order total:", getTotal());
       alert("Đang chuyển đến trang thanh toán...");
       navigate("/PayCheckout");
       setIsLoading(false);
@@ -673,7 +674,6 @@ export default function ShoppingCart() {
                       <li>
                         • Miễn phí vận chuyển cho đơn hàng khi mua tại đây
                       </li>
-                      <li>• Đổi trả miễn phí trong 7 ngày</li>
                       <li>• Bảo hành chính hãng</li>
                     </ul>
                   </div>

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 
 export default function ProductList({ filteredProducts }) {
-  console.log("Filtered products:", filteredProducts); 
+  console.log("Filtered products:", filteredProducts);
 
   // const { products } = data;
   const [isVisible, setIsVisible] = useState(false);
@@ -31,7 +31,7 @@ export default function ProductList({ filteredProducts }) {
     fetchCategories();
     setTimeout(() => setIsVisible(true), 100);
   }, []);
-
+  //pt
   // const [currentPage, setCurrentPage] = useState(1);
   // const itemsPerPage = 10; // Số sản phẩm hiển thị trên mỗi trang
 
@@ -54,7 +54,7 @@ export default function ProductList({ filteredProducts }) {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await axiosInstance.get("/category");
+      const { data } = await axiosInstance.get("/categories");
       setCategories(data.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -69,12 +69,14 @@ export default function ProductList({ filteredProducts }) {
     alert("Đã thêm sản phẩm vào giỏ hàng!");
   };
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
+  // //pt
+  // const handlePageChange = (newPage) => {
+  //   if (newPage >= 1 && newPage <= totalPages) {
+  //     setCurrentPage(newPage);
+  //   }
+  // };
 
+  // // Pagination logic
   // const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   // const paginatedProducts = filteredProducts.slice(
   //   (currentPage - 1) * itemsPerPage,
@@ -159,7 +161,8 @@ export default function ProductList({ filteredProducts }) {
           </div>
         ) : (
           filteredProducts.map((product, index) => (
-          // paginatedProducts.map((product, index) => (
+            // //pt
+            // paginatedProducts.map((product, index) => (
             <div
               className={`product-card flex flex-col items-center ${
                 isVisible ? "animate-in" : ""

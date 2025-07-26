@@ -12,17 +12,19 @@ const agencyRankRoutes = require("./agency-rank-route");
 const momoRoute = require("./momo-route");
 const vnpayRoute = require("./vnpay-route");
 const orderItemRoutes = require("./order-item-route");
+const chatbotRoute = require("./chatbot-route");
 
 //Authentication group api routes
 router.use("/auth", authRoutes);
 router.use("/order", orderRoutes);
 router.use("/product", productRoutes);
-router.use("/category", categoriesRoutes);
+router.use("/categories", categoriesRoutes);
 
 router.use("/promotion", promotionRoutes);
 router.use("/agency", agencyRoutes);
 router.use("/order-item", orderItemRoutes);
 router.use("/agency-rank", agencyRankRoutes);
+router.use("/chatbot", chatbotRoute);
 
 //Thanh toan ngan hang
 router.use('/vnpay',vnpayRoute);

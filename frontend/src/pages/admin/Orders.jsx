@@ -106,6 +106,7 @@ export default function OrdersPage() {
   //   }
   // }, []);
 
+
   // Hàm xử lý thay đổi trạng thái đơn hàng
   const handleStatusChange = async (order_id, newStatus) => {
     const currentOrder = orders.find((order) => order.order_id === order_id);
@@ -168,6 +169,7 @@ export default function OrdersPage() {
   const pendingOrders = orders.filter(
     (order) => order.status === "pending"
   ).length;
+  // số đơn hàng đã hoàn thành
   const completedOrders = orders.filter(
     (order) => order.status === "completed"
   ).length;
@@ -199,6 +201,7 @@ export default function OrdersPage() {
     }
   };
 
+// tổng từng khách chi tiêu dưa trên đơn hàng
   const userTotals = orders.reduce((acc, order) => {
     if (!order.user_id) return acc;
     if (!acc[order.user_id]) {
@@ -212,6 +215,7 @@ export default function OrdersPage() {
     return acc;
   }, {});
 
+  // Tìm người dùng có tổng chi tiêu cao nhất
   const topBuyer = Object.values(userTotals).reduce(
     (max, user) => (user.total > (max?.total || 0) ? user : max),
     null

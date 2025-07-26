@@ -1,5 +1,16 @@
 
 
-input[type="checkbox"]:checked {
-  accent-color: #2563eb; /* blue-600 */
+.checkout-container .back-to-cart-button {
+  background-color: #333; 
+  color: white;
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.checkout-container .back-to-cart-button:hover {
+  background-color: #555;
 }

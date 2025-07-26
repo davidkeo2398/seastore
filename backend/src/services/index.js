@@ -9,6 +9,7 @@ const agencyService = require('./agency-service');
 const momoService = require('./momo-service');
 const vnpayService = require('./vnpay-service');
 const orderItemService = require('./order-item-service');
+const chatbotService = require('./chatbot-service');
 
 //admin
 const orderAdminService = require('./admin/order-admin-service');
@@ -28,6 +29,7 @@ module.exports = {
     agencyRankService,
     agencyService,
     orderItemService,
+    chatbotService,
     
     //Thanh toan ngan han
     vnpayService,

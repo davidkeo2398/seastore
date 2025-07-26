@@ -1,0 +1,48 @@
+{
+  "faq": [
+    {
+      "intent": "greeting",
+      "keywords": ["chào", "hi", "xin chào", "hello", "shop ơi"],
+      "answer": "Xin chào! Tôi là trợ lý ảo của Sea Store. Tôi có thể giúp bạn tìm kiếm sản phẩm hoặc giải đáp các thắc mắc về nuôi trồng thủy sản. Bạn cần hỗ trợ gì ạ?"
+    },
+    {
+      "intent": "faq_doi_tra",
+      "keywords": ["đổi", "trả hàng", "hoàn hàng", "bảo hành", "chính sách đổi trả"],
+      "answer": "Sea Store hỗ trợ đổi trả sản phẩm trong vòng 7 ngày nếu có lỗi từ nhà sản xuất. Sản phẩm cần còn nguyên tem, mác và chưa qua sử dụng. Bạn vui lòng liên hệ hotline **0337586860** để được hỗ trợ chi tiết nhé."
+    },
+    {
+      "intent": "faq_thanh_toan",
+      "keywords": ["thanh toán", "trả tiền", "cách thanh toán", "phương thức", "cod", "vnpay"],
+      "answer": "Chúng tôi hỗ trợ nhiều phương thức thanh toán tiện lợi, bao gồm: Thanh toán khi nhận hàng (COD) và thanh toán trực tuyến qua cổng VNPay."
+    },
+    {
+      "intent": "faq_lien_he",
+      "keywords": ["liên hệ", "hotline", "số điện thoại", "địa chỉ", "sdt"],
+      "answer": "Bạn có thể liên hệ với Sea Store qua hotline: **0337586860**. Chúng tôi luôn sẵn sàng hỗ trợ bạn."
+    },
+    {
+        "intent": "faq_tu_van_chung",
+        "keywords": ["tư vấn", "hỗ trợ", "giúp tôi", "hỏi"],
+        "answer": "Chào bạn, bạn đang quan tâm đến vấn đề gì cho ao nuôi của mình? (Ví dụ: cách trị bệnh cho tôm, sản phẩm làm sạch nước, thức ăn tăng trưởng...)"
+    },
+    {
+      "intent": "benh_duong_ruot_tom",
+      "keywords": ["phân trắng", "bệnh đường ruột", "ruột tôm lỏng", "tôm bỏ ăn", "EHP"],
+      "answer": "Chào bạn, vấn đề về đường ruột và phân trắng ở tôm khá phổ biến. Bạn có thể tham khảo các sản phẩm chuyên trị như **PIO NUS** (đặc trị EHP & phân trắng), **NOVA-BACCI** hoặc các loại men đường ruột như **BioFlora**, **GUT‑PRO** để cải thiện tiêu hóa và phục hồi sức khỏe cho tôm. Bạn có muốn tôi tìm chi tiết các sản phẩm này không?"
+    },
+    {
+      "intent": "xu_ly_nuoc",
+      "keywords": ["xử lý nước", "làm sạch nước", "nước ao bị dơ", "khử phèn", "khí độc", "nhớt bạt", "làm sạch đáy ao"],
+      "answer": "Chào bạn, để xử lý các vấn đề về nước ao nuôi, Sea Store có nhiều sản phẩm vi sinh và hóa chất chuyên dụng. Ví dụ, **Anti SLIME R.E.P Biotech** chuyên trị nhớt bạt, **Vi sinh IBAC** để xử lý phèn, **SIVIBAC Plus** để xử lý đáy ao, hoặc **QUILLAJA YUCCA** để khử khí độc. Bạn đang gặp vấn đề cụ thể nào về nước?"
+    },
+    {
+        "intent": "bo_sung_vitamin_khoang",
+        "keywords": ["bổ sung khoáng", "tăng đề kháng", "vitamin c", "cong thân", "mềm vỏ", "giảm stress"],
+        "answer": "Chào bạn, việc bổ sung khoáng và vitamin rất quan trọng. Để chống sốc và tăng đề kháng, bạn có thể dùng các loại **Vitamin C** như **Nutri C** hoặc **Vitamin C Antistress**. Để phòng bệnh cong thân, mềm vỏ do thiếu khoáng, bạn nên dùng các loại khoáng như **MCP diges** hoặc **AquaMineral Plus**. Bạn muốn tìm sản phẩm nào cụ thể hơn không?"
+    }
+  ],
+  "fallback": {
+    "product_not_found": "Xin lỗi, tôi không tìm thấy sản phẩm nào phù hợp với yêu cầu của bạn trong hệ thống. Để được tư vấn kỹ hơn, bạn vui lòng liên hệ chuyên gia qua hotline: **0337586860**.",
+    "general_fallback": "Hiện tại tôi chưa có thông tin về vấn đề này. Để được hỗ trợ tốt nhất, bạn vui lòng liên hệ hotline: **0337586860**."
+  }
+}

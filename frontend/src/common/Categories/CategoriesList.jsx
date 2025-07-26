@@ -9,7 +9,7 @@ export default function CategoriesList({ onCategorySelect, onShowAll }) {
   
   const fetchCategories = async () => {
     try {
-      const { data } = await axiosInstance.get("/category");
+      const { data } = await axiosInstance.get("/categories");
       setCategories(data.data);
       console.log("Categories fetched successfully", data.data);
     } catch (error) {

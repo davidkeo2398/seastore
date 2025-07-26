@@ -46,7 +46,7 @@ export default function Products() {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await axiosInstance.get("/category");
+      const { data } = await axiosInstance.get("/categories");
       setCategories(data.data);
     } catch (error) {
       console.error("Error fetching categories:", error);

@@ -1,4 +1,5 @@
 const { productAdminService } = require("../../services");
+const { getCategoryProductCount } = require("../../services/admin/product-admin-service");
 
 module.exports = {
   getProducts: async (req, res) => {
@@ -97,4 +98,5 @@ module.exports = {
       res.status(400).json({ message: "Xoá sản phẩm thất bại" });
     }
   },
+  
 };

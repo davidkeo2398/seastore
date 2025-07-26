@@ -6,33 +6,75 @@ const {
   sequelize,
 } = require("../../Model/Index");
 
-//xác định hạng tiếp theo
+async function getAllRanksSorted() {
+  return await AgencyRank.findAll({
+    order: [["min_accumulated_value", "ASC"]],
+  });
+}
+
+// lấy ds đại lý và tổng chi tiêu của họ
+async function getMembersWithTotalSpent() {
+  return await User.findAll({
+    where: { role_id: 3 },
+    attributes: [
+      "user_id",
+      "first_name",
+      "last_name",
+      "email",
+      "phone",
+      "createdAt",
+      "agency_rank_id",
+      [
+        sequelize.fn(
+          "SUM",
+          sequelize.literal(
+            "CASE WHEN `orders`.`status` = 'completed' THEN `orders`.`total` ELSE 0 END"
+          )
+        ),
+        "total_spent",
+      ],
+    ],
+    include: [
+      // req: vẫn lấy all ng dùng ngay cả những người chưa có đơn hàng
+      { model: Order, as: "orders", attributes: [], required: false },
+      { model: AgencyRank, as: "agencyRank" },
+      { model: Role, as: "role" },
+    ],
+    // gpm tất cả đơn của cùng người dùng( vì vừa hiển thị vừa sum)
+    group: ["User.user_id", "agencyRank.agency_rank_id", "role.role_id"],
+  });
+}
+
+
+
 function getNextRank(currentRank, allRanks) {
-  if (!currentRank) return allRanks[0]; // Nếu chưa có hạng, trả về hạng đầu tiên
+  // Nếu không có hạng hiện tại, trả về hạng đầu tiên
+  if (!currentRank) return allRanks[0];
+  //ếu currentRank là "Silver" và "Silver" ở vị trí thứ 2 trong danh sách, currentRankIndex sẽ là 1 (vì mảng bắt đầu từ 0).
   const currentRankIndex = allRanks.findIndex(
     (r) => r.agency_rank_id === currentRank.agency_rank_id
   );
+  //tìm hạng tiếp theo, nếu k phải cuối cùng thì trrar về hạng tiếp theo
   return currentRankIndex < allRanks.length - 1
     ? allRanks[currentRankIndex + 1]
-    : null; // Nếu là hạng cao nhất, trả về null
+    : null;
 }
 
-// phần trăm tiến độ đạt hạng
+
 function calculateRankProgress(totalSpent, nextRank) {
-  if (!nextRank) return 100; // Nếu không có hạng tiếp theo, trả về 100%
+  if (!nextRank) return 100;
+  // Lấy giá trị tối thiểu cần đạt để lên hạng tiếp theo
   const minForNextRank = nextRank.min_accumulated_value;
   return minForNextRank > 0 ? (totalSpent / minForNextRank) * 100 : 100;
 }
 
-
-
-// Tính toán thông tin rank cho từng thành viên
+// Xây dựng dữ liệu thành viên với thông tin xếp hạng
 function buildMemberRankData(member, allRanks) {
-  const memberJson = member.get({ plain: true });
-  const totalSpent = parseFloat(memberJson.total_spent || 0); // Tổng chi tiêu của thành viên
-  const currentRank = memberJson.agencyRank; // hạng hiện tại của thành viên
+  const memberJson = member.get({ plain: true });//
+  const totalSpent = parseFloat(memberJson.total_spent || 0);//tong
+  const currentRank = memberJson.agencyRank;//hang hiện tại
   const nextRank = getNextRank(currentRank, allRanks);
-  const rankProgress = calculateRankProgress(totalSpent, nextRank);
+  const rankProgress = calculateRankProgress(totalSpent, nextRank);//tiến độ
 
   return {
     user_id: memberJson.user_id,
@@ -56,135 +98,16 @@ function buildMemberRankData(member, allRanks) {
         ? Math.max(0, nextRank.min_accumulated_value - totalSpent)
         : 0,
     },
-    rank_valid_until: memberJson.rank_expiration_date,
-    actions: ["view_details", "edit_rank"],
   };
 }
 
-// Lấy tất cả các hạng, sắp xếp tăng dần theo min_accumulated_value
-async function getAllRanks() {
-  try {
-    return await AgencyRank.findAll({
-      order: [["min_accumulated_value", "ASC"]],
-    });
-  } catch (error) {
-    console.error("Lỗi khi lấy danh sách hạng:", error);
-    throw new Error("Không thể lấy danh sách hạng");
-  }
-}
-
-// Lấy tất cả user là thành viên (role_id = 3)
-async function getAllMembers() {
-  return await User.findAll({
-    where: { role_id: 3 },
-    attributes: [
-      "user_id",
-      "user_name",
-      "first_name",
-      "last_name",
-      "email",
-      "phone",
-      "createdAt",
-      "agency_rank_id",
-      [
-        sequelize.fn(
-          "SUM",
-          sequelize.literal(
-            // tổng đơn hàng đã hoàn thành
-            "CASE WHEN `orders`.`status` = 'completed' THEN `orders`.`total` ELSE 0 END"
-          )
-        ),
-        "total_spent",
-      ],
-    ],
-    include: [
-      {
-        model: Order,
-        as: "orders",
-        attributes: [],
-        required: false,
-      },
-      {
-        model: AgencyRank,
-        as: "agencyRank",
-      },
-      {
-        model: Role,
-        as: "role",
-      },
-    ],
-    group: ["User.user_id", "agencyRank.agency_rank_id", "role.role_id"],
-  });
-}
+// HÀM MÀ CONTROLLER SẼ GỌI ĐỂ LẤY DỮ LIỆU
 
 module.exports = {
-  getRanks: async () => {
-    try {
-      console.log("Đang gọi AgencyRank.findAll() để lấy danh sách hạng.");
-      const agency_ranks = await AgencyRank.findAll();
-      console.log("danh sách hạng:", agency_ranks);
-      console.log("Lấy danh sách hạng thành công.", agency_ranks);
-      return agency_ranks;
-    } catch (error) {
-      console.error("Lỗi khi lấy danh sách hạng:", error);
-      throw new Error("Không thể lấy danh sách hạng");
-    }
-  },
-  getRankById: async (rank_id) => {
-    try {
-      const agency_rank = await AgencyRank.findOne({
-        where: { rank_id: rank_id },
-      });
-      if (!agency_rank) {
-      throw new Error("Hạng không tồn tại");
-    }
-      return agency_rank;
-    } catch (error) {
-      throw new Error("Không thể lấy hạng" + error.message);
-    }
-  },
-
-  createRank: async (data) => {
-    try {
-      const newRank = await AgencyRank.create(data);
-      return newRank;
-    } catch (error) {
-      console.error("Lỗi khi tạo hạng:", error);
-      throw new Error("Không thể tạo hạng");
-    }
-  },
-  deleteRank: async (id) => {
-    try {
-      const rank = await AgencyRank.findByPk(id);
-      if (!rank) {
-        throw new Error("Hạng không tồn tại");
-      }
-      await rank.destroy();
-      return { message: "Xóa hạng thành công" };
-    } catch (error) {
-      console.error("Lỗi khi xóa hạng:", error);
-      throw new Error("Không thể xóa hạng");
-    }
-  },
-
-  updateRank: async (id, data) => {
-    try {
-      const rank = await AgencyRank.findByPk(id);
-      if (!rank) {
-        throw new Error("Hạng không tồn tại");
-      }
-      await rank.update(data);
-      return rank;
-    } catch (error) {
-      console.error("Lỗi khi cập nhật hạng:", error);
-      throw new Error("Không thể cập nhật hạng");
-    }
-  },
-
   getMembersWithRank: async () => {
     try {
-      const allRanks = await getAllRanks();
-      const members = await getAllMembers();
+      const allRanks = await getAllRanksSorted();
+      const members = await getMembersWithTotalSpent();
       const result = members.map((member) =>
         buildMemberRankData(member, allRanks)
       );
@@ -193,5 +116,26 @@ module.exports = {
       console.error("Lỗi khi lấy danh sách thành viên theo hạng:", error);
       throw new Error("Không thể lấy danh sách thành viên");
     }
+  },
+
+  getRanks: async () => {
+    return await AgencyRank.findAll();
+  },
+
+  createRank: async (data) => {
+    return await AgencyRank.create(data);
+  },
+
+  updateRank: async (id, data) => {
+    const rank = await AgencyRank.findByPk(id);
+    if (!rank) throw new Error("Hạng không tồn tại");
+    return await rank.update(data);
+  },
+
+  deleteRank: async (id) => {
+    const rank = await AgencyRank.findByPk(id);
+    if (!rank) throw new Error("Hạng không tồn tại");
+    await rank.destroy();
+    return { message: "Xóa hạng thành công" };
   },
 };

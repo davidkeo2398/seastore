@@ -1,32 +1,76 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
-//import "../css/layout.css";
+import Chatbot from "@/pages/Chatbot";
+import { MessageCircle } from "lucide-react";
+import axiosInstance from "@/lib/axios";
+import "../css/Layout.css";
 
-const Layout = () => {
+export default function Layout() {
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    {
+      sender: "bot",
+      text: "Chào bạn, tôi là trợ lý ảo của Sea Store. Tôi có thể giúp gì cho bạn?",
+    },
+  ]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const toggleChatbot = () => {
+    setIsChatbotOpen(!isChatbotOpen);
+  };
+
+  const handleSendMessage = async (question) => {
+    setMessages((prev) => [...prev, { sender: "user", text: question }]);
+    setIsLoading(true);
+
+    try {
+      // Send question to backend
+      const response = await axiosInstance.post("/chatbot", { question });
+
+      // Add bot's response to the chat
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: response.data.answer },
+      ]);
+    } catch (error) {
+      console.error("Lỗi khi gửi câu hỏi đến backend:", error);
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại." },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 w-full pt-16">
+      <main className="flex-grow outlet-container">
         <Outlet />
       </main>
       <Footer />
-      {/* Nút nổi Zalo */}
-      <a
-        href="https://zalo.me/0337586860" 
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed z-50 bottom-6 right-6 bg-blue-500 hover:bg-blue-600 rounded-full shadow-lg p-3 flex items-center justify-center"
-        style={{ width: 56, height: 56 }}
-      >
-        <img
-          src="images/icons8-zalo-48.png"
-          alt="Zalo"
-          className="w-8 h-8"
-        />
-      </a>
+
+      {/* Chatbot Floating Button and Window */}
+      <div className="fixed z-50 bottom-5 right-5">
+        {isChatbotOpen && (
+          <Chatbot
+            messages={messages}
+            onSendMessage={handleSendMessage}
+            isLoading={isLoading}
+            onClose={toggleChatbot} // Đóng chat khi nhấn nút
+          />
+        )}
+        <button
+          onClick={toggleChatbot} // Mở hoặc đóng chat
+          className="p-4 mt-4 text-black rounded-full shadow-lg bg-black-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          aria-label="Toggle Chatbot"
+        >
+          <MessageCircle className="w-6 h-6" />
+        </button>
+      </div>
     </div>
   );
-};
-
-export default Layout;
+}

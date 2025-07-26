@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import "../css/PaymentCheckout.css";
 // import { Checkbox } from "@/components/ui/checkbox";
 import { SunIcon } from "@radix-ui/react-icons";
 import {
@@ -32,8 +33,12 @@ import axiosInstance from "@/lib/axios";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import LoginDialog from "./LoginDiaLog";
+import { Textarea } from "@/components/ui/textarea";
 import { TermsModal, PrivacyModal } from "./Modal";
 import { Checkbox } from "@/components/ui/checkbox";
+import "../css/PaymentCheckout.css";
+import CartPage from "../pages/CartPage";
+
 
 const paymentMethods = [
   {
@@ -89,21 +94,26 @@ export default function PayCheckout() {
     // Bank transfer
     bankCode: "",
 
+    note: "",
+
     // Preferences
     saveInfo: false,
     agreeTerms: false,
   });
   const { cart, getCartTotal, removeFromCart } = useCart();
+
+  // validation
   const [invalidFullName, setInvalidFullName] = useState(true);
   const [invalidEmail, setInvalidEmail] = useState(true);
   const [invalidPhone, setInvalidPhone] = useState(true);
   const [invalidAddress, setInvalidAddress] = useState(true);
-
   const [touchedFullName, setTouchedFullName] = useState(false);
   const [touchedEmail, setTouchedEmail] = useState(false);
   const [touchedPhone, setTouchedPhone] = useState(false);
   const [touchedAddress, setTouchedAddress] = useState(false);
 
+  
+// khuyến mãi
   const [discount, setDiscount] = useState(0);
   const [calRankDiscount, setCalRankDiscount] = useState(0);
 
@@ -311,6 +321,7 @@ export default function PayCheckout() {
       payment_method: selectedPayment.toLowerCase(),
       products: products,
       promotion_code: promotion_code,
+      note: formData.note || "",
      
     };
     console.log("payload", payload);
@@ -523,7 +534,7 @@ export default function PayCheckout() {
           </div>
           <Link to="/cart">
             <Button variant="outline">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4 mr-2 " />
               Quay lại giỏ hàng
             </Button>
           </Link>
@@ -622,7 +633,20 @@ export default function PayCheckout() {
                         </p>
                       )}
                     </div>
-                  </div>
+
+                    {/* viết hàm ghi chú
+                    <div className="col-span-2">
+                      <Label htmlFor="note">Ghi chú</Label>
+                      <Textarea
+                        id="note"
+                        value={formData.note}
+                        onChange={(e) =>
+                          handleInputChange("note", e.target.value)
+                        }
+                      />
+                    </div> */}
+
+                    </div>
                 </CardContent>
               </Card>
 

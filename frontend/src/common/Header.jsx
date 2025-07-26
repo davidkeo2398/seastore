@@ -22,7 +22,6 @@ const Header = () => {
   console.log("user:", user);
   console.log("isAdmin:", isAdmin);
 
-
   // Xử lý đăng nhập thành công
   const handleLoginSuccess = (userData) => {
     console.log("User logged in:", userData);
@@ -43,6 +42,7 @@ const Header = () => {
     clearAuthToken();
     localStorage.clear();
     navigate("/");
+    window.location.reload(); // Tải lại trang để cập nhật header
   };
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -94,7 +94,6 @@ const Header = () => {
         </Link> */}
         {/* 5 */}
       </nav>
-      {/* Cart and user info/buttons */}
       <div className="user-actions">
         <Link to="/cart" className="cart">
           <FaShoppingCart className="cart-icon" />
@@ -129,6 +128,7 @@ const Header = () => {
         className="menu-toggle"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
+        {/* fatime: X; fabar: ba gạch */}
         {isMenuOpen ? <FaTimes /> : <FaBars />}
       </button>
       {showLoginDialog && (

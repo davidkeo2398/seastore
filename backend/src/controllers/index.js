@@ -8,7 +8,7 @@ const agencyRankController = require("./agency-rank-controller");
 const momoController = require("./momo-controller");
 const vnpayController = require("./vnpay-controller");
 const orderItemController = require("./order-item-controller");
-
+const chatbotController = require("./chatbot-controller");
 
 //admin
 const orderAdminController = require("./admin/order-admin-controller");
@@ -26,6 +26,7 @@ module.exports = {
   agencyController,
   agencyRankController,
   orderItemController,
+  chatbotController,
 
   //Thanh toan ngan hang
   vnpayController,

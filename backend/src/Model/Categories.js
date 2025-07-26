@@ -38,12 +38,15 @@ module.exports = (sequelize) => {
   );
   Categories.associate = (models) => {
     Categories.hasMany(models.Product, {
-      foreignKey: 'category_id',
-      as: 'products',
+      foreignKey: "category_id",
+      as: "products",
     });
   };
+
+  
   return Categories;
-}; 
-// Category - Product
-// Categories.hasMany(Product, { foreignKey: "category_id", as: "products" });
-// Product.belongsTo(Categories, { foreignKey: "category_id", as: "category" });
+};
+
+// //Category - Product
+//   Categories.hasMany(Product, { foreignKey: "category_id", as: "products" });
+//   Product.belongsTo(Categories, { foreignKey: "category_id", as: "category" });
