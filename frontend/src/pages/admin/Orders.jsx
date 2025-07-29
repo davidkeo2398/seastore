@@ -72,6 +72,11 @@ export default function OrdersPage() {
     try {
       const response = await axiosInstance.get("/admin/order");
       setOrders(response.data.data || []);
+
+      const sortOrders = response.data.data.sort((a, b) => {
+        return new Date(b.order_date) - new Date(a.order_date);
+      });
+      setOrders(sortOrders);
     } catch (error) {
       setOrders([]);
       toast.error("Lấy danh sách đơn hàng thất bại!");
@@ -108,7 +113,8 @@ export default function OrdersPage() {
 
 
   // Hàm xử lý thay đổi trạng thái đơn hàng
-  const handleStatusChange = async (order_id, newStatus) => {
+  const handleStatusChange = async (order_id, newStatus, order) => {
+    console.log("change status", order)
     const currentOrder = orders.find((order) => order.order_id === order_id);
     if (!currentOrder) {
       toast.error("Không tìm thấy đơn hàng!");
@@ -135,6 +141,7 @@ export default function OrdersPage() {
     try {
       await axiosInstance.patch(`/admin/order/${order_id}`, {
         status: newStatus,
+        user_id: order.user_id,
       });
       toast.success("Cập nhật trạng thái đơn hàng thành công!");
     } catch (error) {
@@ -158,7 +165,8 @@ export default function OrdersPage() {
       order.user_name?.toLowerCase().includes(searchTermLower) ||
       order.user_email?.toLowerCase().includes(searchTermLower) ||
       order.order_code?.toLowerCase().includes(searchTermLower) ||
-      order.phone_user?.toLowerCase().includes(searchTermLower);
+      order.phone_user?.toLowerCase().includes(searchTermLower) ||
+      order.phone_agency?.toLowerCase().includes(searchTermLower);
     const matchesStatus =
       statusFilter === "all" || order.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -396,7 +404,7 @@ export default function OrdersPage() {
                             <Select
                               value={order.status}
                               onValueChange={(value) =>
-                                handleStatusChange(order.order_id, value)
+                                handleStatusChange(order.order_id, value, order)
                               }
                             >
                               <SelectTrigger className="w-[150px] h-8">

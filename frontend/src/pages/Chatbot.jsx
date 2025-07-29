@@ -71,7 +71,12 @@ export default function Chatbot({
                 components={{
                   // Mở link trong tab mới
                   a: ({ node, ...props }) => (
-                    <a {...props} target="_blank" rel="noopener noreferrer" />
+                    <a
+                      {...props}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "black" }}
+                    />
                   ),
                 }}
               >
@@ -82,10 +87,11 @@ export default function Chatbot({
         ))}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="px-4 py-2 text-gray-800 bg-gray-200 rounded-lg">
-              <span className="inline-block w-2 h-2 mr-1 bg-gray-500 rounded-full animate-pulse"></span>
-              <span className="inline-block w-2 h-2 mr-1 delay-75 bg-gray-500 rounded-full animate-pulse"></span>
-              <span className="inline-block w-2 h-2 delay-150 bg-gray-500 rounded-full animate-pulse"></span>
+            <div className="px-4 py-2 bg-gray-200 rounded-lg">
+              <span style={{ color: "black-300", opacity: 0.7 }}>
+                Sea Store AI đang suy nghĩ...
+              </span>{" "}
+              {/* Màu trắng và mờ */}
             </div>
           </div>
         )}

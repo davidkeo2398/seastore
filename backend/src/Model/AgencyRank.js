@@ -53,3 +53,8 @@ module.exports = (sequelize) => {
   };
   return AgencyRank;
 };
+
+async function validateRanks() {
+  const ranks = await AgencyRank.findAll();
+  console.log("Danh sách hạng:", ranks);
+}

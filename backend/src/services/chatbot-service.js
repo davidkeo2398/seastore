@@ -2,8 +2,8 @@
 const { Product } = require("../Model/Index");
 const Op = require("sequelize").Op;
 require("dotenv").config();
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 function formatPrice(price) {
@@ -11,83 +11,86 @@ function formatPrice(price) {
   if (isNaN(numericPrice)) {
     return price; // Trả về nguyên bản nếu không phải là số
   }
-  return numericPrice.toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
+  return numericPrice.toLocaleString("vi-VN"); // Định dạng theo chuẩn Việt Nam
 }
 const productService = {
   searchProductsForChatbot: async (searchTerms) => {
     console.log(`AI is searching DB for keywords: ${searchTerms}`);
 
     // Tách chuỗi từ khóa thành một mảng các từ khóa riêng lẻ
-    const keywords = searchTerms.split(' ').filter(k => k.length > 1); // Lọc bỏ các từ khóa quá ngắn
+    const keywords = searchTerms.split(" ").filter((k) => k.length > 1); // Lọc bỏ các từ khóa quá ngắn
 
     if (keywords.length === 0) {
       return [];
     }
 
     // Tạo một mảng các điều kiện LIKE cho mỗi từ khóa
-    const likeConditions = keywords.map(key => ({ [Op.like]: `%${key}%` }));
+    const likeConditions = keywords.map((key) => ({ [Op.like]: `%${key}%` }));
 
     // Xây dựng câu truy vấn Sequelize linh hoạt
     const products = await Product.findAll({
       where: {
         [Op.or]: [
           { product_name: { [Op.or]: likeConditions } },
-          { description: { [Op.or]: likeConditions } }
-        ]
+          { description: { [Op.or]: likeConditions } },
+        ],
       },
-      limit: 5 // Giới hạn 5 sản phẩm để câu trả lời không quá dài
+      limit: 5, // Giới hạn 5 sản phẩm để câu trả lời không quá dài
     });
 
     console.log(`Found ${products.length} products in DB.`);
-    
+
     // Trả về dữ liệu đã được đơn giản hóa cho AI
-   return products.map(p => ({
+    return products.map((p) => ({
       product_id: p.product_id, // Cần ID để tạo link
       product_name: p.product_name,
       description: p.description,
       price: formatPrice(p.price), // Định dạng giá
       category_id: p.category_id, // Cần để hiển thị danh mục nếu cần
-      image: p.image // Cần URL ảnh để hiển thị
+      image: p.image, // Cần URL ảnh để hiển thị
     }));
-  }
+  },
 };
 // === KẾT THÚC PHẦN SỬA LỖI ===
 
 // Nạp kiến thức từ file JSON
-const knowledgeBasePath = path.join(__dirname, '../../knowledge_base.json');
+const knowledgeBasePath = path.join(__dirname, "../../knowledge_base.json");
 let knowledgeBase = { faq: [], fallback: {} };
 try {
-    const jsonData = fs.readFileSync(knowledgeBasePath, 'utf-8');
-    knowledgeBase = JSON.parse(jsonData);
-    console.log("AI đã nạp thành công kiến thức nền từ knowledge_base.json");
+  const jsonData = fs.readFileSync(knowledgeBasePath, "utf-8");
+  knowledgeBase = JSON.parse(jsonData);
+  console.log("AI đã nạp thành công kiến thức nền từ knowledge_base.json");
 } catch (error) {
-    console.error("Lỗi khi đọc file knowledge_base.json:", error);
+  console.error("Lỗi khi đọc file knowledge_base.json:", error);
 }
 
 function findAnswerInFaq(userQuestion) {
-    const question = userQuestion.toLowerCase();
-    for (const item of knowledgeBase.faq) {
-        for (const keyword of item.keywords) {
-            if (question.includes(keyword)) {
-                return item.answer;
-            }
-        }
+  const question = userQuestion.toLowerCase();
+  for (const item of knowledgeBase.faq) {
+    for (const keyword of item.keywords) {
+      // Chỉ khớp khi câu hỏi là một từ đơn hoặc có khoảng trắng bao quanh
+      const regex = new RegExp(`\\b${keyword}\\b`);
+      if (regex.test(question)) {
+        return item.answer;
+      }
     }
-    return null;
+  }
+  return null;
 }
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 async function getGeminiResponse(userQuestion, isContinuation = false) {
-    try {
-      // BƯỚC 1: KIỂM TRA FAQ (LỜI CHÀO NGẮN)
-      // Sửa lại file knowledge_base.json để lời chào ngắn gọn hơn
-      // "answer": "Chào bạn, bạn cần tôi hỗ trợ thêm gì không ạ?"
-      const faqAnswer = findAnswerInFaq(userQuestion);
-      if (faqAnswer) return faqAnswer;
+  try {
+    // BƯỚC 1: KIỂM TRA FAQ (LỜI CHÀO NGẮN)
+    // Sửa lại file knowledge_base.json để lời chào ngắn gọn hơn
+    // "answer": "Chào bạn, bạn cần tôi hỗ trợ thêm gì không ạ?"
+    const faqAnswer = findAnswerInFaq(userQuestion);
+    if (faqAnswer) return faqAnswer;
+    
 
-      const keywordExtractionPrompt = `
+    const keywordExtractionPrompt = `
         Bạn là chuyên gia về thủy sản. Dựa vào câu hỏi của người dùng, hãy rút ra những từ khóa chính xác nhất để tìm kiếm sản phẩm trong cơ sở dữ liệu.
         Chỉ trả về các từ khóa, phân cách bởi dấu phẩy. Ưu tiên các từ khóa mô tả vấn đề, công dụng sản phẩm hoặc tên loại sản phẩm.
         Ví dụ:
@@ -100,23 +103,36 @@ async function getGeminiResponse(userQuestion, isContinuation = false) {
         Câu hỏi: "${userQuestion}"
         Từ khóa:
       `;
-      const keywordResult = await model.generateContent(keywordExtractionPrompt);
-      const searchTerms = (await keywordResult.response.text()).split(',').map(term => term.trim()).join(' ');
-      
-      const productsFromDB = await productService.searchProductsForChatbot(searchTerms);
+    const keywordResult = await model.generateContent(keywordExtractionPrompt);
+    const searchTerms = (await keywordResult.response.text())
+      .split(",")
+      .map((term) => term.trim())
+      .join(" ");
 
-      if (productsFromDB.length === 0) {
-        return knowledgeBase.fallback.product_not_found;
-      }
- // === BƯỚC 5: CẬP NHẬT PROMPT VỚI ĐÚNG ĐƯỜNG DẪN LOCALHOST ===
-      const context = `Dữ liệu sản phẩm có liên quan (JSON): ${JSON.stringify(productsFromDB, null, 2)}`;
-      const finalPrompt = `
+    const productsFromDB = await productService.searchProductsForChatbot(
+      searchTerms
+    );
+
+    if (productsFromDB.length === 0) {
+      return knowledgeBase.fallback.product_not_found;
+    }
+    // === BƯỚC 5: CẬP NHẬT PROMPT VỚI ĐÚNG ĐƯỜNG DẪN LOCALHOST ===
+    const context = `Dữ liệu sản phẩm có liên quan (JSON): ${JSON.stringify(
+      productsFromDB,
+      null,
+      2
+    )}`;
+    const finalPrompt = `
         Bạn là trợ lý tư vấn bán hàng chuyên nghiệp của cửa hàng thủy sản Sea Store.
         **Dữ liệu sản phẩm có sẵn:**
         ${context}
 
         **Nhiệm vụ và Quy tắc định dạng RẤT QUAN TRỌNG:**
-        1.  **${isContinuation ? "Không sử dụng lời chào. Đi thẳng vào vấn đề." : "Bắt đầu bằng một câu chào thân thiện."}**
+        1.  **${
+          isContinuation
+            ? "Không sử dụng lời chào. Đi thẳng vào vấn đề."
+            : "Bắt đầu bằng một câu chào thân thiện."
+        }**
         2.  Sau câu chào (nếu có), thêm tiêu đề "### Các sản phẩm gợi ý".
         3.  Với **MỖI** sản phẩm, hãy trình bày bằng các gạch đầu dòng và **in đậm** các đầu mục:
             * **[Tên sản phẩm]**
@@ -134,14 +150,13 @@ async function getGeminiResponse(userQuestion, isContinuation = false) {
         **Câu hỏi của khách hàng:** "${userQuestion}"
       `;
 
-      const finalResult = await model.generateContent(finalPrompt);
-      const finalResponse = await finalResult.response;
-      return finalResponse.text();
-
-    } catch (error) {
-      console.error("Lỗi khi tương tác với Gemini API:", error);
-      return knowledgeBase.fallback.general_fallback;
-    }
+    const finalResult = await model.generateContent(finalPrompt);
+    const finalResponse = await finalResult.response;
+    return finalResponse.text();
+  } catch (error) {
+    console.error("Lỗi khi tương tác với Gemini API:", error);
+    return knowledgeBase.fallback.general_fallback;
+  }
 }
 
 module.exports = { getGeminiResponse };

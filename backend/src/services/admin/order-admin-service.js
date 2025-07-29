@@ -1,5 +1,13 @@
 const { raw } = require("body-parser");
-const { Order, OrderItem, Product, User } = require("../../Model/Index");
+const {
+  Order,
+  OrderItem,
+  Product,
+  User,
+  AgencyRank,
+} = require("../../Model/Index");
+const { sequelize } = require("../../config/dbcontext");
+const { updateOrder } = require("../order-service");
 
 // xử lý  logic, database
 module.exports = {
@@ -14,15 +22,74 @@ module.exports = {
     }
   },
   updateStatusOrderById: async (data, order_id) => {
+    const t = await sequelize.transaction();
     try {
-      const { status } = data;
-      const udpatedOrder = Order.update(
+      const { status, user_id, payment_method } = data;
+      const updatedOrder = await Order.update(
         { status: status },
-        { where: { order_id: order_id } }
+        { where: { order_id: order_id }, transaction: t }
       );
-      return udpatedOrder;
+
+      // Nếu trạng thái không phải "completed", không cần nâng hạng
+      if (status !== "completed") {
+        await t.commit();
+        return updatedOrder;
+      }
+      if (payment_method === "vnpay") {
+        console.log("Thanh toán qua VNPAY mặc định hoàn thành và nâng hạng");
+      }
+
+      const ordersTotal = await Order.sum("total", {
+        // đơn hàng đã hoàn thành
+        where: { user_id, status: "completed" },
+        transaction: t,
+      });
+
+      const user = await User.findOne({ where: { user_id: user_id } });
+      if (!user) {
+        throw new Error(`User with ID '${user_id}' not found`);
+      }
+
+      let rankName = null;
+      // hạng thành viên
+      if (ordersTotal >= 40_000_000) {
+        // so sánh hạng cao nhất
+        rankName = "Diamond";
+      } else if (ordersTotal >= 30_000_000) {
+        rankName = "Platinum";
+      } else if (ordersTotal >= 10_000_000) {
+        rankName = "Gold";
+      } else if (ordersTotal >= 5_000_000) {
+        rankName = "Silver";
+      } else if (ordersTotal >= 1_000_000) {
+        rankName = "Bronze";
+      }
+
+      // Nếu không có hạng mới, không cần cập nhật
+      if (!rankName) {
+        await t.commit();
+        return updatedOrder;
+      }
+
+      // cập nhật hạng thành viên nếu có
+      if (rankName) {
+        const agency = await AgencyRank.findOne({
+          // lấy danh sách hạng thành viên
+          where: { agency_rank_name: rankName },
+          transaction: t, //truy vấn trong giao dịch hiện tại
+        });
+        if (!agency) {
+          throw new Error(`Agency rank '${rankName}' not found`);
+        }
+        console.log("agency", rankName);
+        // cập nhật hạng thành viên cho người dùng
+        await user.update({ agency_rank_id: agency.agency_rank_id });
+      }
+      await t.commit();
+      return updatedOrder;
     } catch (error) {
       console.error("Update order by id fail");
+      await t.rollback();
       throw new Error("Update order by id fail: ", error);
     }
   },

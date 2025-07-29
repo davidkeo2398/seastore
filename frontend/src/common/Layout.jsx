@@ -65,10 +65,14 @@ export default function Layout() {
         )}
         <button
           onClick={toggleChatbot} // Mở hoặc đóng chat
-          className="p-4 mt-4 text-black rounded-full shadow-lg bg-black-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="p-4 mt-4 dow-lg boa nded-full boaxt-black border-3 bg-black-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           aria-label="Toggle Chatbot"
         >
-          <MessageCircle className="w-6 h-6" />
+          <img
+            src="../../public/images/chat_ai.jpg" // Đường dẫn tới hình ảnh
+            alt="Chatbot Icon"
+            className="border-white rounded-full border-3 w-15 h-18" // Kích thước hình ảnh
+          />
         </button>
       </div>
     </div>

@@ -26,6 +26,56 @@
         "answer": "Chào bạn, bạn đang quan tâm đến vấn đề gì cho ao nuôi của mình? (Ví dụ: cách trị bệnh cho tôm, sản phẩm làm sạch nước, thức ăn tăng trưởng...)"
     },
     {
+      "intent": "faq_gioi_thieu",
+      "keywords": ["giới thiệu", "giới thiệu shop", "giới thiệu cửa hàng"],
+      "answer": "Sea Store là cửa hàng chuyên cung cấp các sản phẩm và giải pháp cho nuôi trồng thủy sản. Chúng tôi cam kết mang đến sản phẩm chất lượng, giá cả hợp lý và dịch vụ tư vấn tận tình. Bạn cần tìm hiểu thêm về sản phẩm nào không?"
+    },
+    {
+      "intent": "faq_dich_vu",
+      "keywords": ["dịch vụ", "dịch vụ của shop", "dịch vụ cửa hàng"],
+      "answer": "Chúng tôi cung cấp các dịch vụ tư vấn nuôi trồng thủy sản, hỗ trợ kỹ thuật và cung cấp các sản phẩm chuyên dụng cho nuôi tôm, cá. Bạn cần tìm hiểu về dịch vụ nào cụ thể không?"
+    },
+    {
+      "intent": "faq_dai_ly",
+      "keywords": ["đại lý", "trở thành đại lý", "mở đại lý", "đại lý phân phối"],
+      "answer": "Chúng tôi luôn chào đón các đối tác muốn trở thành đại lý phân phối sản phẩm của Sea Store. Bạn có thể liên hệ hotline **0337586860** để được tư vấn chi tiết về chính sách và điều kiện hợp tác."
+    },
+    {
+      "intent": "faq_chiet_khau_dai_ly",
+      "keywords": ["chiết khấu", "giá đại lý", "giá sỉ", "giá ưu đãi"],
+      "answer": "Sea Store có chính sách chiết khấu hấp dẫn cho các đại lý và khách hàng mua số lượng lớn. Bạn có thể liên hệ hotline **0337586860** để được tư vấn chi tiết về mức chiết khấu và các ưu đãi dành cho đại lý."
+    },
+    {
+      "intent": "faq_quyen_loi_dai_ly",
+      "keywords": ["quyền lợi đại lý", "lợi ích đại lý", "ưu đãi đại lý", "quyền lợi khi làm đại lý"],
+      "answer": "Khi trở thành đại lý của Sea Store, bạn sẽ được hưởng nhiều quyền lợi như: giá ưu đãi, hỗ trợ marketing, tư vấn kỹ thuật miễn phí và các chương trình khuyến mãi đặc biệt. Để biết thêm chi tiết, bạn vui lòng liên hệ hotline **0337586860**."
+    },
+    {
+      "intent": "faq_dich_vu_dai_ly",
+      "keywords": ["dịch vụ đại lý", "hỗ trợ đại lý", "dịch vụ hỗ trợ"],
+      "answer": "Chúng tôi cung cấp dịch vụ hỗ trợ tận tình cho các đại lý, bao gồm tư vấn kỹ thuật, hỗ trợ marketing và các chương trình đào tạo. Bạn có thể liên hệ hotline **0337586860** để được tư vấn chi tiết."
+    },
+    {
+      "intent": "faq_doi_tac",
+      "keywords": ["đối tác", "hợp tác", "liên kết"],
+      "answer": "Sea Store luôn mở cửa chào đón các đối tác muốn hợp tác trong lĩnh vực nuôi trồng thủy sản. Bạn có thể liên hệ hotline **0337586860** để thảo luận về cơ hội hợp tác."
+    },
+    {
+      "intent": "faq_chinh_sach_bao_mat",
+      "keywords": ["chính sách bảo mật", "bảo mật thông tin", "an toàn dữ liệu"],
+      "answer": "Chúng tôi cam kết bảo mật thông tin cá nhân của khách hàng theo đúng quy định pháp luật. Mọi thông tin sẽ được sử dụng chỉ với mục đích phục vụ khách hàng tốt nhất."
+    },
+    {
+      "intent": "faq_khuyen_mai",
+      "keywords": ["khuyến mãi", "giảm giá", "ưu đãi", "mã giảm giá"],
+      "answer": "Hiện tại, Sea Store đang có nhiều chương trình khuyến mãi hấp dẫn cho khách hàng. Bạn có thể theo dõi trang web hoặc fanpage của chúng tôi để cập nhật thông tin mới nhất về các chương trình ưu đãi."
+    },
+    {
+      "intent": "faq_san_pham",
+      "keywords": ["sản phẩm", "catalog", "danh mục sản phẩm"],
+      "answer": "Sea Store cung cấp đa dạng các sản phẩm cho nuôi trồng thủy sản, bao gồm thức ăn, thuốc thú y, và các sản phẩm hỗ trợ khác. Bạn có muốn xem danh mục sản phẩm cụ thể không?"
+    },
+    {
       "intent": "benh_duong_ruot_tom",
       "keywords": ["phân trắng", "bệnh đường ruột", "ruột tôm lỏng", "tôm bỏ ăn", "EHP"],
       "answer": "Chào bạn, vấn đề về đường ruột và phân trắng ở tôm khá phổ biến. Bạn có thể tham khảo các sản phẩm chuyên trị như **PIO NUS** (đặc trị EHP & phân trắng), **NOVA-BACCI** hoặc các loại men đường ruột như **BioFlora**, **GUT‑PRO** để cải thiện tiêu hóa và phục hồi sức khỏe cho tôm. Bạn có muốn tôi tìm chi tiết các sản phẩm này không?"

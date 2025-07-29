@@ -53,7 +53,6 @@ import {
 } from "lucide-react";
 import axiosInstance from "@/lib/axios";
 
-
 const rankConfigIconsColors = {
   Bronze: { color: "bg-orange-100 text-orange-800", icon: Award },
   Silver: { color: "bg-gray-100 text-gray-800", icon: Star },
@@ -143,28 +142,49 @@ export default function AdminAngencyRank() {
 
   const getRankBadge = (rankName) => {
     const config = rankConfigIconsColors[rankName];
+
     if (!config) {
       // Thêm dòng này để phòng trường hợp có hạng không xác định
       return <Badge variant="secondary">{rankName}</Badge>;
     }
     const IconComponent = config.icon;
     return (
-      <Badge className={config.color}>
-        <IconComponent className="w-3 h-3 mr-1" />
-        {rankName}
-      </Badge>
+      console.log("Rank Name:", rankName),
+      (
+        <Badge className={config.color}>
+          <IconComponent className="w-3 h-3 mr-1" />
+          {rankName}
+        </Badge>
+      )
     );
   };
 
   const getNextRank = (currentRank, totalSpent) => {
     const ranks = Object.keys(rankConfig);
     const currentIndex = ranks.indexOf(currentRank);
-    const nextRank = ranks[currentIndex + 1];
 
+    if (currentIndex === -1) {
+      console.error(
+        "Hạng hiện tại không tồn tại trong danh sách hạng:",
+        currentRank
+      );
+      return null;
+    }
+
+    const nextRank = ranks[currentIndex + 1];
     if (!nextRank) return null;
 
     const nextThreshold = rankConfig[nextRank].threshold;
-    const progress = Math.min(100, (totalSpent / nextThreshold) * 100);
+    const progress =
+      totalSpent >= nextThreshold
+        ? 100
+        : Math.min(100, (totalSpent / nextThreshold) * 100);
+    console.log("Kết quả getNextRank:", {
+      rank: nextRank,
+      threshold: nextThreshold,
+      remaining: nextThreshold - totalSpent,
+      progress,
+    });
 
     return {
       rank: nextRank,
@@ -173,6 +193,8 @@ export default function AdminAngencyRank() {
       progress,
     };
   };
+
+  console.log("getNextRank:", getNextRank);
 
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">
@@ -206,7 +228,6 @@ export default function AdminAngencyRank() {
             </p>
           </CardContent>
         </Card>
-       
       </div>
 
       {/* Main Content */}
@@ -269,7 +290,9 @@ export default function AdminAngencyRank() {
                       <TableHead>Tổng chi tiêu</TableHead>
                       <TableHead>Giảm giá</TableHead>
                       <TableHead>Tiến độ hạng</TableHead>
-                      <TableHead className="w-[150px] text-left">Hành động</TableHead>
+                      <TableHead className="w-[150px] text-left">
+                        Hành động
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -362,8 +385,6 @@ export default function AdminAngencyRank() {
             </CardContent>
           </Card>
         </TabsContent>
-
-        
       </Tabs>
 
       {/* Member Detail Dialog */}
@@ -384,7 +405,7 @@ export default function AdminAngencyRank() {
                     <div>Tên: {selectedMember.member_info.user_name}</div>
                     <div>Email: {selectedMember.member_info.email}</div>
                     <div>Điện thoại: {selectedMember.phone}</div>
-                    
+
                     <div>
                       Ngày tham gia:{" "}
                       {new Date(selectedMember.createdAt).toLocaleDateString(
@@ -438,9 +459,6 @@ export default function AdminAngencyRank() {
           )}
         </DialogContent>
       </Dialog>
-
-      
-      
     </div>
   );
 }

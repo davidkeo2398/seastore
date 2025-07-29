@@ -46,15 +46,15 @@ async function getMembersWithTotalSpent() {
 }
 
 
-
 function getNextRank(currentRank, allRanks) {
-  // Nếu không có hạng hiện tại, trả về hạng đầu tiên
   if (!currentRank) return allRanks[0];
-  //ếu currentRank là "Silver" và "Silver" ở vị trí thứ 2 trong danh sách, currentRankIndex sẽ là 1 (vì mảng bắt đầu từ 0).
   const currentRankIndex = allRanks.findIndex(
     (r) => r.agency_rank_id === currentRank.agency_rank_id
   );
-  //tìm hạng tiếp theo, nếu k phải cuối cùng thì trrar về hạng tiếp theo
+  if (currentRankIndex === -1) {
+    console.error("Hạng hiện tại không tồn tại trong danh sách hạng.");
+    return null;
+  }
   return currentRankIndex < allRanks.length - 1
     ? allRanks[currentRankIndex + 1]
     : null;
@@ -63,9 +63,26 @@ function getNextRank(currentRank, allRanks) {
 
 function calculateRankProgress(totalSpent, nextRank) {
   if (!nextRank) return 100;
-  // Lấy giá trị tối thiểu cần đạt để lên hạng tiếp theo
   const minForNextRank = nextRank.min_accumulated_value;
-  return minForNextRank > 0 ? (totalSpent / minForNextRank) * 100 : 100;
+  if (totalSpent >= minForNextRank) return 100; // Đã đạt hạng tiếp theo
+  return (totalSpent / minForNextRank) * 100;
+}
+
+async function updateMemberRank(userId, totalSpent) {
+  const allRanks = await getAllRanksSorted();
+  const currentRank = await User.findByPk(userId, {
+    include: { model: AgencyRank, as: "agencyRank" },
+  });
+
+  const nextRank = getNextRank(currentRank.agencyRank, allRanks);
+
+  if (nextRank && totalSpent >= nextRank.min_accumulated_value) {
+    await User.update(
+      { agency_rank_id: nextRank.agency_rank_id },
+      { where: { user_id: userId } }
+    );
+    console.log(`Hạng của thành viên ${userId} đã được nâng lên ${nextRank.agency_rank_name}`);
+  }
 }
 
 // Xây dựng dữ liệu thành viên với thông tin xếp hạng

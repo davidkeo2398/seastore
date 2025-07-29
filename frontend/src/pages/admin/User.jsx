@@ -122,11 +122,19 @@ export default function UsersPage() {
     const { name, value } = e.target;
     setEditUser((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.put(`/admin/user/${editUser.user_id}`, editUser);
+      const updatedUser = {
+        ...editUser,
+        agency_rank_id: editUser.role_id === 3 ? 1 : editUser.agency_rank_id, // Mặc định agency_rank_id = 1 nếu role_id = 3
+      };
+      console.log("Dữ liệu gửi lên API:", updatedUser); // Kiểm tra dữ liệu gửi lên API
+
+      // Gửi yêu cầu cập nhật lên API
+      await axiosInstance.put(`/admin/user/${editUser.user_id}`, updatedUser);
+
+      // Cập nhật danh sách người dùng trong state
       setUsers((prev) =>
         prev.map((u) =>
           u.user_id === editUser.user_id ? { ...u, ...editUser } : u
@@ -151,6 +159,9 @@ export default function UsersPage() {
   ).length;
   const userCount = users.filter(
     (user) => user.role?.role_name !== "admin"
+  ).length;
+  const agencyCount = users.filter(
+    (user) => user.role?.role_name === "admin_agency"
   ).length;
   const activeCount = users.length;
 
@@ -207,6 +218,17 @@ export default function UsersPage() {
               {userCount}
             </div>
             <p className="text-xs text-muted-foreground">Quyền user</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium">Đại lý</CardTitle>
+            <Users className="w-4 h-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{agencyCount}</div>
+            <p className="text-xs text-muted-foreground">Quyền đại lý</p>
           </CardContent>
         </Card>
       </div>

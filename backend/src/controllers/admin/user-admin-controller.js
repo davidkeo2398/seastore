@@ -1,6 +1,7 @@
 const { where } = require("sequelize");
 const { userAdminService } = require("../../services");
 const { use } = require("react");
+const { getHighValueCustomers } = require("../../services/admin/user-admin-service");
 
 module.exports = {
   getUsers: async (req, res) => {
@@ -89,4 +90,18 @@ module.exports = {
         });
     }
   },
+  getHighValueCustomers: async (req, res) => {
+    try {
+      const result = await getHighValueCustomers();
+      res.status(200).json({
+        message: "Lấy danh sách khách hàng giá trị cao thành công",
+        data: result,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Lấy danh sách khách hàng giá trị cao thất bại",
+        error: error.message,
+      });
+    }
+  }
 };

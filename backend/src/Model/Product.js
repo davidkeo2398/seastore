@@ -25,7 +25,7 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
         validate: {
-          len: [0, 500], // Optional description with a maximum length
+          len: [0, 1500], // Optional description with a maximum length
         },
       },
       category_id: {

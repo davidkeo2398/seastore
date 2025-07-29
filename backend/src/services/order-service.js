@@ -100,6 +100,8 @@ module.exports = {
           transaction: t,
         });
 
+        console.log("ordersTotal", ordersTotal);
+
         // hạng thành viên
         if (ordersTotal >= 40_000_000) { // so sánh hạng cao nhất
           rankName = "Diamond";

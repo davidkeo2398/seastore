@@ -245,6 +245,7 @@ export default function ProductsPage() {
       toast.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
       return;
     }
+    console.log("Dữ liệu gửi đến API:", formData);
     if (isEditMode) {
       // Cập nhật sản phẩm (nếu cần, có thể bổ sung API PUT ở đây)
       setProducts((prev) =>

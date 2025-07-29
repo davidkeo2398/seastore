@@ -10,7 +10,7 @@ module.exports = {
                 message: "Get agencies success",
                 data: result,
             });
-        } catch (err) {
+        } catch (error) {
             return res.status(400).json({
                 message: "Get agencies fail",
                 data: [],
@@ -25,7 +25,7 @@ module.exports = {
                 message: "Get agency by id success",
                 data: result,
             });
-        } catch (err) {
+        } catch (error) {
             return res.status(400).json({
                 message: "Get agency by id fail",
                 data: [],

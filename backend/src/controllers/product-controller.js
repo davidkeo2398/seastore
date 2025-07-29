@@ -43,7 +43,7 @@ module.exports = {
         message: "Get a product sucessfully",
         data: result,
       });
-    } catch (err) {
+    } catch (error) {
       return res.status(400).json({
         message: "Get a product fail",
         data: [],
@@ -62,7 +62,7 @@ module.exports = {
         message: "Get products by category sucessfully",
         data: result,
       });
-    } catch (err) {
+    } catch (error) {
       return res.status(400).json({
         message: "Get products by category fail",
         data: [],
@@ -81,7 +81,7 @@ module.exports = {
         message: "Get count product by category sucessfully",
         data: result,
       });
-    } catch (err) {
+    } catch (error) {
       return res.status(400).json({
         message: "Get count product by category fail",
         data: [],

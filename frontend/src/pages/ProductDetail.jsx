@@ -17,6 +17,8 @@ import { useCart } from "@/context/CartContext";
 import axiosInstance from "@/lib/axios";
 import { Link } from "react-router-dom";
 
+import { toast } from "sonner";
+
 export default function ProductDetailPage() {
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -46,7 +48,7 @@ export default function ProductDetailPage() {
       setIsLoading(false);
     }
   };
-  
+
   // Lấy sản phẩm liên quan
   const fetchRelatedProducts = async () => {
     setIsLoading(false);
@@ -57,7 +59,7 @@ export default function ProductDetailPage() {
         const related = data.data.filter(
           (p) =>
             p.category_id === product.category_id && p.id !== product.product_id
-        );// lấy cùng danh mục, khác sp hiện tại
+        ); // lấy cùng danh mục, khác sp hiện tại
         console.log("debug related filter:", related);
         setRelatedProducts(related);
       } catch (error) {
@@ -92,7 +94,8 @@ export default function ProductDetailPage() {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
       addToCart(product, quantity);
-      alert("Đã thêm sản phẩm vào giỏ hàng!");
+      toast.success("Đã thêm sản phẩm vào giỏ hàng!");
+      // alert("Đã thêm sản phẩm vào giỏ hàng!");
     } catch (error) {
       console.error("Error adding to cart:", error);
       alert("Có lỗi xảy ra khi thêm vào giỏ hàng");
@@ -240,15 +243,20 @@ export default function ProductDetailPage() {
             </div>
             {/* <p className="text-sm text-gray-600">Đơn vị: {product.unit}</p> */}
           </div>
-
-          
         </div>
 
         {/* Description */}
         <div>
           <h3 className="mb-2 text-lg font-semibold">Mô tả sản phẩm</h3>
           <p className="leading-relaxed text-gray-600">
-            {product.description || "Không có mô tả cho sản phẩm này."}
+            {product.description
+              ? product.description.split("\n").map((line, index) => (
+                  <span key={index}>
+                    {line}
+                    <br />
+                  </span>
+                ))
+              : "Không có mô tả cho sản phẩm này."}
           </p>
         </div>
 
