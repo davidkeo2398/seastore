@@ -4,10 +4,11 @@ const {
   OrderItem,
   Product,
   User,
+  Categories,
   AgencyRank,
 } = require("../../Model/Index");
 const { sequelize } = require("../../config/dbcontext");
-const { updateOrder } = require("../order-service");
+
 
 // xử lý  logic, database
 module.exports = {
@@ -132,6 +133,39 @@ module.exports = {
     } catch (error) {
       console.error("Error fetching admin order details:", error);
       throw new Error("Failed to fetch admin order details");
+    }
+  },
+
+  // tính được tổng số lượng sản phẩm thuộc một danh mục trong đơn hàng
+  getTotalProductsByCategoryOnOrder: async (orderId) => {
+    try {
+      const statistics = await sequelize.query(
+        `
+        SELECT 
+          p.category_id, 
+          c.category_name, 
+          SUM(oi.quantity) AS total_quantity
+        FROM 
+          orders_item oi
+        JOIN 
+          products p ON oi.product_id = p.product_id
+        JOIN 
+          categories c ON p.category_id = c.category_id
+        WHERE 
+          oi.order_id = :orderId
+        GROUP BY 
+          p.category_id, c.category_name;
+        `,
+        {
+          replacements: { orderId: orderId }, // Thay thế giá trị :orderId
+          type: sequelize.QueryTypes.SELECT, // Loại truy vấn là SELECT
+        }
+      );
+
+      return statistics;
+    } catch (error) {
+      console.error("Error fetching total products by category:", error);
+      throw new Error("Failed to fetch total products by category");
     }
   },
 };

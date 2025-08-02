@@ -256,6 +256,7 @@ export default function ProductsPage() {
         formData
       );
       fetchProducts();
+      console.log("Cập nhật sản phẩm:", data);
       toast.success("Cập nhật sản phẩm thành công!");
     } else {
       try {

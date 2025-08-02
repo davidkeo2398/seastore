@@ -27,7 +27,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import axiosInstance from "@/lib/axios";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+
+
 
 export default function ShoppingCart() {
   const [cartItems, setCartItems] = useState([]);
@@ -154,6 +155,17 @@ export default function ShoppingCart() {
   };
   // số lượng sản phẩm trong giỏ hàng
   const handleUpdateQuantity = (id, newQuantity) => {
+    // Kiểm tra nếu số lượng mới lớn hơn số lượng tồn kho (tạo đơn hàng)
+    //     const item = cartItems.find((item) => item.product_id === id);
+
+    // if (!item) return;
+
+    // if (newQuantity > item.number_of_inventory) {
+    //   alert(
+    //     `Số lượng sản phẩm "${item.product_name}" không được vượt quá tồn kho. Hiện tại chỉ còn ${item.number_of_inventory} sản phẩm.`
+    //   );
+    //   return;
+    // } 
     console.log("update quantity", id, newQuantity);
     if (newQuantity < 1) return;
     updateQuantity(id, newQuantity); // Gọi hàm từ context
@@ -163,22 +175,22 @@ export default function ShoppingCart() {
     removeFromCart(id);
   };
 
-  const applyCoupon = async () => {
-    setIsApplyingCoupon(true);
-    setCouponError("");
-    // Giả lập kiểm tra mã giảm giá
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    if (couponCode.trim().toLowerCase() === "giamgia50") {
-      setAppliedCoupon(couponCode);
-      setCouponDiscount(50000); // Giảm 50.000đ
-      setCouponError("");
-    } else {
-      setCouponError("Mã giảm giá không hợp lệ hoặc đã hết hạn.");
-      setAppliedCoupon(null);
-      setCouponDiscount(0);
-    }
-    setIsApplyingCoupon(false);
-  };
+  // const applyCoupon = async () => {
+  //   setIsApplyingCoupon(true);
+  //   setCouponError("");
+  //   // Giả lập kiểm tra mã giảm giá
+  //   await new Promise((resolve) => setTimeout(resolve, 1000));
+  //   if (couponCode.trim().toLowerCase() === "giamgia50") {
+  //     setAppliedCoupon(couponCode);
+  //     setCouponDiscount(50000); // Giảm 50.000đ
+  //     setCouponError("");
+  //   } else {
+  //     setCouponError("Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+  //     setAppliedCoupon(null);
+  //     setCouponDiscount(0);
+  //   }
+  //   setIsApplyingCoupon(false);
+  // };
 
   // khu vực lấy thông tin khuyến mãi
   const getDiscount = (promotion_code) => {
@@ -191,6 +203,9 @@ export default function ShoppingCart() {
       // số tiền giảm giá = tổng tiền giỏ hàng * phần trăm khuyến mãi
       const priceReduce = getCartTotal() * percent;
       setDiscount(priceReduce);
+      // khi áp dụng mã giảm giá trừ đi số lượng mã giảm giá 
+      setAppliedCoupon(promotion_code);
+      
       localStorage.setItem("discount", priceReduce);
       localStorage.setItem("promotion_code", promotion_code);
       console.log("price reduce", priceReduce, percent, getCartTotal());
@@ -201,30 +216,51 @@ export default function ShoppingCart() {
     }
   };
 
+  
+
   // k được áp dụng mã giảm giá và chiết khấu đồng thời
   const handleCheckout = async () => {
     setIsLoading(true);
-    // Kiểm tra nếu cả mã giảm giá và chiết khấu hạng đại lý
-    if (discount > 0 && rankDiscountAmount > 0) {
-      alert(
-        "Bạn không thể áp dụng cả mã giảm giá và chiết khấu hạng đại lý đồng thời. Vui lòng chọn một trong hai."
-      );
-      setIsLoading(false);
-      return;
-    } else {
-      // Reset mã giảm giá
-      setCouponCode("");
-      setDiscount(0);
-      setAppliedCoupon(null);
-      localStorage.removeItem("promotion_code");
-      // localStorage.removeItem("discount");
 
-      localStorage.setItem("finalOrderTotal", getTotal()); // lưu tổng tiền cuối cùng
-      console.log("Final order total:", getTotal());
-      alert("Đang chuyển đến trang thanh toán...");
+    try {
+      // Kiểm tra nếu cả mã giảm giá và chiết khấu hạng đại lý được áp dụng
+      if (discount > 0 && rankDiscountAmount > 0) {
+        alert(
+          "Bạn không thể áp dụng cả mã giảm giá và chiết khấu hạng đại lý đồng thời. Vui lòng chọn một trong hai."
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      // Chuẩn bị dữ liệu đơn hàng
+      const orderData = {
+        cartItems,
+        total: getTotal(),
+        promotion_code: appliedCoupon,
+        discount: discount,
+      };
+
+      // Lưu dữ liệu vào localStorage
+      localStorage.setItem("orderData", JSON.stringify(orderData));
+      console.log("Order data saved to localStorage:", orderData);
+
+      // Chuyển đến trang thanh toán
+      alert("Đặt hàng thành công! Đang chuyển đến trang thanh toán...");
       navigate("/PayCheckout");
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      alert("Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại!");
+    } finally {
       setIsLoading(false);
     }
+  };
+
+  // Hàm reset mã giảm giá
+  const resetCoupon = () => {
+    setCouponCode("");
+    setDiscount(0);
+    setAppliedCoupon(null);
+    localStorage.removeItem("promotion_code");
   };
 
   useEffect(() => {

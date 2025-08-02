@@ -46,4 +46,50 @@ module.exports = {
     });
      return result;
   },
+  getAgencyRankProgress: async (agencyRankId) => {
+    try {
+      // Lấy hạng hiện tại theo ID
+      const currentRank = await AgencyRank.findByPk(agencyRankId);
+      if (!currentRank) {
+        throw new Error("Không tìm thấy hạng hiện tại.");
+      }
+
+      // Lấy danh sách các hạng, sắp xếp theo giá trị tối thiểu
+      const ranks = await AgencyRank.findAll({
+        order: [["min_accumulated_value", "ASC"]],
+      });
+
+      // Tính tổng chi tiêu của người dùng (giả sử có tổng chi tiêu trong bảng User)
+      const totalSpent = currentRank.totalSpent || 0;
+
+      // Tìm hạng tiếp theo
+      const nextRank = ranks.find(
+        (rank) => rank.min_accumulated_value > totalSpent
+      );
+
+      let progress = {
+        currentRank: currentRank.agency_rank_name,
+        discountPercent: currentRank.discount_percent,
+        totalSpent,
+        nextRank: null,
+      };
+
+      if (nextRank) {
+        const remaining = nextRank.min_accumulated_value - totalSpent;
+        const percent =
+          (totalSpent / nextRank.min_accumulated_value) * 100;
+
+        progress.nextRank = {
+          rank: nextRank.agency_rank_name,
+          remaining,
+          percent: Math.min(percent, 100),
+        };
+      }
+
+      return progress;
+    } catch (error) {
+      console.error("Lỗi khi tính tiến độ hạng:", error);
+      throw new Error("Không thể tính tiến độ hạng.");
+    }
+  },
 };

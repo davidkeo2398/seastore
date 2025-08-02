@@ -33,5 +33,22 @@ module.exports = {
                 error: error.message
             });
         }
-    }
+    },
+    getAgencyRankProgress: async (req, res) => {
+        try {
+            const { id } = req.params; // Lấy agency_rank_id từ URL
+            const progress = await agencyRankService.getAgencyRankProgress(id);
+
+            res.status(200).json({
+                message: "Lấy tiến độ hạng thành công.",
+                data: progress,
+            });
+        } catch (error) {
+            console.error("Lỗi khi lấy tiến độ hạng:", error);
+            res.status(500).json({
+                message: "Không thể lấy tiến độ hạng.",
+                error: error.message,
+            });
+        }
+    },
 };

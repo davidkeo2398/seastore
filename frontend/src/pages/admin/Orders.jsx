@@ -60,6 +60,13 @@ const statusFlow = {
   cancelled: { level: 4, next: [], canCancel: false },
 };
 
+// const predefinedPriceRanges = [
+//   { label: "Tất cả", min: 0, max: Number.MAX_SAFE_INTEGER },
+//   { label: "1 - 5 triệu", min: 1000000, max: 5000000 },
+//   { label: "5 - 10 triệu", min: 5000000, max: 10000000 },
+//   { label: "Trên 10 triệu", min: 10000000, max: Number.MAX_SAFE_INTEGER },
+// ];
+
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
@@ -67,16 +74,29 @@ export default function OrdersPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [priceRange, setPriceRange] = useState({
+    min: 0,
+    max: Number.MAX_SAFE_INTEGER, // Giá tối đa là vô hạn
+  });
+
+  // const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  // const itemsPerPage = 7; // Số sản phẩm trên mỗi trang
+
+  // lọc: khởi tạo khoảng giá mặc định -> lọc qua filter hàm kiểm tra giá -> hàm const handChange
+
+  const sortedOrders = orders.sort((a, b) => {
+    return new Date(b.order_date) - new Date(a.order_date);
+  });
 
   const fetchOrders = async () => {
     try {
       const response = await axiosInstance.get("/admin/order");
-      setOrders(response.data.data || []);
-
-      const sortOrders = response.data.data.sort((a, b) => {
+      // Sắp xếp đơn hàng theo ngày đặt mới nhất
+      const sortedOrders = (response.data.data || []).sort((a, b) => {
         return new Date(b.order_date) - new Date(a.order_date);
       });
-      setOrders(sortOrders);
+      // Chỉ cần gọi setOrders một lần với dữ liệu đã sắp xếp
+      setOrders(sortedOrders);
     } catch (error) {
       setOrders([]);
       toast.error("Lấy danh sách đơn hàng thất bại!");
@@ -111,10 +131,9 @@ export default function OrdersPage() {
   //   }
   // }, []);
 
-
   // Hàm xử lý thay đổi trạng thái đơn hàng
   const handleStatusChange = async (order_id, newStatus, order) => {
-    console.log("change status", order)
+    console.log("change status", order);
     const currentOrder = orders.find((order) => order.order_id === order_id);
     if (!currentOrder) {
       toast.error("Không tìm thấy đơn hàng!");
@@ -161,6 +180,7 @@ export default function OrdersPage() {
 
   const filteredOrders = orders.filter((order) => {
     const searchTermLower = searchTerm.toLowerCase();
+
     const matchesSearch =
       order.user_name?.toLowerCase().includes(searchTermLower) ||
       order.user_email?.toLowerCase().includes(searchTermLower) ||
@@ -169,8 +189,34 @@ export default function OrdersPage() {
       order.phone_agency?.toLowerCase().includes(searchTermLower);
     const matchesStatus =
       statusFilter === "all" || order.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    // const matchePrice =
+    //   order.total >= priceRange.min && order.total <= priceRange.max;
+
+    return matchesSearch && matchesStatus ;
   });
+
+  const formatCurrency = (value) => {
+    if (value === Infinity) return ""; // Nếu là Infinity, trả về chuỗi rỗng
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  // //dưới filter
+  // const totalPages = Math.ceil(filteredOrders.length / itemsPerPage); // Tổng số trang
+  // const paginatedOrders = filteredOrders.slice(
+  //   (currentPage - 1) * itemsPerPage,
+  //   currentPage * itemsPerPage
+  // ); // Đơn hàng hiển thị trên trang hiện tại
+
+  //  const handlePageChange = (newPage) => {
+  //   if (newPage >= 1 && newPage <= totalPages) {
+  //     setCurrentPage(newPage);
+  //   }
+  // };
 
   const totalOrders = orders.length;
   const totalRevenue = calculateTotalRevenue(orders);
@@ -181,6 +227,8 @@ export default function OrdersPage() {
   const completedOrders = orders.filter(
     (order) => order.status === "completed"
   ).length;
+
+  // tạo bộ lọc theo tổng chi tiêu
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -209,7 +257,7 @@ export default function OrdersPage() {
     }
   };
 
-// tổng từng khách chi tiêu dưa trên đơn hàng
+  // tổng từng khách chi tiêu dưa trên đơn hàng
   const userTotals = orders.reduce((acc, order) => {
     if (!order.user_id) return acc;
     if (!acc[order.user_id]) {
@@ -228,6 +276,37 @@ export default function OrdersPage() {
     (max, user) => (user.total > (max?.total || 0) ? user : max),
     null
   );
+
+  // tìm khách hàng có tổng chi tiêu trên 1 triệu
+  const topBuyerAbove1M = Object.values(userTotals).filter(
+    (user) => user.total > 1000000
+  );
+
+
+
+  // // Hàm xử lý thay đổi khoảng giá
+  // const handlePriceChange = (e) => {
+  //   const { name, value } = e.target; // name là 'min' hoặc 'max'
+  //   setPriceRange((prev) => ({
+  //     ...prev,
+  //     [name]:
+  //       value === ""
+  //         ? name === "max"
+  //           ? Number.MAX_SAFE_INTEGER // Nếu ô input rỗng, trả về giá trị vô hạn
+  //           : 0
+  //         : Number(value.replace(/\D/g, "")), // Loại bỏ ký tự không phải số
+  //   }));
+  // };
+
+  // // Hàm xử lý thay đổi khoảng giá từ combobox
+  // const handlePredefinedPriceRangeChange = (value) => {
+  //   const selectedRange = predefinedPriceRanges.find(
+  //     (range) => range.label === value
+  //   );
+  //   if (selectedRange) {
+  //     setPriceRange({ min: selectedRange.min, max: selectedRange.max });
+  //   }
+  // };
 
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">
@@ -253,323 +332,425 @@ export default function OrdersPage() {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        {/* Card stats */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Tổng đơn hàng</CardTitle>
-            <ShoppingCart className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalOrders}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Doanh thu</CardTitle>
-            <DollarSign className="w-4 h-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {totalRevenue.toLocaleString("vi-VN")} đ
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Đang xử lý</CardTitle>
-            <Clock className="w-4 h-4 text-orange-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
-              {pendingOrders}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Hoàn thành</CardTitle>
-            <Package className="w-4 h-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {completedOrders}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* <div className="container px-4 py-8 mx-auto space-y-6">
+        {topBuyerAbove1M.length > 0 && (
+          <Card className="mb-4 border-2 border-yellow-400">
+            <CardHeader>
+              <CardTitle>Khách hàng chi tiêu trên 1 triệu</CardTitle>
+              <CardDescription>
+                {topBuyerAbove1M.map((user) => (
+                  <div key={user.user_id}>
+                    {user.user_name || "N/A"} ({user.user_email || "N/A"})
+                  </div>
+                ))}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-lg">
+                Tổng chi tiêu:{" "}
+                <span className="font-bold text-green-600">
+                  {new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(topBuyer.total)}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        )} */}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Danh sách đơn hàng</CardTitle>
-          <CardDescription>
-            Tìm kiếm và quản lý đơn hàng của khách hàng
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-4 mb-6 sm:flex-row">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Tìm kiếm theo tên, email hoặc mã đơn..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Lọc theo trạng thái" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả</SelectItem>
-                <SelectItem value="pending">Đang xử lý</SelectItem>
-                <SelectItem value="delivering">Đang vận chuyển</SelectItem>
-                <SelectItem value="completed">Hoàn thành</SelectItem>
-                <SelectItem value="cancelled">Đã hủy</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          {/* Card stats */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">
+                Tổng đơn hàng
+              </CardTitle>
+              <ShoppingCart className="w-4 h-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalOrders}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Doanh thu</CardTitle>
+              <DollarSign className="w-4 h-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">
+                {totalRevenue.toLocaleString("vi-VN")} đ
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Đang xử lý</CardTitle>
+              <Clock className="w-4 h-4 text-orange-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-orange-600">
+                {pendingOrders}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Hoàn thành</CardTitle>
+              <Package className="w-4 h-4 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-blue-600">
+                {completedOrders}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-          <div className="border rounded-md">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Mã đơn hàng</TableHead>
-                  <TableHead>Ngày đặt</TableHead>
-                  <TableHead>Khách hàng</TableHead>
-                  <TableHead>Địa chỉ</TableHead>
-                  <TableHead>Tổng tiền</TableHead>
-                  <TableHead>Trạng thái</TableHead>
-                  <TableHead className="text-right">Hành động</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOrders.length === 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Danh sách đơn hàng</CardTitle>
+            <CardDescription>
+              Tìm kiếm và quản lý đơn hàng của khách hàng
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-4 mb-6 sm:flex-row">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Tìm kiếm theo tên, email hoặc mã đơn..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Lọc theo trạng thái" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="pending">Đang xử lý</SelectItem>
+                  <SelectItem value="delivering">Đang vận chuyển</SelectItem>
+                  <SelectItem value="completed">Hoàn thành</SelectItem>
+                  <SelectItem value="cancelled">Đã hủy</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              {/* Thêm bộ lọc khoảng giá
+              <div className="flex-1">
+              <div className="flex items-center justify-end gap-4 mb-6">
+                <Select onValueChange={handlePredefinedPriceRangeChange}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Lọc theo khoảng giá" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {predefinedPriceRanges.map((range) => (
+                      <SelectItem key={range.label} value={range.label}>
+                        {range.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div> */}
+            </div>
+          
+            {/* Existing price range inputs
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  name="min"
+                  placeholder="Giá tối thiểu"
+                  value={priceRange.min === 0 ? "" : priceRange.min}
+                  onChange={handlePriceChange}
+                  className="w-full"
+                />
+              </div>
+              <span className="text-muted-foreground">-</span>
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  name="max"
+                  placeholder="Giá tối đa"
+                  value={priceRange.max === Number.MAX_SAFE_INTEGER ? "" : priceRange.max}
+                  onChange={handlePriceChange}
+                  className="w-full"
+                />
+              </div>
+            </div> */}
+            <div className="border rounded-md">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={7} className="py-8 text-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <ShoppingCart className="w-8 h-8 text-muted-foreground" />
-                        <p className="text-muted-foreground">
-                          Không có đơn hàng nào.
-                        </p>
-                      </div>
-                    </TableCell>
+                    <TableHead>Mã đơn hàng</TableHead>
+                    <TableHead>Ngày đặt</TableHead>
+                    <TableHead>Khách hàng</TableHead>
+                    <TableHead>Địa chỉ</TableHead>
+                    <TableHead>Tổng tiền</TableHead>
+                    <TableHead>Trạng thái</TableHead>
+                    <TableHead className="text-right">Hành động</TableHead>
                   </TableRow>
-                ) : (
-                  filteredOrders.map((order) => {
-                    const isFinalStatus =
-                      order.status === "completed" ||
-                      order.status === "cancelled";
-                    return (
-                      <TableRow key={order.order_id}>
-                        <TableCell>
-                          <code className="px-2 py-1 text-sm rounded bg-muted">
-                            {order.order_code}
-                          </code>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3 text-muted-foreground" />
-                            {new Date(order.order_date).toLocaleDateString(
-                              "vi-VN"
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-medium">
-                            {order.user_name || "N/A"}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {order.user_email || "N/A"}
-                          </div>
-                        </TableCell>
-                        <TableCell
-                          className="max-w-[200px] truncate"
-                          title={order.address_agency}
-                        >
-                          {order.address_agency}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {new Intl.NumberFormat("vi-VN", {
-                            style: "currency",
-                            currency: "VND",
-                          }).format(order.total)}
-                        </TableCell>
-                        <TableCell>
-                          {isFinalStatus ? (
-                            getStatusBadge(order.status)
-                          ) : (
-                            <Select
-                              value={order.status}
-                              onValueChange={(value) =>
-                                handleStatusChange(order.order_id, value, order)
-                              }
-                            >
-                              <SelectTrigger className="w-[150px] h-8">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem
-                                  value="pending"
-                                  disabled={order.status !== "pending"}
-                                >
-                                  Đang xử lý
-                                </SelectItem>
-                                <SelectItem
-                                  value="delivering"
-                                  disabled={
-                                    !statusFlow[order.status].next.includes(
-                                      "delivering"
-                                    )
-                                  }
-                                >
-                                  Đang vận chuyển
-                                </SelectItem>
-                                <SelectItem
-                                  value="completed"
-                                  disabled={
-                                    !statusFlow[order.status].next.includes(
-                                      "completed"
-                                    )
-                                  }
-                                >
-                                  Hoàn thành
-                                </SelectItem>
-                                <SelectItem
-                                  value="cancelled"
-                                  disabled={!statusFlow[order.status].canCancel}
-                                >
-                                  Đã hủy
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleViewDetails(order, order.order_id)}
-                            title="Xem chi tiết"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Chi tiết đơn hàng</DialogTitle>
-            <DialogDescription>
-              Thông tin chi tiết về đơn hàng {selectedOrder?.order_code}
-            </DialogDescription>
-          </DialogHeader>
-          {selectedOrder ? (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium">Thông tin khách hàng</h4>
-                  <div className="space-y-1 text-sm">
-                    <div className="flex items-center gap-2">
-                      <User className="w-3 h-3" />
-                      {selectedOrder.user_name || "N/A"}
-                    </div>
-                    <div>
-                      <span className="font-medium">SĐT: </span>
-                      {selectedOrder.phone_user ||
-                        selectedOrder.phone_agency ||
-                        "N/A"}
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-medium">Thông tin đơn hàng</h4>
-                  <div className="space-y-1 text-sm">
-                    <div>Mã: {selectedOrder.order_code}</div>
-                    <div>
-                      Ngày:{" "}
-                      {new Date(selectedOrder.order_date).toLocaleDateString(
-                        "vi-VN"
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Địa chỉ giao hàng</h4>
-                <div className="text-sm">{selectedOrder.address_agency}</div>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Sản phẩm</h4>
-                <ul className="space-y-2 overflow-y-auto text-sm max-h-60">
-                  {orderItems.length > 0 ? (
-                    orderItems.map((item) => (
-                      <li
-                        key={item.order_item_id}
-                        className="flex items-center gap-4"
-                      >
-                        <img
-                          src={item.product?.image || "/placeholder.png"}
-                          alt={item.product?.product_name || "Sản phẩm"}
-                          className="object-cover w-16 h-16 rounded"
-                        />
-                        <div className="flex-1">
-                          <p className="font-medium">
-                            {item.product?.product_name || "N/A"}
-                          </p>
+                </TableHeader>
+                <TableBody>
+                  {/* {paginatedOrders.length === 0 ? (  */}
+                  {filteredOrders.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="py-8 text-center">
+                        <div className="flex flex-col items-center gap-2">
+                          <ShoppingCart className="w-8 h-8 text-muted-foreground" />
                           <p className="text-muted-foreground">
-                            Số lượng: {item.quantity}
+                            Không có đơn hàng nào.
                           </p>
                         </div>
-                        <p className="font-medium">
-                          {item.product?.price
-                            ? new Intl.NumberFormat("vi-VN", {
-                                style: "currency",
-                                currency: "VND",
-                              }).format(item.product.price * item.quantity)
-                            : "N/A"}
-                        </p>
-                      </li>
-                    ))
+                      </TableCell>
+                    </TableRow>
                   ) : (
-                    <p className="text-muted-foreground">Đang tải...</p>
+                    filteredOrders.map((order) => {
+                      const isFinalStatus =
+                        order.status === "completed" ||
+                        order.status === "cancelled";
+                      return (
+                        <TableRow key={order.order_id}>
+                          <TableCell>
+                            <code className="px-2 py-1 text-sm rounded bg-muted">
+                              {order.order_code}
+                            </code>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3 text-muted-foreground" />
+                              {new Date(order.order_date).toLocaleDateString(
+                                "vi-VN"
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="font-medium">
+                              {order.user_name || "N/A"}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {order.user_email || "N/A"}
+                            </div>
+                          </TableCell>
+                          <TableCell
+                            className="max-w-[200px] truncate"
+                            title={order.address_agency}
+                          >
+                            {order.address_agency}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(order.total)}
+                          </TableCell>
+                          <TableCell>
+                            {isFinalStatus ? (
+                              getStatusBadge(order.status)
+                            ) : (
+                              <Select
+                                value={order.status}
+                                onValueChange={(value) =>
+                                  handleStatusChange(
+                                    order.order_id,
+                                    value,
+                                    order
+                                  )
+                                }
+                              >
+                                <SelectTrigger className="w-[150px] h-8">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem
+                                    value="pending"
+                                    disabled={order.status !== "pending"}
+                                  >
+                                    Đang xử lý
+                                  </SelectItem>
+                                  <SelectItem
+                                    value="delivering"
+                                    disabled={
+                                      !statusFlow[order.status].next.includes(
+                                        "delivering"
+                                      )
+                                    }
+                                  >
+                                    Đang vận chuyển
+                                  </SelectItem>
+                                  <SelectItem
+                                    value="completed"
+                                    disabled={
+                                      !statusFlow[order.status].next.includes(
+                                        "completed"
+                                      )
+                                    }
+                                  >
+                                    Hoàn thành
+                                  </SelectItem>
+                                  <SelectItem
+                                    value="cancelled"
+                                    disabled={
+                                      !statusFlow[order.status].canCancel
+                                    }
+                                  >
+                                    Đã hủy
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                handleViewDetails(order, order.order_id)
+                              }
+                              title="Xem chi tiết"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
                   )}
-                </ul>
-              </div>
-              <div className="flex items-center justify-between pt-4 border-t">
-                <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">
-                    Trạng thái
-                  </div>
-                  {getStatusBadge(selectedOrder.status)}
-                </div>
-                <div className="space-y-1 text-right">
-                  <div className="text-sm text-muted-foreground">Tổng tiền</div>
-                  <div className="text-2xl font-bold">
-                    {new Intl.NumberFormat("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }).format(selectedOrder.total)}
-                  </div>
-                </div>
-              </div>
+                </TableBody>
+              </Table>
             </div>
-          ) : (
-            <p>Đang tải thông tin đơn hàng...</p>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+          </CardContent>
+        </Card>
+
+        {/* <div className="flex justify-end mt-4 space-x-2">
+        <Button
+          variant="outline"
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
+          Pre
+        </Button>
+        <span className="px-4 py-2 border rounded">
+          Trang {currentPage} / {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
+          Next
+        </Button>
+      </div> */}
+
+        <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Chi tiết đơn hàng</DialogTitle>
+              <DialogDescription>
+                Thông tin chi tiết về đơn hàng {selectedOrder?.order_code}
+              </DialogDescription>
+            </DialogHeader>
+            {selectedOrder ? (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Thông tin khách hàng</h4>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex items-center gap-2">
+                        <User className="w-3 h-3" />
+                        {selectedOrder.user_name || "N/A"}
+                      </div>
+                      <div>
+                        <span className="font-medium">SĐT: </span>
+                        {selectedOrder.phone_user ||
+                          selectedOrder.phone_agency ||
+                          "N/A"}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Thông tin đơn hàng</h4>
+                    <div className="space-y-1 text-sm">
+                      <div>Mã: {selectedOrder.order_code}</div>
+                      <div>
+                        Ngày:{" "}
+                        {new Date(selectedOrder.order_date).toLocaleDateString(
+                          "vi-VN"
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-medium">Địa chỉ giao hàng</h4>
+                  <div className="text-sm">{selectedOrder.address_agency}</div>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-medium">Sản phẩm</h4>
+                  <ul className="space-y-2 overflow-y-auto text-sm max-h-60">
+                    {orderItems.length > 0 ? (
+                      orderItems.map((item) => (
+                        <li
+                          key={item.order_item_id}
+                          className="flex items-center gap-4"
+                        >
+                          <img
+                            src={item.product?.image || "/placeholder.png"}
+                            alt={item.product?.product_name || "Sản phẩm"}
+                            className="object-cover w-16 h-16 rounded"
+                          />
+                          <div className="flex-1">
+                            <p className="font-medium">
+                              {item.product?.product_name || "N/A"}
+                            </p>
+                            <p className="text-muted-foreground">
+                              Số lượng: {item.quantity}
+                            </p>
+                          </div>
+                          <p className="font-medium">
+                            {item.product?.price
+                              ? new Intl.NumberFormat("vi-VN", {
+                                  style: "currency",
+                                  currency: "VND",
+                                }).format(item.product.price * item.quantity)
+                              : "N/A"}
+                          </p>
+                        </li>
+                      ))
+                    ) : (
+                      <p className="text-muted-foreground">Đang tải...</p>
+                    )}
+                  </ul>
+                </div>
+                <div className="flex items-center justify-between pt-4 border-t">
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">
+                      Trạng thái
+                    </div>
+                    {getStatusBadge(selectedOrder.status)}
+                  </div>
+                  <div className="space-y-1 text-right">
+                    <div className="text-sm text-muted-foreground">
+                      Tổng tiền
+                    </div>
+                    <div className="text-2xl font-bold">
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(selectedOrder.total)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p>Đang tải thông tin đơn hàng...</p>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
+    // </div>
   );
 }

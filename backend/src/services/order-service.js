@@ -11,6 +11,8 @@ const jwt = require("jsonwebtoken");
 const { generateToken } = require("../config/authentication");
 const { generateCode } = require("../utils/generateCode");
 const { sequelize } = require("../config/dbcontext");
+const { Promotion } = require("../Model/Index");
+const { where } = require("sequelize");
 
 module.exports = {
   createOrder: async (orderData, userInfo) => {
@@ -49,6 +51,42 @@ module.exports = {
       if (!user) {
         throw new Error("The user is not exist");
       }
+
+      // // kiểm tra tồn kho sản phẩm
+      // for (const product of products) {
+      //   const productModel = await Product.findOne({
+      //     where: { product_id: product.product_id },
+      //   });
+      //   if (!productModel) {
+      //     throw new Error(`Product with ID ${product.product_id} not found`);
+      //   }
+      //   if (productModel.number_of_inventory < product.quantity) {
+      //     throw new Error(
+      //       `Insufficient inventory for product ${product.product_name}`
+      //     );
+      //   }
+      // }
+
+      // kiểm tra mã giảm giá và trừ đi số lượng promotion_quantity
+      if (promotion_code)
+      {
+        const promotion = await Promotion.findOne({
+          where: { promotion_code: promotion_code },
+        });
+        if (!promotion) {
+          throw new Error("Promotion not found");
+        }
+        if (promotion.promotion_quantity <= 0) {
+          throw new Error("Promotion has expired or is invalid");
+        } else {
+          // giảm số lượng khuyến mãi
+          await Promotion.decrement(
+            { promotion_quantity: 1 },
+            { where: { promotion_code: promotion_code } }
+          );
+        }
+      }
+
       const payload = {
         order_code: order_code,
         user_id: user_id,

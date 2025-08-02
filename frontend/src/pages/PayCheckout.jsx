@@ -39,7 +39,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import "../css/PaymentCheckout.css";
 import CartPage from "../pages/CartPage";
 
-
 const paymentMethods = [
   {
     id: "VNPay",
@@ -112,8 +111,7 @@ export default function PayCheckout() {
   const [touchedPhone, setTouchedPhone] = useState(false);
   const [touchedAddress, setTouchedAddress] = useState(false);
 
-  
-// khuyến mãi
+  // khuyến mãi
   const [discount, setDiscount] = useState(0);
   const [calRankDiscount, setCalRankDiscount] = useState(0);
 
@@ -157,7 +155,7 @@ export default function PayCheckout() {
         setInvalid: setInvalidFullName,
       },
       user_email: {
-        regex:  /^[a-zA-Z0-9]([a-zA-Z0-9._-])*[a-zA-Z0-9]@gmail\.com$/,
+        regex: /^[a-zA-Z0-9]([a-zA-Z0-9._-])*[a-zA-Z0-9]@gmail\.com$/,
         setInvalid: setInvalidEmail,
       },
       phone_user: {
@@ -277,8 +275,6 @@ export default function PayCheckout() {
       return;
     }
 
-   
-
     console.log("form data", formData);
     console.log("userInfo", userInfo);
     console.log("cart", orderSummary);
@@ -322,7 +318,6 @@ export default function PayCheckout() {
       products: products,
       promotion_code: promotion_code,
       note: formData.note || "",
-     
     };
     console.log("payload", payload);
 
@@ -333,6 +328,13 @@ export default function PayCheckout() {
         "Content-Type": "application/json",
       },
     });
+
+    if (result.data.success) {
+      // console.log("Order created successfully:", result.data);
+    } else {
+      console.error("Order creation failed:", result.data.message);
+      alert(result.data.message || "Đặt hàng thất bại. Vui lòng thử lại.");
+    }
     console.log("create order for other roles", result);
     removeFromCart();
     localStorage.removeItem("cart");
@@ -645,8 +647,7 @@ export default function PayCheckout() {
                         }
                       />
                     </div> */}
-
-                    </div>
+                  </div>
                 </CardContent>
               </Card>
 

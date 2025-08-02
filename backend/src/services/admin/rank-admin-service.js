@@ -118,8 +118,7 @@ function buildMemberRankData(member, allRanks) {
   };
 }
 
-// HÀM MÀ CONTROLLER SẼ GỌI ĐỂ LẤY DỮ LIỆU
-
+//controller
 module.exports = {
   getMembersWithRank: async () => {
     try {

@@ -6,4 +6,6 @@ const { authMiddleware } = require('../middleware/index');
 
 router.get('/', agencyRankController.getAgencyRanks);
 router.get('/:agency_rank_id', agencyRankController.getAgencyRankById);
+router.get('/:id/progress', agencyRankController.getAgencyRankProgress);
+
 module.exports = router;

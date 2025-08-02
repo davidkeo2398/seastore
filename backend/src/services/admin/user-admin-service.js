@@ -151,4 +151,28 @@ module.exports = {
       throw new Error("Không thể lấy danh sách khách hàng");
     }
   },
+  // lọc người dùng không phát sinh đơn hàng trong 6 tháng qua
+  getInactiveUsers: async () => {
+    try {
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+      const inactiveUsers = await User.findAll({
+        where: {
+          id: {
+            [Sequelize.Op.notIn]: Sequelize.literal(`(
+              SELECT DISTINCT user_id
+              FROM orders
+              WHERE created_at >= '${sixMonthsAgo.toISOString()}'
+            )`)
+          }
+        }
+      });
+
+      return inactiveUsers;
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách người dùng không hoạt động:", error);
+      throw new Error("Không thể lấy danh sách người dùng không hoạt động");
+    }
+  }
 };
