@@ -18,6 +18,7 @@ const rankAdminService = require('./admin/rank-admin-service')
 const userAdminService = require('./admin/user-admin-service')
 const warehouseAdminService = require('./admin/warehouse-admin-service')
 const categoryAdminService = require('./admin/category-admin-service');
+const promotionAdminService = require('./admin/promotion-admin-service');
 
 
 module.exports = {
@@ -42,5 +43,6 @@ module.exports = {
     userAdminService,
     warehouseAdminService,
     categoryAdminService,
-    rankAdminService
+    rankAdminService, 
+    promotionAdminService
 };

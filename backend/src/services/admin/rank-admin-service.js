@@ -85,6 +85,7 @@ async function updateMemberRank(userId, totalSpent) {
   }
 }
 
+
 // Xây dựng dữ liệu thành viên với thông tin xếp hạng
 function buildMemberRankData(member, allRanks) {
   const memberJson = member.get({ plain: true });//
@@ -154,4 +155,28 @@ module.exports = {
     await rank.destroy();
     return { message: "Xóa hạng thành công" };
   },
+
+  updateMemberRankByCompletedOrder: async (userId, roleId) => {
+    const t = await sequelize.transaction();
+    try {
+    const user = await User.findByPk(userId, {
+      include: { model: AgencyRank, as: "agencyRank" },
+    });
+    if (!user) {
+      throw new Error("Người dùng không tồn tại");
+    }
+    user.role_id = roleId; // Giả sử hạng thành viên là 3 (Agency)
+    await user.save();
+    const totalSpent = await Order.sum("total", {
+      where: { user_id: userId, status: "completed" },
+    });
+    await updateMemberRank(userId, totalSpent);
+  } catch (error) {
+    console.error("Lỗi khi cập nhật hạng thành viên:", error);
+    throw new Error("Không thể cập nhật hạng thành viên");
+  } finally {
+    await t.commit();
+  } 
+  },
+
 };

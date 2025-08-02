@@ -212,7 +212,7 @@ module.exports = {
     try {
       const [updatedRows, [updatedOrder]] = await Order.update(updateData, {
         where: { order_id: orderId },
-        returning: true,
+        returning: true, // trả về bản ghi đã cập nhật
       });
       if (updatedRows === 0) {
         throw new Error("Order not found or no changes made");
@@ -249,16 +249,23 @@ module.exports = {
 
   updateOrderStatus: async (orderId, status) => {
     try {
-      // Cập nhật trạng thái đơn hàng trong cơ sở dữ liệu
-      const updatedOrder = await Order.update({ status }, { where: { order_id: orderId } });
-      if (updatedOrder[0] === 1) {
-        return { message: "Cập nhật trạng thái thành công." };
-      } else {
-        throw new Error("Không tìm thấy đơn hàng.");
-      }
-    } catch (error) {
-      console.error("Error updating order status:", error);
-      throw new Error("Cập nhật trạng thái thất bại.");
-    }
+      console.log('orderId', orderId, 'status', status);
+    // Update the order status in the database
+    const [rowsAffected, updatedOrders] = await Order.update(
+      { status: status },
+      { where: { order_id: orderId } }
+    );
+
+    console.log("updatedOrders", rowsAffected);
+
+    // if (rowsAffected) {
+    //   return { message: "Cập nhật trạng thái thành công.", updatedOrder: updatedOrders[0] };
+    // } else {
+    //   throw new Error("Không tìm thấy đơn hàng.");
+    // }
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    throw new Error("Cập nhật trạng thái thất bại.");
+  }
   },
 };

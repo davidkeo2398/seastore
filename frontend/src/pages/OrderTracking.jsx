@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import axiosInstance from "@/lib/axios";
+import { toast } from "sonner";
 // import { response } from "express";
 
 export default function OrderTracking() {
@@ -58,10 +59,12 @@ export default function OrderTracking() {
     switch (status) {
       case "pending":
         return <span className="text-yellow-600">Đang xử lý</span>;
+      case "paid":
+        return <span className="text-green-400">Đã thanh toán</span>;
       case "delivering":
         return <span className="text-blue-600">Đang vận chuyển</span>;
       case "completed":
-        return <span className="text-green-600">Hoàn thành</span>;
+        return <span className="text-green-700">Hoàn thành</span>;
       case "cancelled":
         return <span className="text-red-600">Đã hủy</span>;
       default:
@@ -83,7 +86,7 @@ export default function OrderTracking() {
       setIsDetailDialogOpen(true);
     } catch (error) {
       console.error("Error fetching order details:", error);
-      alert("Không thể lấy chi tiết đơn hàng. Vui lòng thử lại sau.");
+      toast.error("Không thể lấy chi tiết đơn hàng. Vui lòng thử lại sau.");
     }
   };
 
@@ -96,14 +99,14 @@ export default function OrderTracking() {
       console.log("Cancelling order with ID:", order_id);
 
       if (response.status === 200) {
-        alert("Đơn hàng đã được hủy thành công.");
+        toast.success("Đơn hàng đã được hủy thành công.");
         fetchOrders(); // Refresh the order list
       } else {
-        alert("Không thể xử lý đơn hàng. Vui lòng thử lại.");
+        toast.error("Không thể xử lý đơn hàng. Vui lòng thử lại.");
       }
     } catch (error) {
       console.error("Error cancelling order:", error);
-      alert("Đã xảy ra lỗi khi hủy đơn hàng. Vui lòng thử lại sau.");
+      toast.error("Đã xảy ra lỗi khi hủy đơn hàng. Vui lòng thử lại sau.");
     }
   };
 

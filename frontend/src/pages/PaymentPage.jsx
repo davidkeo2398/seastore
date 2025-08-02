@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { Outlet } from "react-router-dom";
+import { toast } from "sonner";
 
 
 export default function PaymentPage() {
@@ -13,18 +14,18 @@ export default function PaymentPage() {
 
   const handlePayment = () => {
     if (!paymentMethod) {
-      alert("Vui lòng chọn phương thức thanh toán!");
+      toast.error("Vui lòng chọn phương thức thanh toán!");
       return;
     }
-    alert(`Thanh toán thành công bằng ${paymentMethod}!`);
+    toast.success(`Thanh toán thành công bằng ${paymentMethod}!`);
     navigate("/");
   };
 
   return (
     <div className="payment-container">
-      <h1 className="text-3xl font-bold mb-8 text-center">Thanh toán</h1>
+      <h1 className="mb-8 text-3xl font-bold text-center">Thanh toán</h1>
       <div className="payment-form">
-        <h2 className="text-xl font-semibold mb-4">Tóm tắt đơn hàng</h2>
+        <h2 className="mb-4 text-xl font-semibold">Tóm tắt đơn hàng</h2>
         <ul className="mb-4">
           {cart.map((item) => (
             <li key={item.id} className="flex justify-between mb-2">
@@ -33,7 +34,7 @@ export default function PaymentPage() {
             </li>
           ))}
         </ul>
-        <p className="text-lg font-bold mb-4">Tổng tiền: ${total.toFixed(2)}</p>
+        <p className="mb-4 text-lg font-bold">Tổng tiền: ${total.toFixed(2)}</p>
         <label className="text-gray-700">Phương thức thanh toán:</label>
         <select
           value={paymentMethod}
@@ -46,7 +47,7 @@ export default function PaymentPage() {
           <option value="Cash on Delivery">Thanh toán khi nhận hàng</option>
         </select>
         <button
-          className="payment-button w-full"
+          className="w-full payment-button"
           onClick={handlePayment}
         >
           Xác nhận thanh toán

@@ -38,6 +38,7 @@ import { TermsModal, PrivacyModal } from "./Modal";
 import { Checkbox } from "@/components/ui/checkbox";
 import "../css/PaymentCheckout.css";
 import CartPage from "../pages/CartPage";
+import { toast } from "sonner";
 
 const paymentMethods = [
   {
@@ -265,13 +266,13 @@ export default function PayCheckout() {
     e.preventDefault();
     if (isProcessing) return; // Ngăn chặn gửi nhiều lần
     if (!userInfo || !userInfo.role) {
-      alert("Vui lòng đăng nhập để thanh toán");
+      toast.error("Vui lòng đăng nhập để thanh toán");
       setIsShowLoginDialog(true);
       // navigate("/login");
       return;
     }
     if (!formData.agreeTerms) {
-      alert("Vui lòng đồng ý với điều khoản và điều kiện");
+      toast.error("Vui lòng đồng ý với điều khoản và điều kiện");
       return;
     }
 
@@ -329,31 +330,58 @@ export default function PayCheckout() {
       },
     });
 
+    console.log("create order result", result);
+
     if (result.data.success) {
       // console.log("Order created successfully:", result.data);
     } else {
       console.error("Order creation failed:", result.data.message);
-      alert(result.data.message || "Đặt hàng thất bại. Vui lòng thử lại.");
+      toast.error(
+        result.data.message || "Đặt hàng thất bại. Vui lòng thử lại."
+      );
     }
     console.log("create order for other roles", result);
     removeFromCart();
     localStorage.removeItem("cart");
     if (selectedPayment === "VNPay") {
-      const payloadVNPay = {
-        totalNeedToPay: finalTotal,
-        bankName: "NCB",
-        order_id: result.data.data.order.order_id,
-        localeLanguage: "vn",
-      };
-      const response = await axiosInstance.post(
-        "/vnpay/create_payment_url",
-        payloadVNPay
-      );
-      window.location.href = response.data.data;
+      // Hiển thị loading để người dùng biết hệ thống đang xử lý
+      setIsProcessing(true);
+
+      try {
+         const payloadVNPay = {
+          order_id: result.data.data.order.order_code, 
+          amount: finalTotal, // Đảm bảo tên trường khớp với backend (amount)
+          bankCode: "NCB", // bankCode thay vì bankName
+          orderDescription: `Thanh toan don hang cho ${result.data.data.order.order_id}`, // Mô tả đơn hàng
+          // order_id sẽ được tạo ở backend, không cần gửi lên
+        };
+
+
+        const response = await axiosInstance.post(
+          "/vnpay/create_payment_url", // API endpoint backend
+          payloadVNPay
+        );
+
+        // Chuyển hướng người dùng đến URL thanh toán của VNPAY
+        if (response.data && response.data.data) {
+          window.location.href = response.data.data;
+        } else {
+          // Xử lý nếu không nhận được URL
+          toast.error("Không thể tạo yêu cầu thanh toán. Vui lòng thử lại.");
+          setIsProcessing(false);
+        }
+        // !!! KHÔNG hiển thị toast.success hay setIsProcessing(false) ở đây
+      } catch (error) {
+        toast.error("Đã có lỗi xảy ra. Vui lòng thử lại.");
+        setIsProcessing(false);
+      }
     } else {
       navigate("/orderTracking");
+      
     }
-    alert("Đặt hàng thành công!");
+    localStorage.setItem("order", JSON.stringify(result.data.data.order));
+    
+    toast.success("Đặt hàng thành công!");
     setIsProcessing(false);
   };
 
@@ -855,12 +883,12 @@ export default function PayCheckout() {
                     )}
                   </Button>
 
-                  <div className="text-center">
+                  {/* <div className="text-center">
                     <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
                       <Shield className="w-4 h-4" />
                       <span>Thanh toán an toàn và bảo mật</span>
                     </div>
-                  </div>
+                  </div> */}
                 </CardContent>
               </Card>
             </div>

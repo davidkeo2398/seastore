@@ -29,6 +29,9 @@ import OrderSuccess from "./pages/OrderSuccess";
 import { Navigate, Outlet } from "react-router-dom";
 import Products from "./pages/Products";
 import { Cat } from "lucide-react";
+import { Toaster } from "sonner";
+import Promotion from "./pages/admin/Promotion";
+import PromotionPage from "./pages/admin/Promotion";
 // import CategoriesPage from "./pages/admin/Category";
 
 function App() {
@@ -89,9 +92,11 @@ function App() {
             <Route path="orders" element={<OrdersPage />} />
             <Route path="adminrank" element={<AdminAngencyRank />} />
             {/* <Route path="categories" element={<CategoriesPage />} /> */}
+            <Route path="promotion" element={<PromotionPage />} />
           </Route>
         </Routes>
       </main>
+      <Toaster />
     </BrowserRouter>
   );
 }

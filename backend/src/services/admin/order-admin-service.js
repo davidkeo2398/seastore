@@ -9,7 +9,6 @@ const {
 } = require("../../Model/Index");
 const { sequelize } = require("../../config/dbcontext");
 
-
 // xử lý  logic, database
 module.exports = {
   getOrders: async () => {

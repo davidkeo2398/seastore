@@ -118,6 +118,8 @@ export default function UsersPage() {
     setIsEditDialogOpen(true);
   };
 
+
+  // chinh sua thong tin nguoi dung, nang cap quyen
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setEditUser((prev) => ({ ...prev, [name]: value }));
@@ -125,14 +127,25 @@ export default function UsersPage() {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedUser = {
-        ...editUser,
-        agency_rank_id: editUser.role_id === 3 ? 1 : editUser.agency_rank_id, // Mặc định agency_rank_id = 1 nếu role_id = 3
-      };
-      console.log("Dữ liệu gửi lên API:", updatedUser); // Kiểm tra dữ liệu gửi lên API
+      // const updatedUser = {
+      //   ...editUser,
+      //   agency_rank_id: editUser.role_id === 3 ? 1 : editUser.agency_rank_id, // Mặc định agency_rank_id = 1 nếu role_id = 3
+      // };
+
+      // cập nhật lại agency_rank_id nếu role_id là 3
+      // if (editUser.role_id === "3") {
+      //   editUser.agency_rank_id = 1;
+      // }
+
+
+      console.log("Dữ liệu gửi lên API:", editUser); // Kiểm tra dữ liệu gửi lên API
 
       // Gửi yêu cầu cập nhật lên API
-      await axiosInstance.put(`/admin/user/${editUser.user_id}`, updatedUser);
+      // await axiosInstance.put(`/admin/user/${editUser.user_id}`, editUser);
+
+      await axiosInstance.patch(`/admin/rank/members/${editUser.user_id}/role`, {
+        role_id: editUser.role_id,
+      }); 
 
       // Cập nhật danh sách người dùng trong state
       setUsers((prev) =>

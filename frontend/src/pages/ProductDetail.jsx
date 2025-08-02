@@ -98,7 +98,7 @@ export default function ProductDetailPage() {
       // alert("Đã thêm sản phẩm vào giỏ hàng!");
     } catch (error) {
       console.error("Error adding to cart:", error);
-      alert("Có lỗi xảy ra khi thêm vào giỏ hàng");
+      toast.error("Có lỗi xảy ra khi thêm vào giỏ hàng");
     } finally {
       setIsAddingToCart(false);
     }

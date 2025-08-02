@@ -27,6 +27,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import axiosInstance from "@/lib/axios";
+import { toast } from "sonner";
 
 
 
@@ -225,7 +226,7 @@ export default function ShoppingCart() {
     try {
       // Kiểm tra nếu cả mã giảm giá và chiết khấu hạng đại lý được áp dụng
       if (discount > 0 && rankDiscountAmount > 0) {
-        alert(
+        toast.error(
           "Bạn không thể áp dụng cả mã giảm giá và chiết khấu hạng đại lý đồng thời. Vui lòng chọn một trong hai."
         );
         setIsLoading(false);
@@ -245,11 +246,11 @@ export default function ShoppingCart() {
       console.log("Order data saved to localStorage:", orderData);
 
       // Chuyển đến trang thanh toán
-      alert("Đặt hàng thành công! Đang chuyển đến trang thanh toán...");
+      toast.success("Đặt hàng thành công! Đang chuyển đến trang thanh toán...");
       navigate("/PayCheckout");
     } catch (error) {
       console.error("Error during checkout:", error);
-      alert("Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại!");
+      toast.error("Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại!");
     } finally {
       setIsLoading(false);
     }
@@ -268,7 +269,7 @@ export default function ShoppingCart() {
     const vnp_ResponseCode = params.get("vnp_ResponseCode");
 
     if (vnp_ResponseCode && vnp_ResponseCode !== "00") {
-      alert("Thanh toán bị hủy. Bạn đã quay lại giỏ hàng.");
+      toast.error("Thanh toán bị hủy. Bạn đã quay lại giỏ hàng.");
     }
   }, [location]);
 
@@ -294,7 +295,7 @@ export default function ShoppingCart() {
                   navigate("/"); // Chuyển hướng đến Home
                 } catch (error) {
                   console.error("Lỗi khi chuyển hướng:", error);
-                  alert("Đã xảy ra lỗi khi chuyển hướng. Vui lòng thử lại!"); // Hiển thị thông báo lỗi
+                  toast.error("Đã xảy ra lỗi khi chuyển hướng. Vui lòng thử lại!"); // Hiển thị thông báo lỗi
                 }
               }}
             >

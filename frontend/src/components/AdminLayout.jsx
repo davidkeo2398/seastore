@@ -55,6 +55,16 @@ export default function AdminLayout() {
               Quản lý đơn hàng
             </Button>
           </Link>
+
+           {/* <Link to="/admin/promotion">
+            <Button
+              variant="ghost"
+              className="justify-start w-full text-gray-700 hover:text-blue-700 hover:bg-blue-50"
+            >
+              <Package className="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-500" />
+              Quản lý khuyến mãi
+            </Button>
+          </Link> */}
           <Link to="/admin/users">
             <Button
               variant="ghost"

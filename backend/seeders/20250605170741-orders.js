@@ -31,7 +31,7 @@ module.exports = {
         order_date: faker.date.past().toISOString().slice(0, 19).replace('T', ' '),
         payment_method: faker.helpers.arrayElement(['cash', 'paypal', 'bank_transfer', 'momo', 'vnpay']),
         promotion_code: faker.string.alphanumeric(10), // Random alphanumeric code
-        status: faker.helpers.arrayElement(['pending','delivering', 'completed', 'cancelled']),
+        status: faker.helpers.arrayElement(['pending','paid','delivering', 'completed', 'cancelled']),
         createdAt: new Date(),
         updatedAt: new Date()
       });

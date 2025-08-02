@@ -1,7 +1,6 @@
-const { where } = require("sequelize");
 const { userAdminService } = require("../../services");
-const { use } = require("react");
 const { getHighValueCustomers } = require("../../services/admin/user-admin-service");
+const { updateMemberRankByCompletedOrder } = require("../../services/admin/rank-admin-service");
 
 module.exports = {
   getUsers: async (req, res) => {
@@ -104,4 +103,5 @@ module.exports = {
       });
     }
   }
+  
 };

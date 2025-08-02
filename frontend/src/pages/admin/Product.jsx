@@ -118,7 +118,7 @@ export default function ProductsPage() {
       const res = await axiosInstance.get("/agency");
       if (res.data && res.data.data) setAgencies(res.data.data);
     } catch (error) {
-      toast.error("Không thể tải danh sách đại lý.");
+      //toast.error("Không thể tải danh sách đại lý.");
     }
   };
 
@@ -289,7 +289,7 @@ export default function ProductsPage() {
           "Lỗi khi thêm sản phẩm:",
           error.response?.data || error.message
         );
-        alert("Lỗi khi thêm sản phẩm: " + error.message);
+        toast.error("Lỗi khi thêm sản phẩm: " + error.message);
         toast.error("Thêm sản phẩm thất bại!");
         return;
       }

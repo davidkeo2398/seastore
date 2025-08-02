@@ -102,6 +102,7 @@ module.exports = (sequelize) => {
       status: {
         type: DataTypes.ENUM(
           "pending",
+          "paid",
           "processing",
           // "shipped",
           "completed",

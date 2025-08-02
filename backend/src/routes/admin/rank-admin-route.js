@@ -9,5 +9,6 @@ router.post("/", adminAuthMiddleware, controller.createRank);
 router.put("/:id", adminAuthMiddleware, controller.updateRank);
 router.delete("/:id", adminAuthMiddleware, controller.deleteRank);
 router.get("/members", adminAuthMiddleware, controller.getMembersWithRank);
+router.patch("/members/:id/role", adminAuthMiddleware, controller.updateMemberRankByCompletedOrder);
 
 module.exports = router;

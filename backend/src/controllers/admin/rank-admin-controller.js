@@ -48,4 +48,16 @@ module.exports = {
         .json({ message: "Lỗi lấy danh sách thành viên", error: err.message });
     }
   },
+  updateMemberRankByCompletedOrder: async (req, res) => {
+    try {
+      const { role_id } = req.body;
+      const userId = req.params.id;
+      await rankAdminService.updateMemberRankByCompletedOrder(userId, role_id);
+      res.json({ message: "Cập nhật hạng thành viên thành công" });
+    } catch (err) {
+      res
+        .status(500)
+        .json({ message: "Lỗi cập nhật hạng thành viên", error: err.message });
+    }
+  },
 };
