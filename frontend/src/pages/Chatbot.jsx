@@ -23,7 +23,7 @@ export default function Chatbot({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (inputRef.current.value.trim()) {
-        onSendMessage(inputRef.current.value);
+        onSendMessage(inputRef.current.value); // gửi qua hàm onSendMessage
         inputRef.current.value = "";
       }
     }

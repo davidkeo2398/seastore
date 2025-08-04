@@ -13,6 +13,8 @@ function formatPrice(price) {
   }
   return numericPrice.toLocaleString("vi-VN"); // Định dạng theo chuẩn Việt Nam
 }
+
+// nếu k faq, tìm kiếm theo từ khóa các sản phẩm trong cơ sở dữ liệu
 const productService = {
   searchProductsForChatbot: async (searchTerms) => {
     console.log(`AI is searching DB for keywords: ${searchTerms}`);
@@ -51,7 +53,6 @@ const productService = {
     }));
   },
 };
-// === KẾT THÚC PHẦN SỬA LỖI ===
 
 // Nạp kiến thức từ file JSON
 const knowledgeBasePath = path.join(__dirname, "../../knowledge_base.json");
@@ -64,12 +65,13 @@ try {
   console.error("Lỗi khi đọc file knowledge_base.json:", error);
 }
 
+// duyệt qua các mục trong FAQ để đảm bảo định dạng đúng
 function findAnswerInFaq(userQuestion) {
   const question = userQuestion.toLowerCase();
   for (const item of knowledgeBase.faq) {
     for (const keyword of item.keywords) {
       // Chỉ khớp khi câu hỏi là một từ đơn hoặc có khoảng trắng bao quanh
-      const regex = new RegExp(`\\b${keyword}\\b`);
+      const regex = new RegExp(`\\b${keyword}\\b`); // ranh giới từ khóa có thể k hoạt động chính xác cho tiếng việt
       if (regex.test(question)) {
         return item.answer;
       }
@@ -88,7 +90,9 @@ async function getGeminiResponse(userQuestion, isContinuation = false) {
     // "answer": "Chào bạn, bạn cần tôi hỗ trợ thêm gì không ạ?"
     const faqAnswer = findAnswerInFaq(userQuestion);
     if (faqAnswer) return faqAnswer;
-    
+
+    // nếu k faq, tìm kiếm theo từ khóa các sản phẩm trong cơ sở dữ liệu
+    console.log("Câu hỏi không khớp với FAQ. Đang trích xuất từ khóa...");
 
     const keywordExtractionPrompt = `
         Bạn là chuyên gia về thủy sản. Dựa vào câu hỏi của người dùng, hãy rút ra những từ khóa chính xác nhất để tìm kiếm sản phẩm trong cơ sở dữ liệu.
@@ -103,25 +107,31 @@ async function getGeminiResponse(userQuestion, isContinuation = false) {
         Câu hỏi: "${userQuestion}"
         Từ khóa:
       `;
+    console.log(`Prompt trích xuất từ khóa: ${keywordExtractionPrompt}`);
     const keywordResult = await model.generateContent(keywordExtractionPrompt);
     const searchTerms = (await keywordResult.response.text())
       .split(",")
       .map((term) => term.trim())
       .join(" ");
+    console.log(`Từ khóa trích xuất được: ${searchTerms}`);
 
+    // tìm sp ở db
+    console.log("Đang tìm kiếm sản phẩm trong cơ sở dữ liệu...");
     const productsFromDB = await productService.searchProductsForChatbot(
       searchTerms
     );
+    console.log(`Found ${productsFromDB.length} products in DB.`);
 
     if (productsFromDB.length === 0) {
       return knowledgeBase.fallback.product_not_found;
     }
-    // === BƯỚC 5: CẬP NHẬT PROMPT VỚI ĐÚNG ĐƯỜNG DẪN LOCALHOST ===
+    //  CẬP NHẬT PROMPT VỚI ĐÚNG ĐƯỜNG DẪN LOCALHOST
     const context = `Dữ liệu sản phẩm có liên quan (JSON): ${JSON.stringify(
       productsFromDB,
       null,
       2
     )}`;
+
     const finalPrompt = `
         Bạn là trợ lý tư vấn bán hàng chuyên nghiệp của cửa hàng thủy sản Sea Store.
         **Dữ liệu sản phẩm có sẵn:**

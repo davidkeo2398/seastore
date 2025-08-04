@@ -51,6 +51,9 @@ export default function UsersPage() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editUser, setEditUser] = useState(null);
 
+  // const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  // const itemsPerPage = 7; // Số sản phẩm trên mỗi trang
+
   // Kiểm tra user có bị khóa không
   const isUserLocked = (user) => {
     if (!user.lockedUntil) return false;
@@ -74,7 +77,7 @@ export default function UsersPage() {
   };
 
   useEffect(() => {
-    +fetchUsers();
+    fetchUsers();
   }, []);
   const handleBan = async (iduser) => {
     if (!window.confirm("Bạn có chắc chắn muốn khóa người dùng này không?")) {
@@ -118,7 +121,6 @@ export default function UsersPage() {
     setIsEditDialogOpen(true);
   };
 
-
   // chinh sua thong tin nguoi dung, nang cap quyen
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -137,15 +139,17 @@ export default function UsersPage() {
       //   editUser.agency_rank_id = 1;
       // }
 
-
       console.log("Dữ liệu gửi lên API:", editUser); // Kiểm tra dữ liệu gửi lên API
 
       // Gửi yêu cầu cập nhật lên API
       // await axiosInstance.put(`/admin/user/${editUser.user_id}`, editUser);
 
-      await axiosInstance.patch(`/admin/rank/members/${editUser.user_id}/role`, {
-        role_id: editUser.role_id,
-      }); 
+      await axiosInstance.patch(
+        `/admin/rank/members/${editUser.user_id}/role`,
+        {
+          role_id: editUser.role_id,
+        }
+      );
 
       // Cập nhật danh sách người dùng trong state
       setUsers((prev) =>
@@ -166,9 +170,21 @@ export default function UsersPage() {
       user.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
 
-   
-    return matchesSearch ;
+    return matchesSearch;
   });
+
+  // //dưới filter
+  // const totalPages = Math.ceil(filteredUsers.length / itemsPerPage); // Tổng số trang
+  // const paginatedUsers = filteredUsers.slice(
+  //   (currentPage - 1) * itemsPerPage,
+  //   currentPage * itemsPerPage
+  // ); // Người dùng hiển thị trên trang hiện tại
+
+  // const handlePageChange = (newPage) => {
+  //   if (newPage >= 1 && newPage <= totalPages) {
+  //     setCurrentPage(newPage);
+  //   }
+  // };
 
   const adminCount = users.filter(
     (user) => user.role?.role_name === "admin"
@@ -286,6 +302,7 @@ export default function UsersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
+                {/* {paginatedUsers.length === 0 ? ( */}
                 {filteredUsers.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="py-8 text-center">
@@ -379,6 +396,26 @@ export default function UsersPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* <div className="flex items-center justify-center mt-4 space-x-2">
+        <Button
+          variant="outline"
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
+          Trước
+        </Button>
+        <span className="px-4 py-2 border rounded">
+          Trang {currentPage} / {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
+          Sau
+        </Button>
+      </div> */}
 
       {/* Edit User Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>

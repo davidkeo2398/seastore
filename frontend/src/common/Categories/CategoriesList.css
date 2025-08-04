@@ -57,9 +57,28 @@
 /* Lưới hiển thị các card danh mục */
 .categories-grid {
   display: grid; /* Sử dụng lưới */
-  grid-template-columns: repeat(5, 1fr); /* 4 danh mục trên một hàng */
+  grid-template-columns: repeat(2, 1fr); /* Mặc định: 2 cột */
   gap: 20px; /* Khoảng cách giữa các phần tử */
   justify-items: center; /* Căn giữa các phần tử theo chiều ngang */
+}
+
+/* Responsive cho các kích thước màn hình khác nhau */
+@media (min-width: 640px) {
+  .categories-grid {
+    grid-template-columns: repeat(3, 1fr); /* 3 cột cho màn hình nhỏ */
+  }
+}
+
+@media (min-width: 768px) {
+  .categories-grid {
+    grid-template-columns: repeat(4, 1fr); /* 4 cột cho màn hình trung bình */
+  }
+}
+
+@media (min-width: 1024px) {
+  .categories-grid {
+    grid-template-columns: repeat(5, 1fr); /* 5 cột cho màn hình lớn */
+  }
 }
 
 /* Card hiển thị từng danh mục */
@@ -71,39 +90,43 @@
   background: transparent; /* Nền trong suốt */
   border: none; /* Không có viền */
   box-shadow: none; /* Không có đổ bóng */
-  width: 200px; /* Chiều rộng cố định */
-  min-width: 140px; /* Chiều rộng tối thiểu */
-  max-width: 120px; /* Chiều rộng tối đa */
+  width: 100%; /* Chiều rộng 100% của ô lưới */
+  max-width: 200px; /* Giới hạn chiều rộng tối đa */
   height: auto; /* Chiều cao tự động */
   margin: 0 auto; /* Căn giữa theo chiều ngang */
   padding: 0; /* Không có khoảng cách bên trong */
-  transition: transform 0.3s; /* Hiệu ứng chuyển đổi khi hover */
+  transition: transform 0.3s, box-shadow 0.3s; /* Hiệu ứng chuyển đổi khi hover */
 }
 
 /* Hiệu ứng khi hover vào card */
-.category-card.hovered {
+.category-card:hover {
   transform: translateY(-5px); /* Dịch chuyển lên trên 5px */
   box-shadow: 0 4px 12px rgba(30, 64, 175, 0.18); /* Đổ bóng khi hover */
-  border-color: #1e40af; /* Đổi màu viền */
 }
 
 /* Hình ảnh trong card danh mục */
 .category-image {
-  width: 100%; /* Chiều rộng 100% */
-  height: 100px; /* Chiều cao cố định */
-  object-fit: cover; /* Cắt ảnh vừa khung */
-  border-bottom: 2px solid #1e40af; /* Viền dưới màu xanh nước biển đậm */
-  background: #e6f0fa; /* Nền xanh nước biển nhạt */
-  border-radius: 100px; /* Bo tròn hình ảnh */
+  width: 100%; /* Chiều rộng 100% của container */
+  height: auto; /* Giữ tỷ lệ khung hình */
+  aspect-ratio: 1 / 1; /* Đảm bảo hình ảnh luôn là hình vuông */
+  object-fit: cover; /* Đảm bảo ảnh vừa khung mà không bị méo */
+  border-radius: 50%; /* Làm cho ảnh thành hình tròn */
+  border: 2px solid #1e40af; /* Thêm viền màu xanh nước biển đậm */
+  transition: border-color 0.3s; /* Hiệu ứng chuyển đổi màu viền */
+}
+
+/* Đổi màu viền ảnh khi hover */
+.category-card:hover .category-image {
+  border-color: #2563eb; /* Đổi màu viền thành màu khác khi hover */
 }
 
 /* Tên danh mục */
 .category-name {
-  font-size: 1.2rem; /* Kích thước chữ */
+  font-size: 1rem; /* Kích thước chữ */
   font-weight: 600; /* Độ đậm chữ */
   color: #1e40af; /* Màu chữ xanh nước biển đậm */
   text-align: center; /* Căn giữa chữ */
-  padding: 12px; /* Khoảng cách bên trong */
+  margin-top: 12px; /* Khoảng cách trên */
 }
 
 /* Khi hover, viền card và viền ảnh cùng màu */

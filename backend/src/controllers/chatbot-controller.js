@@ -1,6 +1,7 @@
 const { chatbotService } = require('../services/index');
 
 module.exports = {
+  // nhận câu hỏi từ frontend và trả về câu trả lời
   handleChat: async (req, res) => {
     try {
       const { question } = req.body;

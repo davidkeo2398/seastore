@@ -348,15 +348,15 @@ export default function PayCheckout() {
       setIsProcessing(true);
 
       try {
-         const payloadVNPay = {
-          order_id: result.data.data.order.order_code, 
+        const payloadVNPay = {
+          order_id: result.data.data.order.order_code,
           amount: finalTotal, // Đảm bảo tên trường khớp với backend (amount)
           bankCode: "NCB", // bankCode thay vì bankName
           orderDescription: `Thanh toan don hang cho ${result.data.data.order.order_id}`, // Mô tả đơn hàng
           // order_id sẽ được tạo ở backend, không cần gửi lên
         };
 
-
+        // handleSubmit api vn-controller.js
         const response = await axiosInstance.post(
           "/vnpay/create_payment_url", // API endpoint backend
           payloadVNPay
@@ -377,10 +377,9 @@ export default function PayCheckout() {
       }
     } else {
       navigate("/orderTracking");
-      
     }
     localStorage.setItem("order", JSON.stringify(result.data.data.order));
-    
+
     toast.success("Đặt hàng thành công!");
     setIsProcessing(false);
   };
@@ -563,8 +562,11 @@ export default function PayCheckout() {
             <p className="mt-1 text-gray-600">Hoàn tất đơn hàng của bạn</p>
           </div>
           <Link to="/cart">
-            <Button variant="outline">
-              <ArrowLeft className="w-4 h-4 mr-2 " />
+            <Button
+              variant="outline"
+              className="text-black border-black hover:bg-gray-100"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Quay lại giỏ hàng
             </Button>
           </Link>

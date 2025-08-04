@@ -26,10 +26,10 @@ export default function Layout() {
     setIsLoading(true);
 
     try {
-      // Send question to backend
+      // gửi câu hỏi của người dùng đến backend
       const response = await axiosInstance.post("/chatbot", { question });
 
-      // Add bot's response to the chat
+      // Thêm phản hồi của bot vào chat
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: response.data.answer },

@@ -3,9 +3,9 @@ const { vnpayService } = require("../services");
 const { Order } = require("../Model/Index");
 
 module.exports = {
-  /**
-   * B1: Client gọi API này để tạo URL thanh toán
-   */
+ 
+   //B1: Client gọi API này để tạo URL thanh toán
+   
   createPayment: async (req, res) => {
     try {
       console.log("Creating payment URL with data:", req.body);

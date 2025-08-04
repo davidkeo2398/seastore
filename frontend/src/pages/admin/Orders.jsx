@@ -61,12 +61,12 @@ const statusFlow = {
   cancelled: { level: 5, next: [], canCancel: false },
 };
 
-// const predefinedPriceRanges = [
-//   { label: "Tất cả", min: 0, max: Number.MAX_SAFE_INTEGER },
-//   { label: "1 - 5 triệu", min: 1000000, max: 5000000 },
-//   { label: "5 - 10 triệu", min: 5000000, max: 10000000 },
-//   { label: "Trên 10 triệu", min: 10000000, max: Number.MAX_SAFE_INTEGER },
-// ];
+const predefinedPriceRanges = [
+  { label: "Tất cả", min: 0, max: Number.MAX_SAFE_INTEGER },
+  { label: "1 - 5 triệu", min: 1000000, max: 5000000 },
+  { label: "5 - 10 triệu", min: 5000000, max: 10000000 },
+  { label: "Trên 10 triệu", min: 10000000, max: Number.MAX_SAFE_INTEGER },
+];
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -83,7 +83,7 @@ export default function OrdersPage() {
   // const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
   // const itemsPerPage = 7; // Số sản phẩm trên mỗi trang
 
-  // lọc: khởi tạo khoảng giá mặc định -> lọc qua filter hàm kiểm tra giá -> hàm const handChange
+  // l: khởi tạo khoảng giá mặc định -> lọc qua filter hàm kiểm tra giá -> hàm const handChange
 
   const sortedOrders = orders.sort((a, b) => {
     return new Date(b.order_date) - new Date(a.order_date);
@@ -190,10 +190,10 @@ export default function OrdersPage() {
       order.phone_agency?.toLowerCase().includes(searchTermLower);
     const matchesStatus =
       statusFilter === "all" || order.status === statusFilter;
-    // const matchePrice =
-    //   order.total >= priceRange.min && order.total <= priceRange.max;
+    const matchePrice =
+      order.total >= priceRange.min && order.total <= priceRange.max;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchePrice;
   });
 
   const formatCurrency = (value) => {
@@ -303,15 +303,15 @@ export default function OrdersPage() {
   //   }));
   // };
 
-  // // Hàm xử lý thay đổi khoảng giá từ combobox
-  // const handlePredefinedPriceRangeChange = (value) => {
-  //   const selectedRange = predefinedPriceRanges.find(
-  //     (range) => range.label === value
-  //   );
-  //   if (selectedRange) {
-  //     setPriceRange({ min: selectedRange.min, max: selectedRange.max });
-  //   }
-  // };
+  // Hàm xử lý thay đổi khoảng giá từ combobox
+  const handlePredefinedPriceRangeChange = (value) => {
+    const selectedRange = predefinedPriceRanges.find(
+      (range) => range.label === value
+    );
+    if (selectedRange) {
+      setPriceRange({ min: selectedRange.min, max: selectedRange.max });
+    }
+  };
 
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">
@@ -443,8 +443,8 @@ export default function OrdersPage() {
               </SelectContent>
             </Select>
 
-            {/* Thêm bộ lọc khoảng giá
-              <div className="flex-1">
+            {/* Thêm bộ lọc khoảng giá */}
+            {/* <div className="flex-1">
               <div className="flex items-center justify-end gap-4 mb-6">
                 <Select onValueChange={handlePredefinedPriceRangeChange}>
                   <SelectTrigger className="w-[180px]">
@@ -458,7 +458,10 @@ export default function OrdersPage() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div> */}
+              </div>
+          </div> */}
+
+
           </div>
 
           {/* Existing price range inputs
@@ -494,6 +497,7 @@ export default function OrdersPage() {
                   <TableHead>Khách hàng</TableHead>
                   <TableHead>Địa chỉ</TableHead>
                   <TableHead>Tổng tiền</TableHead>
+                  <TableHead>Phương thức thanh toán</TableHead>
                   <TableHead>Trạng thái</TableHead>
                   <TableHead className="text-right">Hành động</TableHead>
                 </TableRow>
@@ -551,6 +555,7 @@ export default function OrdersPage() {
                             currency: "VND",
                           }).format(order.total)}
                         </TableCell>
+                        <TableCell>{order.payment_method}</TableCell>
                         <TableCell>
                           {isFinalStatus ? (
                             getStatusBadge(order.status)

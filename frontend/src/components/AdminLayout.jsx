@@ -25,7 +25,7 @@ export default function AdminLayout() {
               className="justify-start w-full text-gray-700 hover:text-blue-700 hover:bg-blue-50"
             >
               <LayoutDashboard className="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-500" />
-              Dashboard
+              Trang chủ quản trị
             </Button>
           </Link>
           <Link to="/admin/products">
@@ -89,7 +89,7 @@ export default function AdminLayout() {
               className="justify-start w-full text-gray-700 hover:text-blue-700 hover:bg-blue-50"
             >
               <Settings className="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-500" />
-              Quản lý hạng thành viên
+              Quản lý hạng đại lý
             </Button>
           </Link>
           <div className="pt-4 mt-4 border-t border-gray-200">

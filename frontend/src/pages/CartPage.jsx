@@ -251,6 +251,7 @@ export default function ShoppingCart() {
     } catch (error) {
       console.error("Error during checkout:", error);
       toast.error("Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại!");
+      
     } finally {
       setIsLoading(false);
     }

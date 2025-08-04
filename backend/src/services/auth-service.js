@@ -94,7 +94,7 @@ module.exports = {
         role: role,
       };
     } catch (err) {
-      console.error("Get user info fail:", error);
+      console.error("Get user info fail:", err);
       throw new Error("Get user info fail: ", err);
     }
   },

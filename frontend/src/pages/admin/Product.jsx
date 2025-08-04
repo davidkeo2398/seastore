@@ -75,6 +75,8 @@ export default function ProductsPage() {
   const [category, setCategory] = useState([]);
   const [agencies, setAgencies] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
+  const [sortOrder, setSortOrder] = useState("default");
+  const [sortOrderDate, setSortOrderDate] = useState("default");
 
   // const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
   // const itemsPerPage = 7; // Số sản phẩm trên mỗi trang
@@ -198,20 +200,42 @@ export default function ProductsPage() {
     }
   };
 
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch =
-      (product.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (product.category || "").toLowerCase().includes(searchTerm.toLowerCase());
-    // (product.description || "")
-    //   .toLowerCase()
-    //   .includes(searchTerm.toLowerCase());
+  const filteredProducts = products
+    .filter((product) => {
+      const matchesSearch =
+        (product.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product.category || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+      // (product.description || "")
+      //   .toLowerCase()
+      //   .includes(searchTerm.toLowerCase());
 
-    const matchesCategory =
-      categoryFilter === "all" ||
-      String(product.category_id) === String(categoryFilter);
+      const matchesCategory =
+        categoryFilter === "all" ||
+        String(product.category_id) === String(categoryFilter);
 
-    return matchesSearch && matchesCategory;
-  });
+      return matchesSearch && matchesCategory;
+    });
+    // .sort((a, b) => {
+    //   if (sortOrderDate === "dateAsc") {
+    //     return new Date(a.createdAt) - new Date(b.createdAt); // Sắp xếp theo ngày tăng dần
+    //   }
+    //   if (sortOrderDate === "dateDesc") {
+    //     return new Date(b.createdAt) - new Date(a.createdAt); // Sắp xếp theo ngày giảm dần
+    //   }
+    //   return 0; // Không sắp xếp
+    // });
+
+  // .sort((a, b) => {
+  //   if (sortOrder === "asc") {
+  //     return a.price - b.price;
+  //   }
+  //   if (sortOrder === "desc") {
+  //     return b.price - a.price;
+  //   }
+  //   return 0;
+  // });
 
   // const totalPages = Math.ceil(filteredProducts.length / itemsPerPage); // Tổng số trang
   // const paginatedProducts = filteredProducts.slice(
@@ -504,6 +528,27 @@ export default function ProductsPage() {
                 </option>
               ))}
             </select>
+            {/* Sắp xếp theo giá */}
+            {/* <select
+              className="w-[180px] border rounded px-2 py-1"
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+            >
+              <option value="default">Mặc định</option>
+              <option value="asc">Giá: Thấp đến Cao</option>
+              <option value="desc">Giá: Cao đến Thấp</option>
+            </select> */}
+
+          {/* Sắp xếp theo ngày */}
+            {/* <select
+              className="w-[180px] border rounded px-2 py-1"
+              value={sortOrderDate}
+              onChange={(e) => setSortOrderDate(e.target.value)}
+            >
+              <option value="default">Mặc định</option>
+              <option value="dateAsc">Ngày: Cũ đến Mới</option>
+              <option value="dateDesc">Ngày: Mới đến Cũ</option>
+            </select> */}
           </div>
 
           {/* Table */}
@@ -512,7 +557,7 @@ export default function ProductsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Hình ảnh</TableHead>
-                  <TableHead>Tên sản phẩm</TableHead>
+                  <TableHead>Tên sản phẩm </TableHead>
                   <TableHead>Danh mục</TableHead>
                   <TableHead>Giá</TableHead>
                   {/* <TableHead>Trạng thái</TableHead> */}
@@ -638,3 +683,5 @@ export default function ProductsPage() {
     </div>
   );
 }
+
+

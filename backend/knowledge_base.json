@@ -12,7 +12,7 @@
     },
     {
       "intent": "faq_thanh_toan",
-      "keywords": ["thanh toán", "trả tiền", "cách thanh toán", "phương thức", "cod", "vnpay"],
+      "keywords": ["thanh toán","thu tiền tận nơi","giao hàng thu tiền","thu tiền","trả tiền", "cách thanh toán", "phương thức", "cod",  "vnpay"],
       "answer": "Chúng tôi hỗ trợ nhiều phương thức thanh toán tiện lợi, bao gồm: Thanh toán khi nhận hàng (COD) và thanh toán trực tuyến qua cổng VNPay."
     },
     {
@@ -89,6 +89,11 @@
         "intent": "bo_sung_vitamin_khoang",
         "keywords": ["bổ sung khoáng", "tăng đề kháng", "vitamin c", "cong thân", "mềm vỏ", "giảm stress"],
         "answer": "Chào bạn, việc bổ sung khoáng và vitamin rất quan trọng. Để chống sốc và tăng đề kháng, bạn có thể dùng các loại **Vitamin C** như **Nutri C** hoặc **Vitamin C Antistress**. Để phòng bệnh cong thân, mềm vỏ do thiếu khoáng, bạn nên dùng các loại khoáng như **MCP diges** hoặc **AquaMineral Plus**. Bạn muốn tìm sản phẩm nào cụ thể hơn không?"
+    },
+     {
+      "intent": "goodbye",
+      "keywords": ["tạm biệt", "bye", "chào tạm biệt", "bye bye"],
+      "answer": "Chào bạn, hẹn gặp lại! Nếu còn thắc mắc gì, bạn cứ liên hệ với tôi nhé số điện thoại: **0337586860**. Chúc bạn một ngày tốt lành!"
     }
   ],
   "fallback": {

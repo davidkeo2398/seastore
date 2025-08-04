@@ -14,6 +14,7 @@ const { sequelize } = require("../config/dbcontext");
 const { Promotion } = require("../Model/Index");
 const { where } = require("sequelize");
 
+
 module.exports = {
   createOrder: async (orderData, userInfo) => {
     // nếu có lỗi xảy ra trong quá trình tạo đơn hàng, sẽ rollback lại toàn bộ
@@ -74,10 +75,15 @@ module.exports = {
           where: { promotion_code: promotion_code },
         });
         if (!promotion) {
-          throw new Error("Promotion not found");
+          throw new Error("Mã giảm giá không tồn tại.");
         }
+        // const currentDate = new Date();
+        // if (promotion.promotion_expired_date < currentDate) {
+        //   throw new Error("Mã giảm giá đã hết hạn.");
+        // }
+        console.log("promotion", promotion)
         if (promotion.promotion_quantity <= 0) {
-          throw new Error("Promotion has expired or is invalid");
+          throw new Error("Mã giảm giá đã hết hạn sử dụng.");
         } else {
           // giảm số lượng khuyến mãi
           await Promotion.decrement(
